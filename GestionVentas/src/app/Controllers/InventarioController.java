@@ -126,27 +126,39 @@ public class InventarioController {
         //     }
         // });
 
-        // Creo una columna para manejar el estado de los productos
-        TableColumn<Producto, String> estadoCol = new TableColumn<>("Estado");
-        estadoCol.setCellFactory(new Callback<TableColumn<Producto, String>, TableCell<Producto, String>>(){
+        // Creo una columna que contiene un boton en cada fila que permite cambiar el estado del producto
+        TableColumn<Producto, Boolean> estadoCol = new TableColumn<>("Estado");
+        estadoCol.setCellFactory(new Callback<TableColumn<Producto, Boolean>, TableCell<Producto, Boolean>>(){
             @Override
-            public TableCell<Producto, String> call(final TableColumn<Producto, String> param) {
-                final TableCell<Producto, String> cell = new TableCell<Producto, String>() {
-                    private final Button btn = new Button("Activo/Inactivo"); // Definicion del boton
+            public TableCell<Producto, Boolean> call(final TableColumn<Producto, Boolean> param) {
+                final TableCell<Producto, Boolean> cell = new TableCell<Producto, Boolean>() {
+                    private final Button btn = new Button(); // Definicion del boton
                     {
                         btn.setOnAction((ActionEvent event) -> {
                             Producto producto = getTableView().getItems().get(getIndex());
-                            cambiarEstadoProducto(producto); // Abre formulario para editar el producto
+                            cambiarEstadoProducto(producto); // Llama funcion que cambia el estado del producto
+                            updateItem(producto.getEstado(), false);
+                            getTableView().refresh();
                         });
                     }
 
                     @Override
-                    public void updateItem(String item, boolean empty) {
+                    public void updateItem(Boolean item, boolean empty) {
                         super.updateItem(item, empty);
                         if (empty) {
-                            setGraphic(null);
+                            System.out.println("vacio");
+                            setGraphic(null); // No muestra nada si la celda esta vacia
                         } else {
-                            setGraphic(btn);
+                            Producto producto = getTableView().getItems().get(getIndex());
+                            if(producto.getEstado()){
+                                btn.setText("Desactivar");
+                                btn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                            } else {
+                                btn.setText("Activar");
+                                btn.setStyle("-fx-background-color: green; -fx-text-fill: white;");
+                            }
+
+                            setGraphic(btn); // Muestra el boton en la celda
                         }
                     }
                 };
@@ -154,7 +166,7 @@ public class InventarioController {
             }
         });
 
-        // Creo una columna para ver los detalles de los productos
+        // Creo una columna que contiene un boton en cada fila para mostrar mas informacion del producto
         TableColumn<Producto, String> detallesCol = new TableColumn<>("Mas informacion");
         detallesCol.setCellFactory(new Callback<TableColumn<Producto, String>, TableCell<Producto, String>>(){
             @Override
@@ -162,12 +174,12 @@ public class InventarioController {
                 final TableCell<Producto, String> cell = new TableCell<Producto, String>() {
                     private final Button btn = new Button("Ver detalles"); // Definicion del boton
                     {
-                        btn.setOnAction((ActionEvent event) -> {
-                            Producto producto = getTableView().getItems().get(getIndex());
+                        btn.setOnAction((ActionEvent event) -> { // Definimos la accion del boton
+                            Producto producto = getTableView().getItems().get(getIndex()); // Obtiene el producto correspondiente a la fila actual
                             verDetalles(producto); 
                         });
                     }
-
+                    /* Metodo que controla la actualizacion de cada celda */
                     @Override
                     public void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);

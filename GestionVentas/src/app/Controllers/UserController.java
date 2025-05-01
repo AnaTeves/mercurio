@@ -20,6 +20,7 @@ import javafx.scene.control.TableView;
 import app.Models.Usuario;
 import java.io.IOException;
 
+/* Controlador del usuario */
 public class UserController {
     @FXML
     private TableView<Usuario> tableView;
@@ -90,13 +91,10 @@ public class UserController {
 
     // Método que cambia el estado del usuario
     private void cambiarEstadoUsuario(Usuario usuario) {
-        // Alterna el estado del usuario
-        String nuevoEstado = usuario.getEstado().equals("activo") ? "inactivo" : "activo";
-        usuario.setEstado(nuevoEstado);
-        // Actualiza en la base de datos
-        users.updateUsuario(usuario);
-        // Vuelve a cargar los datos para reflejar el cambio en la tabla
-        cargarDatosDesdeBD();
+        String nuevoEstado = usuario.getEstado().equals("activo") ? "inactivo" : "activo"; // Alterna el estado del usuario
+        usuario.setEstado(nuevoEstado); // Asigna el nuevo estado
+        users.updateUsuario(usuario); // Actualiza el estado del usuario en la base de datos
+        cargarDatosDesdeBD(); // Vuelve a cargar los datos para reflejar el cambio en la tabla
     }
 
     // Metodo que muestra una alerta
@@ -149,5 +147,11 @@ public class UserController {
     @FXML
     public void añadirUsuario(){
         setView("/resources/FormUser.fxml");
+    }
+
+    // Metodo que carga la vista inicial de la gestion de usuarios
+    @FXML
+    public void recarga() {
+        setView("/resources/UserView.fxml");
     }
 }

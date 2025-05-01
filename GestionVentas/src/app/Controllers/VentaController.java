@@ -33,6 +33,7 @@ import java.util.Optional;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 // Controlador de ventas
@@ -72,6 +73,10 @@ public class VentaController {
     private TextField buscarProducto;
     TableView<Producto> tableView = new TableView<>();
 
+    // NEW 
+    @FXML
+    private TextField campoCliente;
+
     private ObservableList<DetalleVenta> detallesVenta = FXCollections.observableArrayList();
     private float totalProducto = 0.0f;
     private VentaService ventaService = new VentaService();
@@ -82,10 +87,10 @@ public class VentaController {
 
     @FXML
     public void initialize() {
-        colIDProducto.setCellValueFactory(new PropertyValueFactory<>("id_producto"));
-        colProducto.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));;
+        // colIDProducto.setCellValueFactory(new PropertyValueFactory<>("id_producto"));
+        // colProducto.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        // colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+        // colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));;
 
         // tablaDetalleVenta.setItems(detallesVenta);    TEMPORALMENTE COMENTADO
     }
@@ -322,5 +327,31 @@ public class VentaController {
         detallesVenta.clear();
         totalAcumulado = 0.0f;
         tablaDetalleVenta.getItems().clear();
+    }
+
+
+
+    public void openTheWindowClients(){
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/ClientsList.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = new Stage();
+            stage.setTitle("Seleccionar Cliente");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+            
+            // Obtener el cliente seleccionado de la ventana emergente
+            ClientsListController controller = loader.getController();
+            String clienteSeleccionado = controller.getClienteSeleccionado();
+            
+            if (clienteSeleccionado != null) {
+                campoCliente.setText(clienteSeleccionado);
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

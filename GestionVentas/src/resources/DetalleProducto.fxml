@@ -11,7 +11,7 @@
 
 <!-- Vista de los detalles de un producto -->
 <StackPane fx:id="mainContent" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.DetalleProductoController">
-    <VBox alignment="CENTER" style="-fx-background-color: #773939;" HBox.hgrow="ALWAYS">
+    <VBox alignment="CENTER" style="-fx-background-color: #f4f4f7;" HBox.hgrow="ALWAYS">
         <VBox alignment="CENTER" maxHeight="800.0" maxWidth="450.0" minWidth="400.0" spacing="10.0" styleClass="vbox-externo">
             <padding>
                 <Insets bottom="40.0" left="50.0" right="50.0" top="40.0" />

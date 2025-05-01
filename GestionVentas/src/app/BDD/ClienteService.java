@@ -43,6 +43,24 @@ public class ClienteService {
     //     return clientes;
     // }
 
+    public static List<Cliente> obtenerClientesActivos() {
+        List<Cliente> clientes = new ArrayList<>();
+        String query = "SELECT id_cliente, nomYape, documento, email FROM CLIENTE WHERE estado = 'activo'";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                clientes.add(new Cliente(rs.getInt("id_cliente"), rs.getString("nomYape"), rs.getString("documento"), rs.getString("email")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return clientes;
+    }
+
     // Metodo que carga los clientes de la base de datos en una tabla
     public ObservableList<Cliente> loadClients(){
         ObservableList<Cliente> clientes = FXCollections.observableArrayList(); // Creamos una lista observable de clientes

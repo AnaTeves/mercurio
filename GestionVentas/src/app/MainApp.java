@@ -13,7 +13,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Cargamos el archivo FXML
-        Parent root = FXMLLoader.load(getClass().getResource("/resources/LoginView.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/resources/FormUser.fxml"));
 
         DatabaseConnection.getConnection();
 
@@ -25,14 +25,15 @@ public class MainApp extends Application {
         primaryStage.initStyle(StageStyle.UNDECORATED); // Quita la barra superior del titulo
         primaryStage.setScene(scene);
         primaryStage.show();
-        primaryStage.setFullScreen(true);   
+        // primaryStage.setFullScreen(true);   
         // Centramos la ventana al medio de la pantalla
-        // Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        // primaryStage.setX((screenBounds.getWidth() - primaryStage.getWidth()) / 2);
-        // primaryStage.setY((screenBounds.getHeight() - primaryStage.getHeight()) / 2);
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        primaryStage.setX((screenBounds.getWidth() - primaryStage.getWidth()) / 2);
+        primaryStage.setY((screenBounds.getHeight() - primaryStage.getHeight()) / 2);
     }
 
     public static void main(String[] args) {
         launch(args);
+        
     }
 }

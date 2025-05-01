@@ -8,10 +8,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.Image?>        
 
 <!-- Vista del formulario para registrar un cliente -->
 <StackPane fx:id="mainContentForm" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.FormClienteController">
-    <VBox alignment="CENTER" style="-fx-background-color: #773939;" HBox.hgrow="ALWAYS">
+    <VBox alignment="CENTER" style="-fx-background-color: #f4f4f7;" HBox.hgrow="ALWAYS">
         <VBox alignment="CENTER" maxHeight="800.0" maxWidth="450.0" minWidth="400.0" spacing="10.0" styleClass="vbox-externo">
             <padding>
                 <Insets bottom="40.0" left="50.0" right="50.0" top="40.0" />
@@ -26,7 +27,7 @@
                 </VBox.margin>
                 </ImageView>
             
-            <Label styleClass="texto-comun" text="Formulario de registro" textAlignment="CENTER" textFill="WHITE">
+            <Label styleClass="texto-comun" text="Formulario de registro" textAlignment="CENTER" textFill="BLACK">
                 <padding>
                     <Insets bottom="10.0" />
                 </padding>

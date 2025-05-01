@@ -2,7 +2,6 @@ package app.BDD;
 import app.Models.Venta;
 import app.Models.DetalleVenta;
 import app.Models.Producto;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.util.Pair;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -28,7 +28,6 @@ public class VentaService {
 
     public VentaService() {
     }
-
 
     public List<Venta> getAllVentas() {
         List<Venta> ventas = new ArrayList<>();
@@ -62,7 +61,6 @@ public class VentaService {
 
         return ventas;
     }
-
 
     public ObservableList<DetalleVenta> loadVentas(){
         ObservableList<DetalleVenta> ventas = FXCollections.observableArrayList(); // Creamos una lista observable
@@ -358,24 +356,44 @@ public class VentaService {
         return nombre;
     }
 
-    public static Map<String, Double> obtenerIngresosMensuales() {
-        String sql = "SELECT MONTH(fecha_venta) AS mes, SUM(total_venta) AS total_ingresos " +
-                    "FROM VENTA GROUP BY MONTH(fecha_venta) ORDER BY mes";
-        Map<String, Double> ingresosMensuales = new LinkedHashMap<>();
+    //FUNCIONA Y SE USA
+    public double obtenerIngresosMensuales(int mesSeleccionado) {
+        String sql = "SELECT SUM(total_venta) AS total_ingresos FROM VENTA WHERE MONTH(fecha_venta) = ?";
+        double ingresosMensuales = 0;
     
         try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery()) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
     
-            while (rs.next()) {
-                int mes = rs.getInt("mes");
+            stmt.setInt(1, mesSeleccionado);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
                 double total = rs.getDouble("total_ingresos");
-                ingresosMensuales.put(obtenerNombreMes(mes), total);
+                ingresosMensuales += total;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return ingresosMensuales;
+    }
+
+    public Map<String, Double> obtenerIngresosPorMes() {
+        Map<String, Double> ingresosPorMes = new LinkedHashMap<>();
+        String query = "SELECT FORMAT(fecha_venta, 'yyyy-MM') AS mes, SUM(total_venta) AS total "
+                     + "FROM VENTA "
+                     + "GROUP BY FORMAT(fecha_venta, 'yyyy-MM'), YEAR(fecha_venta), MONTH(fecha_venta) "
+                     + "ORDER BY YEAR(fecha_venta), MONTH(fecha_venta)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                ingresosPorMes.put(rs.getString("mes"), rs.getDouble("total"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ingresosPorMes;
     }
     
     private static String obtenerNombreMes(int mes) {
@@ -465,4 +483,47 @@ public class VentaService {
         return data;
     }
 
+
+
+     public List<Pair<String, Integer>> obtenerProductosMasVendidos() {
+        List<Pair<String, Integer>> lista = new ArrayList<>();
+        String query = "SELECT TOP 5 p.nombre, SUM(dv.cantidad) AS total_vendido "
+                     + "FROM detalle_venta dv "
+                     + "JOIN producto p ON dv.id_producto = p.id_producto "
+                     + "GROUP BY p.nombre "
+                     + "ORDER BY total_vendido DESC;";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String nombre = rs.getString("nombre");
+                int totalVendido = rs.getInt("total_vendido");
+                lista.add(new Pair<>(nombre, totalVendido));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+
+    // FUNCIONA Y SE USA
+    public double obtenerIngresosDelDia(){
+        double ingresosDelDia = 0;
+        String query = "SELECT SUM(total_venta) AS total_ingresos FROM VENTA WHERE CAST(fecha_venta AS DATE) = CAST(GETDATE() AS DATE);";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                ingresosDelDia = rs.getDouble("total_ingresos");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ingresosDelDia;
+    }
 }

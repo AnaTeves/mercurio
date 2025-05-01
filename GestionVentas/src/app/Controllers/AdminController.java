@@ -1,10 +1,8 @@
 package app.Controllers;
-
 import javafx.fxml.FXML;
-
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
-
 import app.BDD.CategoriaService;
 import app.BDD.VentaService;
 import javafx.collections.FXCollections;
@@ -20,22 +18,22 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.util.Pair;
+import javafx.scene.control.Label;
 
 // Controlador del administrador que hereda del controlador de los metodos comunes
 public class AdminController extends ComunesController {
 
     @FXML
-    private ComboBox<String> mesComboBox;
+    private ComboBox<String> monthComboBox;
     @FXML
-    private BarChart<String, Number> barChart;
-    @FXML
-    private BarChart<String, Number> barChartMes;
+    private BarChart<String, Number> stockBarChart;
     @FXML
     private BarChart<String, Number> ventasPorDiaChart; 
     @FXML
-    private LineChart<String, Number> ventasLineChart;
+    private LineChart<String, Number> ingresosLineChart;
     @FXML
-    private PieChart pieChart;
+    private PieChart productosPieChart;
     @FXML
     private NumberAxis xAxis;
     @FXML
@@ -48,6 +46,12 @@ public class AdminController extends ComunesController {
     @FXML
     private StackPane mainContent;
     private CategoriaService categoriaService = new CategoriaService();
+    @FXML
+    private Label lblIngresosDia, lblIngresosMes;
+    
+    @FXML
+    private ComboBox<String> cbMeses;
+
     
 
     @FXML
@@ -55,30 +59,46 @@ public class AdminController extends ComunesController {
         super.initialize();
         vistaInicial = mainContent;
         cargarMeses();
-        cargarGraficoCategorias();
+        ingresosDelDia();
+        // cargarGraficoCategorias();
         cargarVentasPorDia();
-        cargarProductosVendidos();
+        // cargarProductosVendidos();
+        productosMasVendidos();
 
         
         
     }
 
+    // FUNCIONA Y SE USA
+    public void ingresosDelDia(){
+        double ingresos = ventaService.obtenerIngresosDelDia();
+        lblIngresosDia.setText(String.format("S/ %.2f", ingresos));
+    }
+
+    public void productosMasVendidos(){
+         List<Pair<String, Integer>> productosMasVendidos = ventaService.obtenerProductosMasVendidos();
+        productosPieChart.getData().clear(); // Limpiar datos previos
+
+        for (Pair<String, Integer> producto : productosMasVendidos) {
+            PieChart.Data data = new PieChart.Data(producto.getKey(), producto.getValue());
+            productosPieChart.getData().add(data);
+        }
+    }
+
+    // FUNCIONA Y SE USA
     public void cargarMeses(){
-        mesComboBox.setItems(FXCollections.observableArrayList(
+        monthComboBox.setItems(FXCollections.observableArrayList(
             "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
             "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
         ));
 
-        System.out.println("Meses cargados: " + mesComboBox.getItems());
-
-        // Mostrar datos iniciales (ingresos mensuales)
-        cargarDatosMensuales();
 
         // Evento al seleccionar un mes
-        mesComboBox.setOnAction(event -> {
-            String mesSeleccionado = mesComboBox.getSelectionModel().getSelectedItem();
+        monthComboBox.setOnAction(event -> {
+            String mesSeleccionado = monthComboBox.getSelectionModel().getSelectedItem();
             if (mesSeleccionado != null) {
-                cargarDatosSemanalPorMes(mesSeleccionado);
+                int numeroMes = monthComboBox.getItems().indexOf(mesSeleccionado) + 1;
+                ingresosMensuales(numeroMes);
             }
         });
     }
@@ -102,21 +122,22 @@ public class AdminController extends ComunesController {
     }
 
     public void cargarVentasPorDia() {
-
-        ventasLineChart.setTitle("Ventas por Día de la Semana");
-        yAxis.setLabel("Cantidad de Ventas");
+        ingresosLineChart.getData().clear();
+        ingresosLineChart.setTitle("Comparación de ingresos mensuales");
+        yAxis.setLabel("Ingresos ($)");
         
 
-        Map<String, Integer> ventasPorDia = ventaService.obtenerVentasPorDiaDeLaSemana();
+        Map<String, Double> ingresosPorMes = ventaService.obtenerIngresosPorMes();
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Ventas");
+        series.setName("Ingresos por mes");
 
-        for (Map.Entry<String, Integer> entry : ventasPorDia.entrySet()) {
+        for (Map.Entry<String, Double> entry : ingresosPorMes.entrySet()) {
             series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
         }
 
-        ventasLineChart.getData().add(series);
+        ingresosLineChart.getData().add(series);
+        System.out.println("exito");
     }
 
     public void cargarProductosVendidos(){
@@ -127,30 +148,36 @@ public class AdminController extends ComunesController {
         xAxis.setTickLabelRotation(45); // Gira las etiquetas 45 grados
     }
 
-    private void cargarDatosMensuales() {
-        barChartMes.getData().clear();
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Ingresos Mensuales");
+    // private void cargarDatosMensuales() {
+    //     barChartMes.getData().clear();
+    //     XYChart.Series<String, Number> series = new XYChart.Series<>();
+    //     series.setName("Ingresos Mensuales");
 
-        // Obtener datos de ingresos mensuales (de tu servicio)
-        VentaService.obtenerIngresosMensuales().forEach((mes, total) -> {
-            series.getData().add(new XYChart.Data<>(mes, total));
-        });
+    //     // Obtener datos de ingresos mensuales (de tu servicio)
+    //     VentaService.obtenerIngresosMensuales().forEach((mes, total) -> {
+    //         series.getData().add(new XYChart.Data<>(mes, total));
+    //     });
 
-        barChartMes.getData().add(series);
-    }
+    //     barChartMes.getData().add(series);
+    // }
 
-    private void cargarDatosSemanalPorMes(String mesSeleccionado) {
-        barChartMes.getData().clear();
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Ingresos semanales de " + mesSeleccionado);
+    // private void cargarDatosSemanalPorMes(String mesSeleccionado) {
+    //     barChartMes.getData().clear();
+    //     XYChart.Series<String, Number> series = new XYChart.Series<>();
+    //     series.setName("Ingresos semanales de " + mesSeleccionado);
 
-        // Obtener datos de ingresos semanales por mes (de tu servicio)
-        VentaService.obtenerIngresosSemanalesPorMes(mesSeleccionado).forEach((semana, total) -> {
-            series.getData().add(new XYChart.Data<>(semana, total));
-        });
+    //     // Obtener datos de ingresos semanales por mes (de tu servicio)
+    //     VentaService.obtenerIngresosSemanalesPorMes(mesSeleccionado).forEach((semana, total) -> {
+    //         series.getData().add(new XYChart.Data<>(semana, total));
+    //     });
 
-        barChartMes.getData().add(series);
+    //     barChartMes.getData().add(series);
+    // }
+
+    // FUNCIONA Y SE USA
+    private void ingresosMensuales(int mesSeleccionado) {
+        double ingresosMensuales = ventaService.obtenerIngresosMensuales(mesSeleccionado);
+        lblIngresosMes.setText(String.format("S/ %.2f", ingresosMensuales));
     }
 
     // Metodo que carga la vista de los usuarios
@@ -161,35 +188,43 @@ public class AdminController extends ComunesController {
 
     // Metodo que carga la vista del inventario
     @FXML
-    public void handleInventario(){
+    public void productManagement(){
         setView("/resources/InventarioView.fxml");
     }
 
     // Metodo que carga la vista de las categorias
     @FXML
-    public void handleCategorias(){
+    public void categoryManagement(){
         setView("/resources/CategoriasView.fxml");
     }
 
     // Metodo que carga la vista de las ventas
     @FXML
-    public void handleVentas(){
+    public void seeSales(){
         setView("/resources/VentasView.fxml");
     }
 
-    // Metodo que carga la vista de las ventas
+    // Metodo que carga la vista de los reportes
     @FXML
-    public void handleReportes(){
+    public void handleReports(){
         mainBorderPane.setCenter(vistaInicial);
     }
 
+    // Metodo que carga la vista del backup
     @FXML
     public void openBackupForm(){
         setView("/resources/BackupForm.fxml");
     }
 
+    // Metodo que carga la vista del formulario para editar el perfil
     @FXML
-    public void cerrarSesion(){
+    public void editProfile(){
+        setView("/resources/ProfileForm.fxml");
+    }
+
+    // Metodo que cierra la sesion heredada de los metodos comunes
+    @FXML
+    public void logout(){
         handleLogout();
     }
 }

@@ -1,6 +1,5 @@
 package app.Controllers;
 import app.BDD.CategoriaService;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,6 +19,7 @@ import java.io.IOException;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 
+/* Controlador de la tabla categorias */
 public class CategoriaController {
     @FXML
     private TableView<Categoria> tableView;
@@ -43,23 +43,21 @@ public class CategoriaController {
 
     @FXML
     public void initialize() {
+        // Configuramos las columnas de la table view
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         descCol.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
-        estadoCol.setCellValueFactory(new PropertyValueFactory<>("estado"));
-
         // Creo una nueva columna para manejar la activacion y desactivacion de las categorias
-        TableColumn<Categoria, String> actionCol = new TableColumn<>("Acciones");
+        TableColumn<Categoria, String> actionCol = new TableColumn<>("Estado");
         actionCol.setCellFactory(new Callback<TableColumn<Categoria, String>, TableCell<Categoria, String>>() {
             @Override
             public TableCell<Categoria, String> call(final TableColumn<Categoria, String> param) {
                 final TableCell<Categoria, String> cell = new TableCell<Categoria, String>() {
-                    private final Button btn = new Button("Activar/Desactivar"); // Definicion del boton
-
+                    private final Button btn = new Button(); // Definicion del boton
                     {
-                        btn.setOnAction((ActionEvent event) -> {
+                        btn.setOnAction((ActionEvent event) -> { // Defino la accion al presionar el boton
                             Categoria categoria = getTableView().getItems().get(getIndex());
-                            cambiarEstadoCategoria(categoria);
+                            cambiarEstadoCategoria(categoria); // Llamo a la funcion que cambia el estado de la categoria
                         });
                     }
                     // Actualiza el contenido de la columna
@@ -67,8 +65,16 @@ public class CategoriaController {
                     public void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
                         if (empty) { // Verifica si la tabla esta vacia
-                            setGraphic(null);
+                            setGraphic(null); // No muestra nada
                         } else { // Muestra un boton de activacion o desactivacion
+                            Categoria categoria = getTableView().getItems().get(getIndex());
+                            if (categoria.getEstado().equals("activa")) { // Si la categoria se encuentra activa
+                                btn.setText("Desactivar"); // El boton permite desactivar
+                                btn.setStyle("-fx-background-color: #fbb09d; -fx-text-fill: black;");
+                            } else { // Si la categoria se encuentra inactiva
+                                btn.setText("Activar"); // El boton permite activar
+                                btn.setStyle("-fx-background-color: #b6dfaa;; -fx-text-fill: black;");
+                            }
                             setGraphic(btn);
                         }
                     }
@@ -77,26 +83,21 @@ public class CategoriaController {
             }
         });
         tableView.getColumns().add(actionCol); // Agrega la nueva columna
-        tableView.prefWidthProperty().bind(vbox.widthProperty());
-
-        // Cargar datos desde la base de datos
-        cargarDatosDesdeBD();
+        tableView.prefWidthProperty().bind(vbox.widthProperty()); // Vincula el ancho de la table view con el vbox 
+        cargarDatosDesdeBD(); // Cargo datos desde la base de datos
     }
 
     private void cargarDatosDesdeBD() {
-        categorias = categoriaService.loadCategorias();
-      // Ajusta el ancho de la tabla al ancho del VBox
-        tableView.setItems(categorias);
+        categorias = categoriaService.loadCategorias(); // Cargo todas las categorias desde la base de datos
+        tableView.setItems(categorias); // Asigno las categorias a la tabla
     }
 
     // Método que cambia el estado de la categoria
     private void cambiarEstadoCategoria(Categoria categoria) {
         String nuevaCategoria = categoria.getEstado().equals("activa") ? "inactiva" : "activa";
-        categoria.setEstado(nuevaCategoria);
-        // Actualiza en la base de datos
-        categoriaService.updateCategoria(categoria);
-        // Vuelve a cargar los datos para reflejar el cambio en la tabla
-        cargarDatosDesdeBD();
+        categoria.setEstado(nuevaCategoria); // Asigna el nuevo estado a la categoria
+        categoriaService.updateCategoria(categoria); // Actualiza en la base de datos
+        cargarDatosDesdeBD(); // Vuelve a cargar los datos para reflejar el cambio en la tabla
     }
 
     @FXML
@@ -135,13 +136,12 @@ public class CategoriaController {
     // Metodo que permite buscar una categoria
     @FXML
     public void buscarCategoria() {
-        String name = buscarCategoria.getText();
-        if(name.isEmpty()) {
+        String name = buscarCategoria.getText(); // Extraigo el nombre ingresado en el buscador
+        if(name.isEmpty()) { // Si el campo esta vacio
             customAlert.mostrarAlertaPersonalizada("Error", "Ingrese el nombre de una categoria.");
             return;
         }
-        // Llamamos al metodo que busca la categoria en la base de datos
-        Categoria categoria = categoriaService.searchCategory(name);
+        Categoria categoria = categoriaService.searchCategory(name); 
         if(categoria != null) {
             tableView.getItems().clear(); // Limpiamos la tabla
             tableView.getItems().add(categoria); // Mostramos la categoria

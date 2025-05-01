@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.shape.Line?>
@@ -17,23 +16,21 @@
 
 <!-- Vista gestion de clientes - Agregar, ver, buscar -->
 <StackPane fx:id="mainContent" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.ClienteController">
-    <HBox alignment="CENTER" spacing="40.0" HBox.hgrow="ALWAYS" style="-fx-background-color: #773939;"> 
+    <HBox alignment="CENTER" spacing="40.0" HBox.hgrow="ALWAYS" style="-fx-background-color: #f4f4f7;"> 
         <VBox alignment="CENTER" spacing="20.0" HBox.hgrow="ALWAYS">
-            <Label text="Gestión de clientes" textAlignment="CENTER" textFill="WHITE" styleClass="titulo">
-                <padding>
-                    <Insets bottom="5.0" />
-                </padding>
-            </Label>
-            <Line startX="0.0" startY="0.0" endX="550.0" endY="0.0" stroke="WHITE" strokeWidth="1.0"/>
+            <VBox alignment="CENTER_LEFT" maxWidth="600.0">
+                <Label text="Gestión de clientes" textAlignment="CENTER" textFill="BLACK" styleClass="titulo"></Label>
+                <Line startX="0.0" startY="0.0" endX="600.0" endY="0.0" stroke="BLACK" strokeWidth="1.0"/>
+            </VBox>
             <!-- Contenedor horizontal -->
-            <HBox alignment="CENTER" spacing="100">
-                <VBox spacing="5">
+            <HBox alignment="CENTER" spacing="100" styleClass="finderContainer" maxWidth="600.0">
+                <VBox spacing="10">
                     <!-- Buscador -->
-                    <Label text="Documento" textFill="WHITE" styleClass="labels"/>
+                    <Label text="Documento" textFill="BLACK" styleClass="labels"/>
                     <HBox spacing="2">
                         <TextField fx:id="buscarCliente" promptText="Ingrese su dni" />
-                        <Button fx:id="btnBuscarCliente" text="Buscar" onAction="#buscarCliente"/>
-                        <Button onAction="#recarga">
+                        <Button fx:id="btnBuscarCliente" text="Buscar" onAction="#buscarCliente" style="-fx-background-color:  #b6dfaa;"/>
+                        <Button onAction="#recarga" style="-fx-background-color: #9fdfe2;">
                             <graphic>
                                 <ImageView fitHeight="17" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -46,15 +43,18 @@
                 </VBox>
                 <VBox spacing="5" alignment="CENTER">
                     <!-- Añadir un nuevo cliente -->
-                    <Label text="¿Aun no esta registrado?" textFill="WHITE" styleClass="labels"/>
-                    <Button fx:id="btnAñadir" text="Registrar cliente" onAction="#añadirCliente"/>
+                    <Label text="¿Aun no esta registrado?" textFill="BLACK" styleClass="labels"/>
+                    <Button fx:id="btnAñadir" text="Registrar cliente" onAction="#añadirCliente" style="-fx-background-color: #fbb09d;"/>
                 </VBox>
+                <padding>
+                    <Insets top="15.0" bottom="20.0"/>
+                </padding>
             </HBox> 
             <padding>
                 <Insets top="40.0" right="40.0" bottom="40.0" left="40.0" />
             </padding>
-            <!-- Tabla que visualiza los usuarios -->
-            <Label text="Clientes registrados" textFill="WHITE" styleClass="texto-comun" />
+            <!-- Tabla que visualiza los clientes -->
+            <Label text="Clientes registrados" textFill="BLACK" styleClass="texto-comun" />
             <TableView fx:id="tableView" maxWidth="600.0" maxHeight="300.0">
                 <columns>
                     <TableColumn fx:id="nombreCol" prefWidth="159.33331298828125" text="Nombre y apellido" />

@@ -13,25 +13,23 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.control.TextField?>
 
-<!-- Vista gestion categorias - Agregar, ver, buscar -->
+<!-- Vista gestion categorías - Agregar, ver, buscar -->
 <StackPane fx:id="mainContent" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.CategoriaController">
-    <HBox alignment="CENTER" spacing="40.0" style="-fx-background-color: #773939;" HBox.hgrow="ALWAYS"> 
+    <HBox alignment="CENTER" spacing="40.0" style="-fx-background-color: #f4f4f7;" HBox.hgrow="ALWAYS"> 
         <VBox fx:id="vbox" alignment="CENTER" spacing="20.0" styleClass="vbox" HBox.hgrow="ALWAYS">
-            <Label text="Gestión de categorias" textAlignment="CENTER" textFill="WHITE" styleClass="titulo">
-                <padding>
-                    <Insets bottom="5.0" />
-                </padding>
-            </Label>
-            <Line startX="0.0" startY="0.0" endX="550.0" endY="0.0" stroke="WHITE" strokeWidth="1.0"/>
+            <VBox alignment="CENTER_LEFT" maxWidth="600.0">
+                <Label text="Gestión de categorías" textFill="BLACK" styleClass="titulo"></Label>
+                <Line startX="0.0" startY="0.0" endX="600.0" endY="0.0" stroke="BLACK" strokeWidth="1.0"/>
+            </VBox>
             <!-- Contenedor horizontal -->
-            <HBox alignment="CENTER" spacing="100">
-                <VBox spacing="5.0"> 
+            <HBox alignment="CENTER" spacing="100" styleClass="finderContainer" maxWidth="600.0">
+                <VBox spacing="10.0"> 
                     <!-- Buscador -->
-                    <Label text="Nombre" textFill="WHITE" styleClass="labels"/>
+                    <Label text="Nombre" textFill="BLACK" styleClass="labels"/>
                     <HBox spacing="2">
                         <TextField fx:id="buscarCategoria" promptText="Ingrese el nombre" />
-                        <Button fx:id="btnBuscarCategoria" text="Buscar" onAction="#buscarCategoria"/>
-                        <Button onAction="#recarga">
+                        <Button fx:id="btnBuscarCategoria" text="Buscar" onAction="#buscarCategoria" style="-fx-background-color:  #b6dfaa;"/>
+                        <Button onAction="#recarga" style="-fx-background-color: #9fdfe2;">
                             <graphic>
                                 <ImageView fitHeight="17" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -44,21 +42,23 @@
                 </VBox>
                 <VBox spacing="5" alignment="CENTER">
                     <!-- Añadir una nueva categoria -->
-                    <Label text="¿Desea agregar una nueva categoria?" styleClass="labels" textFill="WHITE"/>
-                    <Button fx:id="btnAñadir" onAction="#añadirCategoria" text="Añadir categoria" />
+                    <Label text="¿Desea agregar una nueva categoria?" styleClass="labels" textFill="BLACK"/>
+                    <Button fx:id="btnAñadir" onAction="#añadirCategoria" text="Añadir categoria" style="-fx-background-color: #fbb09d;"/>
                 </VBox>
+                <padding>
+                    <Insets top="15.0" bottom="20.0"/>
+                </padding>
             </HBox>
             <padding>
                 <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
             </padding>
             <!-- Tabla que visualiza las categorias -->
-            <Label text="Categorias disponibles" textFill="WHITE" styleClass="texto-comun" />
+            <Label text="Categorías disponibles" textFill="BLACK" styleClass="texto-comun" />
             <TableView fx:id="tableView" maxWidth="520.0" prefWidth="400" maxHeight="300.0">
                 <columns>
                     <TableColumn fx:id="idCol" prefWidth="50.0" text="ID" />
                     <TableColumn fx:id="nombreCol" prefWidth="100.0" text="Nombre" />
                     <TableColumn fx:id="descCol" prefWidth="150.0" text="Descripcion" />
-                    <TableColumn fx:id="estadoCol" prefWidth="100" text="Estado" />
                 </columns>
             </TableView> 
         </VBox>

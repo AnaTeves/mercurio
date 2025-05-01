@@ -5,6 +5,7 @@ public class Cliente {
     private String dni;
     private String email;
     private String telefono;
+    private int id_cliente;
 
     public Cliente(String nombre, String dni, String email, String telefono){
         this.nombre = nombre;
@@ -13,7 +14,22 @@ public class Cliente {
         this.telefono = telefono;
     }
 
+    public Cliente(int id, String nombre, String dni, String email){
+        this.nombre = nombre;
+        this.dni = dni;
+        this.email = email;
+        this.id_cliente = id;
+    }
+
     public Cliente(){}
+
+    public int getId_cliente() {
+        return id_cliente;
+    }
+
+    public void setId_cliente(int id_cliente) {
+        this.id_cliente = id_cliente;
+    }
 
     public Cliente(String dni){
         this.dni = dni;

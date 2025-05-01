@@ -5,15 +5,13 @@ public class Producto {
     private String descripcion;
     private float precio;
     private int stock;
-    private boolean estado = true;
+    private String estado;
     private int id_categoria;
     private int id;
 
-    public Producto(){
+    public Producto(){}
 
-    }
-
-    public Producto(String nombre, String descripcion, float precio, int stock, boolean estado, int id_categoria){
+    public Producto(String nombre, String descripcion, float precio, int stock, String estado, int id_categoria){
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
@@ -22,7 +20,7 @@ public class Producto {
         this.id_categoria = id_categoria;
     }
 
-    public Producto(int id, String nombre, String descripcion, float precio, int stock, boolean estado, int id_categoria){
+    public Producto(int id, String nombre, String descripcion, float precio, int stock, String estado, int id_categoria){
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -80,11 +78,11 @@ public class Producto {
         return stock;
     }
 
-    public void setEstado(boolean estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
     }
     
-    public boolean getEstado() {
+    public String getEstado() {
         return estado;
     }
 

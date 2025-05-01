@@ -108,6 +108,7 @@ public class CategoriaService {
         }
     }
 
+    // Metodo que actualiza el estado de una categoria especifica
     public void updateCategoria(Categoria categoria) {
         String query = "UPDATE CATEGORIA SET estado = ? WHERE id_categoria = ?";
         try (Connection connection = DatabaseConnection.getConnection();

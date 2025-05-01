@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -120,13 +122,6 @@ public class InventService {
         try(Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);){
 
-                System.out.println(producto.getNombre());
-                System.out.println(producto.getDescripcion());
-                System.out.println(producto.getPrecio());
-                System.out.println(producto.getStock());
-                System.out.println(producto.getId_categoria());
-                System.out.println(producto.getId());
-
                 stmt.setString(1, producto.getNombre());
                 stmt.setString(2, producto.getDescripcion());
                 stmt.setFloat(3, producto.getPrecio());
@@ -135,9 +130,10 @@ public class InventService {
                 stmt.setInt(6, producto.getId());
 
 
-                int filasActualizadas =stmt.executeUpdate();
+                int filasActualizadas = stmt.executeUpdate();
 
                 if(filasActualizadas > 0){
+                    // Emitir dialog
                     System.out.println("Producto actualizado correctamente.");
                 }
 
@@ -178,5 +174,27 @@ public class InventService {
             e.printStackTrace();
         }
         return false;
+    }
+
+
+
+
+    public Map<String, Integer> obtenerProductosBajoStock(){
+        Map<String, Integer> productos = new HashMap<>();
+        String sql = "SELECT nombre, stock FROM PRODUCTO WHERE stock <= 5";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String nombre = rs.getString("nombre");
+                int stock = rs.getInt("stock");
+                productos.put(nombre, stock);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productos;
     }
 }
