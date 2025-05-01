@@ -1,6 +1,5 @@
 package app.Controllers;
 import app.BDD.UserService;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,9 +33,7 @@ public class UserController {
     private TableColumn<Usuario, String> tipoUsuarioCol;
     @FXML
     private TableColumn<Usuario, String> estadoCol;
-
     private ObservableList<Usuario> usuarios = FXCollections.observableArrayList();
-
     @FXML
     private StackPane mainContent;
     @FXML
@@ -45,7 +42,7 @@ public class UserController {
 
     @FXML
     public void initialize() {
-        // Las propiedades son las definidas en mi clase Usuario
+        // Cargo las columnas de la tabla, las propiedades son las definidas en mi clase Usuario
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("nomYape"));
         dniCol.setCellValueFactory(new PropertyValueFactory<>("dni"));
         emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -58,11 +55,11 @@ public class UserController {
             public TableCell<Usuario, String> call(final TableColumn<Usuario, String> param) {
                 final TableCell<Usuario, String> cell = new TableCell<Usuario, String>() {
                     private final Button btn = new Button("Activar/Desactivar"); // Definicion del boton
-
+                    // Defino la accion del boton
                     {
                         btn.setOnAction((ActionEvent event) -> {
                             Usuario usuario = getTableView().getItems().get(getIndex());
-                            cambiarEstadoUsuario(usuario);
+                            cambiarEstadoUsuario(usuario); // Llamo al metodo que cambia el estado
                         });
                     }
                     // Actualiza el contenido de la columna
@@ -83,13 +80,13 @@ public class UserController {
         cargarDatosDesdeBD(); // Cargar datos desde la base de datos
     }
 
-    // Metodo que llama al metodo loadUsers de la clase UserService y actualiza la tabla
+    /* Funcion que carga los datos de los usuarios desde la base de datos */
     private void cargarDatosDesdeBD() {
         usuarios = users.loadUsers();
         tableView.setItems(usuarios);
     }
 
-    // Método que cambia el estado del usuario
+    /* Funcion que cambia el estado del usuario */
     private void cambiarEstadoUsuario(Usuario usuario) {
         String nuevoEstado = usuario.getEstado().equals("activo") ? "inactivo" : "activo"; // Alterna el estado del usuario
         usuario.setEstado(nuevoEstado); // Asigna el nuevo estado
