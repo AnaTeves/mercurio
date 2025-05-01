@@ -13,7 +13,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Cargamos el archivo FXML
-        Parent root = FXMLLoader.load(getClass().getResource("/resources/FormUser.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/resources/LoginView.fxml"));
 
         DatabaseConnection.getConnection();
 

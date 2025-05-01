@@ -10,7 +10,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
-import javafx.scene.control.PasswordField;
 
 /* Controlador que maneja el formulario para registrar un nuevo usuario */
 public class FormUserController {
