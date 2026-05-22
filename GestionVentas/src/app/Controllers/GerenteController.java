@@ -71,40 +71,19 @@ public class GerenteController extends ComunesController {
 
     }
 
-    // Metodo que carga la vista del inventario
-    @FXML
-    public void handleInventario(){
-        setView("/resources/InventarioView.fxml");
-    }
-
+    /* Funcion que carga la vista de gestion de los usuarios */
     @FXML
     public void handleUsers(){
         setView("/resources/UserView.fxml");
     }
 
-    // Metodo que carga la vista de las categorias
-    @FXML
-    public void handleCategorias(){
-        setView("/resources/CategoriasView.fxml");
-    }
-
-    // Metodo que carga la vista de los clientes
-    @FXML
-    public void handleClientes(){
-        setView("/resources/ClientesView.fxml");
-    }
-
-    // Metodo que carga la vista de las ventas
-    @FXML
-    public void handleVentas(){
-        setView("/resources/VentasView.fxml");
-    }
-
+    /* Funcion que carga los reportes */
     @FXML
     public void handleReportes(){
         mainBorderPane.setCenter(vistaInicial);
     }
 
+    /* Funcion que cierra la sesion */
     @FXML
     public void cerrarSesion(){
         handleLogout();

@@ -42,7 +42,7 @@
 }
 
 .vbox-externo {
-    -fx-background-color: rgb(153, 159, 200);
+    -fx-background-color: rgb(255, 255, 255);
     -fx-background-radius: 20;
     -fx-border-color: #ccc;
     -fx-border-radius: 20;
@@ -51,7 +51,7 @@
 }
 
 .vbox-interno {
-    -fx-background-color: rgb(197, 173, 208);
+    -fx-background-color: rgb(255, 255, 255);
     -fx-background-radius: 20;
     -fx-border-color: #ccc;
     -fx-border-radius: 20;
@@ -64,4 +64,61 @@
     -fx-background-radius: 10;
     -fx-border-radius: 20;
     -fx-border-width: 1;
+}
+
+
+
+
+
+
+
+/* --- Estilos para el Formulario de Registro --- */
+
+/* Campos de texto (TextField) */
+.text-field-registro {
+    -fx-background-color: #D0D9E1; /* Color de fondo azul grisáceo claro */
+    -fx-text-fill: #4D5A68;        /* Color del texto (gris oscuro) */
+    -fx-prompt-text-fill: #8899A6; /* Color del texto de marcador de posición */
+    -fx-background-radius: 5;      /* Bordes ligeramente redondeados */
+    -fx-border-color: #B0BCC9;     /* Color del borde sutil */
+    -fx-border-radius: 5;
+    -fx-padding: 8 12;             /* Espaciado interno */
+}
+
+/* Efecto al pasar el mouse por encima o enfocar el campo de texto */
+.text-field-registro:focused,
+.text-field-registro:hover {
+    -fx-background-color: #E1E9F0; /* Un poco más claro al interactuar */
+    -fx-border-color: #7890A8;     /* Borde más oscuro al enfocar */
+}
+
+/* Botones "Registrar" y "Volver" */
+.boton-registro {
+    -fx-background-color: #7890A8; /* Color de fondo azul grisáceo medio */
+    -fx-text-fill: white;          /* Texto blanco */
+    -fx-font-weight: bold;         /* Texto en negrita */
+    -fx-background-radius: 5;      /* Bordes redondeados */
+    -fx-padding: 10 25;            /* Espaciado interno para botones más grandes */
+    -fx-cursor: hand;              /* Manito al pasar el mouse */
+}
+
+/* Efecto al pasar el mouse por encima del botón */
+.boton-registro:hover {
+    -fx-background-color: #6A8299; /* Un poco más oscuro al pasar el mouse */
+}
+
+/* Efecto al presionar el botón */
+.boton-registro:pressed {
+    -fx-background-color: #5A6C80; /* Color similar a la barra lateral al presionar */
+}
+
+/* Contenedor del formulario (el recuadro blanco con borde) */
+.formulario-container {
+    -fx-background-color: white;
+    -fx-border-color: #B0BCC9;     /* Borde azul grisáceo sutil */
+    -fx-border-width: 2;
+    -fx-border-radius: 15;         /* Bordes redondeados pronunciados */
+    -fx-background-radius: 15;
+    -fx-padding: 30;               /* Espaciado interno */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); /* Sombra suave */
 }

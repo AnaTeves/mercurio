@@ -64,25 +64,25 @@ public class FormInventarioController {
     }
     
     public void agregarProducto(){
-
-        if(productoEdicion == null){
+    
             String nombre = nombreField.getText();
             String descripcion = descripcionField.getText();
             float precio = Float.parseFloat(precioField.getText());
             int stock = Integer.parseInt(stockField.getText());
             String categoriaDescripcion = categoriaMenuButton.getText();
 
+            // boolean estado = Boolean.parseBoolean(estadoSeleccionado);
+            int categoria = inventario.obtenerIdCategoria(categoriaDescripcion);
+            
+            if(nombre.isEmpty() || descripcion.isEmpty() || categoria == -1){
+                inventarioController.mostrarAlerta("Error", "Todos los campos deben estar completos");
+                return;
+            }
+
             if(estadoSeleccionado == 1){
                 activo = true;
             } else {
                 activo = false;
-            }
-            // boolean estado = Boolean.parseBoolean(estadoSeleccionado);
-            int categoria = inventario.obtenerIdCategoria(categoriaDescripcion);
-
-            if(nombre.isEmpty() || descripcion.isEmpty() ||categoria == -1){
-                inventarioController.mostrarAlerta("Error", "Todos los campos deben estar completos");
-                return;
             }
 
             try {
@@ -94,21 +94,10 @@ public class FormInventarioController {
                 return;
             }
 
+            // Llama al metodo para agregar el producto a la base de datos
             inventario.addProducto(nombre, descripcion, precio, stock, activo, categoria);
             inventarioController.mostrarAlerta("Éxito", "Producto agregado correctamente");
             limpiarCampos();
-        } else {
-            productoEdicion.setNombre(nombreField.getText());
-            productoEdicion.setDescripcion(descripcionField.getText());
-            productoEdicion.setPrecio(Float.parseFloat(precioField.getText()));
-            productoEdicion.setStock(Integer.parseInt(stockField.getText()));
-            productoEdicion.setEstado(activo);
-            productoEdicion.setId_categoria(inventario.obtenerIdCategoria(categoriaMenuButton.getText()));
-
-            inventario.actualizarProducto(productoEdicion);
-            inventarioController.mostrarAlerta("Éxito", "Producto actualizado correctamente");
-            limpiarCampos();
-        }
         
     }
 

@@ -43,7 +43,7 @@ public class UserService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        // retorno la descripcion del usuario
         return perfilDescripcion;
     }
 

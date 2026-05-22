@@ -24,6 +24,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.effect.ColorAdjust?>
 
 <!-- Vista del gerente al ingresar -->
 <StackPane alignment="CENTER" maxHeight="800" maxWidth="1000" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.GerenteController">
@@ -31,67 +32,55 @@
         <!-- Contenedor izquierdo -->
         <left>
             <!-- Contenedor vertical que contiene el menu de opciones -->
-            <VBox alignment="CENTER" spacing="50" style="-fx-background-color: #e3e3e3;">
-                <Button style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Gerente" contentDisplay="TOP">
+            <VBox fx:id="menuLateral" alignment="CENTER_LEFT" spacing="40" prefWidth="180" style="-fx-background-color: rgb(90, 108, 128);">
+                <padding>
+                    <Insets left="20" right="20" />
+                </padding>
+                <Button style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Gerente" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/usuario.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleReportes" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Reportes" contentDisplay="TOP">
+                <Button onAction="#handleReportes" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Reportes" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/reportes.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleVentas" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Ventas" contentDisplay="TOP">
+                <Button onAction="#handleUsers" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Usuarios" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
-                                <Image url="@../files/ventas.png" />
+                                <Image url="@../files/usuario.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleClientes" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Clientes" contentDisplay="TOP">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/clientes.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button onAction="#handleInventario" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Inventario" contentDisplay="TOP">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/inventario.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button onAction="#handleCategorias" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Categorias" contentDisplay="TOP">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/categorias.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button onAction="#cerrarSesion" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Cerrar sesión" contentDisplay="TOP">
+                <Button fx:id="logoutButton" onAction="#cerrarSesion" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Cerrar sesión" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/logout.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
@@ -100,27 +89,29 @@
         <!-- Contenedor central -->
         <center>
             <StackPane fx:id="mainContent" style="-fx-background-color: #f4f4f7;">
-                    <VBox alignment="CENTER" spacing="5">
-                        <HBox spacing="10" alignment="CENTER" style="-fx-background-color:rgb(247, 236, 231);" minHeight="70" maxWidth="700">
-                            <VBox>
-                                <Label styleClass="labels" text="Fecha inicio:" />
-                                <DatePicker fx:id="fechaInicio" promptText="Seleccione.." prefWidth="150.0"/>
-                            </VBox>
-                            <VBox>
-                                <Label styleClass="labels" text="Fecha fin:" />
-                                <DatePicker fx:id="fechaFin" promptText="Seleccione.." prefWidth="150.0"/>
-                            </VBox>
-                            <ComboBox fx:id="comboReporte" promptText="Seleccione reporte"/>
-                            <padding>
-                                <Insets bottom="20.0" />
-                            </padding>
-                        </HBox>
-                        <Button text="Generar Reporte" onAction="#generarReporte"/>
-                        <HBox>
-                            <PieChart fx:id="graficoReporte"/>
-                            
-                        </HBox>
-                    </VBox>
+                <VBox alignment="CENTER" spacing="20">
+                    <HBox spacing="10" alignment="CENTER" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);" minHeight="70" maxWidth="700">
+                        <padding>
+                            <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                        </padding>
+                        <VBox spacing="5">
+                            <Label styleClass="labels" text="Fecha inicio:" />
+                            <DatePicker fx:id="fechaInicio" promptText="Seleccione.." prefWidth="150.0"/>
+                        </VBox>
+                        <VBox spacing="5">
+                            <Label styleClass="labels" text="Fecha fin:" />
+                            <DatePicker fx:id="fechaFin" promptText="Seleccione.." prefWidth="150.0"/>
+                        </VBox>
+                        <VBox spacing="5">
+                            <Label styleClass="labels" text="Tipo reporte:" />
+                            <ComboBox fx:id="comboReporte" promptText="Seleccione reporte" prefWidth="150.0"/>
+                        </VBox>
+                        <Button text="Generar Reporte" onAction="#generarReporte" style="-fx-background-color: rgb(90, 108, 128); -fx-text-fill: White; -fx-font-weight: bold; -fx-cursor: hand;" prefHeight="35.0" prefWidth="120.0"/>
+                    </HBox>
+                    <HBox alignment="CENTER" style="-fx-padding: 20;">
+                        <PieChart fx:id="graficoReporte" prefHeight="400.0" prefWidth="600.0"/>
+                    </HBox>
+                </VBox>
             </StackPane>
         </center>
     </BorderPane>

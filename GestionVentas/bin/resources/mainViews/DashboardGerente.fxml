@@ -31,7 +31,7 @@
         <!-- Contenedor izquierdo -->
         <left>
             <!-- Contenedor vertical que contiene el menu de opciones -->
-            <VBox alignment="CENTER" spacing="50">
+            <VBox alignment="CENTER" spacing="50" style="-fx-background-color: #e3e3e3;">
                 <Button style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Gerente" contentDisplay="TOP">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
@@ -50,38 +50,20 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleVentas" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Ventas" contentDisplay="TOP">
+                <Button onAction="#handleUsers" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Usuarios" contentDisplay="TOP">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
-                                <Image url="@../files/ventas.png" />
+                                <Image url="@../files/usuario.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleClientes" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Clientes" contentDisplay="TOP">
+                <Button onAction="#cerrarSesion" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Cerrar sesión" contentDisplay="TOP">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
-                                <Image url="@../files/clientes.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button onAction="#handleInventario" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Inventario" contentDisplay="TOP">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/inventario.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button onAction="#handleCategorias" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Categorias" contentDisplay="TOP">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/categorias.png" />
+                                <Image url="@../files/logout.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -90,71 +72,28 @@
         </left>
         <!-- Contenedor central -->
         <center>
-            <StackPane fx:id="mainContent" style="-fx-background-color: #773939;">
-                <GridPane fx:id="gridPane" alignment="CENTER"> <!-- Espacio horizontal y vertical entre celdas -->
-                    <columnConstraints>
-                        <ColumnConstraints percentWidth="45" />
-                        <ColumnConstraints percentWidth="45" />
-                    </columnConstraints>
-    
-                    <rowConstraints>
-                        <RowConstraints percentHeight="45" />
-                        <RowConstraints percentHeight="45" />
-                    </rowConstraints>
-
-                    <!-- <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                        <ComboBox fx:id="vendedorComboBox" promptText="Seleccionar vendedor" />
-                        <LineChart fx:id="ventasLineChart" layoutX="50.0" layoutY="50.0" prefHeight="200.0" prefWidth="400.0">
-                        <xAxis>
-                            <CategoryAxis label="Día de la Semana" />
-                        </xAxis>
-                        <yAxis>
-                            <NumberAxis fx:id="yAxis" label="Cantidad de Ventas" autoRanging="false" lowerBound="0" upperBound="50" tickUnit="10"/>
-                        </yAxis>
-                        </LineChart>
-                    </VBox>
-
-                    <PieChart fx:id="pieChart" layoutX="100" layoutY="100" prefHeight="200.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-
-                    <BarChart fx:id="barChart" layoutX="100" layoutY="100" prefHeight="200" prefWidth="400"  GridPane.columnIndex="1" GridPane.rowIndex="1">
-                        <xAxis>
-                            <CategoryAxis label="Producto" />
-                        </xAxis>
-                        <yAxis>
-                            <NumberAxis label="Cantidad Vendida" />
-                        </yAxis>
-                    </BarChart>  -->
-
-                    <VBox alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                        <Label text="RESUMEN DE INGRESOS"/>
-                        <ComboBox fx:id="comboBoxOpciones"/>
-                        <Label fx:id="labelMontoTotal" />
-                        <Label fx:id="labelNumeroVentas" />
-                    </VBox>
-
-                    
-
-                    <VBox alignment="CENTER" spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                        <HBox spacing="10" alignment="CENTER">
+            <StackPane fx:id="mainContent" style="-fx-background-color: #f4f4f7;">
+                    <VBox alignment="CENTER" spacing="5">
+                        <HBox spacing="10" alignment="CENTER" style="-fx-background-color:rgb(247, 236, 231);" minHeight="70" maxWidth="700">
+                            <VBox>
+                                <Label styleClass="labels" text="Fecha inicio:" />
+                                <DatePicker fx:id="fechaInicio" promptText="Seleccione.." prefWidth="150.0"/>
+                            </VBox>
+                            <VBox>
+                                <Label styleClass="labels" text="Fecha fin:" />
+                                <DatePicker fx:id="fechaFin" promptText="Seleccione.." prefWidth="150.0"/>
+                            </VBox>
                             <ComboBox fx:id="comboReporte" promptText="Seleccione reporte"/>
-                            <DatePicker fx:id="fechaInicio" promptText="Fecha inicio" prefWidth="150.0"/>
-                            <DatePicker fx:id="fechaFin" promptText="Fecha fin" prefWidth="150.0"/>
+                            <padding>
+                                <Insets bottom="20.0" />
+                            </padding>
                         </HBox>
                         <Button text="Generar Reporte" onAction="#generarReporte"/>
-                        <PieChart fx:id="graficoReporte"/>
+                        <HBox>
+                            <PieChart fx:id="graficoReporte"/>
+                            
+                        </HBox>
                     </VBox>
-                    <padding>
-                    <Insets bottom="10.0" />
-                </padding>
-
-                </GridPane>
-
-                
-                    <Line startX="0" startY="0" endX="1200" endY="1" stroke="white" strokeWidth="1" StackPane.alignment="CENTER" />
-                    <Line startX="0" startY="0" endX="1" endY="680" stroke="white" strokeWidth="1" StackPane.alignment="CENTER" />
-                
-                
-
             </StackPane>
         </center>
     </BorderPane>

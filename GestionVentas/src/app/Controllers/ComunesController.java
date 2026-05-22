@@ -23,9 +23,9 @@ public class ComunesController {
 
     @FXML
     public void initialize(){
-        if (logoutButton != null) {
-            logoutButton.setOnAction(e -> handleLogout());
-        }
+        //if (logoutButton != null) {
+          //  logoutButton.setOnAction(e -> handleLogout());
+        //}
     }
 
     // Metodo que carga una vista en el contenedor central

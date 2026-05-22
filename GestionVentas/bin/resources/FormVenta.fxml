@@ -18,53 +18,44 @@
 <?import javafx.scene.shape.Line?>
 
 <!-- Vista para registrar una nueva venta -->
-<StackPane xmlns="http://javafx.com/javafx/22" stylesheets="@styles.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.VentaController" style="-fx-background-color: #773939;">
-    <HBox alignment="CENTER" spacing="40.0" HBox.hgrow="ALWAYS" style="-fx-background-color: #773939;">
-        <VBox alignment="CENTER" spacing="20.0" HBox.hgrow="ALWAYS">
-            <Label text="Registro de venta" textAlignment="CENTER" styleClass="titulo">
-                <padding>
-                    <Insets bottom="10.0" />
-                </padding>
-            </Label>
-            <Line startX="0.0" startY="0.0" endX="550.0" endY="0.0" stroke="WHITE" strokeWidth="1.0"/>
-            <!-- Contenedor horizontal para buscar el cliente y el producto -->
-            <HBox alignment="CENTER" spacing="100.0">
-                <VBox>
-                    <Label text="Cliente" styleClass="labels"/>
+<StackPane xmlns="http://javafx.com/javafx/22" stylesheets="@styles.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.VentaController">
+        <VBox alignment="CENTER" spacing="20.0" HBox.hgrow="ALWAYS" style="-fx-background-color: #f4f4f7;">
+            <!-- Container for the tittle -->
+            <VBox alignment="CENTER_LEFT" maxWidth="600.0">
+                <Label text="Registro de venta" textAlignment="CENTER" textFill="BLACK" styleClass="titulo"></Label>
+                <Line startX="0.0" startY="0.0" endX="600.0" endY="0.0" stroke="BLACK" strokeWidth="1.0"/>
+            </VBox>
+            <!-- Container -->
+            <HBox alignment="CENTER" spacing="100" styleClass="finderContainer" maxWidth="600.0">
+                <!-- Contenedor cliente -->
+                <VBox spacing="10">
+                    <Label text="Cliente:"/>
                     <HBox>
-                        <TextField fx:id="buscarCliente" promptText="Ingrese su dni" />
-                        <Button fx:id="btnBuscarCliente" text="Buscar" onAction="#buscarCliente"/>
+                        <TextField fx:id="campoCliente" promptText="Presione el boton..." />
+                        <Button text="Buscar🔍" onAction="#openTheWindowClients"/>
                     </HBox>
                 </VBox>
-                <VBox>
-                    <Label text="Producto" styleClass="labels"/>
-                    <HBox>
-                        <TextField fx:id="buscarProducto" promptText="Nro documento" />
-                        <Button fx:id="btnBuscarProducto" text="Buscar" onAction="#buscarProducto"/>
+                <!-- Contenedor vendedor -->
+                <VBox spacing="10">
+                    <Label text="Vendedor:"/>
+                    <HBox spacing="10">
+                        <Label fx:id="nameLabel" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="dniLabel" style="-fx-font-size: 14px;"/>
                     </HBox>
                 </VBox>
-            </HBox> 
-            <padding>
-                <Insets top="40.0" right="40.0" bottom="40.0" left="40.0" />
-            </padding>
-            <!-- Boton para agregar un producto al detalle de venta -->
-            <Button fx:id="agregarProductoBtn" layoutX="400" layoutY="50" text="Agregar" onAction="#agregarProducto"/>
-            <!-- Tabla que visualiza el detalle de la venta a realizar -->
-            <Label text="Productos agregados" styleClass="texto-comun"/>
-            <TableView fx:id="tablaDetalleVenta" maxWidth="600" maxHeight="300">
+            </HBox>
+            <HBox>
+                <TextField fx:id="buscarProducto" promptText="Buscar producto..."/>
+                <Button onAction="#buscarProducto" text="Buscar 🔍"/>
+            </HBox>
+            <TableView fx:id="tablaDetalleVenta">
                 <columns>
-                    <TableColumn fx:id="colIDProducto" prefWidth="100" text="ID Producto"/>
-                    <TableColumn fx:id="colProducto" prefWidth="200" text="Producto"/>
-                    <TableColumn fx:id="colCantidad" prefWidth="100" text="Cantidad"/>
-                    <TableColumn fx:id="colSubtotal" prefWidth="100" text="Subtotal"/>
+                    <TableColumn fx:id="colIDProducto" text="ID" />    
+                    <TableColumn fx:id="colProducto" text="Producto" />
+                    <TableColumn fx:id="colCantidad" text="Cantidad" />
+                    <TableColumn fx:id="colSubtotal" text="Subtotal" />
+                    <TableColumn fx:id="colAcciones" text="Acciones" />
                 </columns>
             </TableView>
-            <TextField fx:id="totalVenta"/>
-            <!-- Boton para registrar la venta -->
-            <Button fx:id="registrarVentaBtn" layoutX="50" layoutY="300" text="Registrar" onAction="#registrarVenta"/>
-            <padding>
-                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-            </padding>
         </VBox>
-    </HBox>
 </StackPane>

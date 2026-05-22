@@ -15,60 +15,69 @@
 
 <!-- Vista del formulario para agregar un nuevo usuario -->
 <StackPane fx:id="mainContentForm" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.FormUserController">
-    <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
-            <VBox alignment="CENTER" maxHeight="800.0" maxWidth="450.0" minWidth="400.0" spacing="10.0" styleClass="vbox-externo">
-                <padding>
-                    <Insets top="40.0" right="50.0" bottom="40.0" left="50.0" />
-                </padding>
-                <!-- Imagen del formulario -->
-                <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
-                    <image>
-                        <Image url="@files/usuario.png" />
-                    </image>
+    <VBox alignment="CENTER" style="-fx-background-color: #f4f4f7;" HBox.hgrow="ALWAYS">
+        <VBox alignment="CENTER" maxHeight="800.0" maxWidth="450.0" minWidth="400.0" spacing="10.0" styleClass="vbox-externo">
+            <padding>
+                <Insets bottom="40.0" left="50.0" right="50.0" top="40.0" />
+            </padding>
+            
+            <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
+                <image>
+                    <Image url="@files/usuario.png" />
+                </image>
                 <VBox.margin>
                     <Insets top="25.0" />
                 </VBox.margin>
-                </ImageView>
-                <!-- Titulo del formulario -->
-                <Label styleClass="texto-comun" text="Formulario de registro" textAlignment="CENTER" textFill="BLACK">
-                    <padding>
-                        <Insets bottom="10.0" />
-                    </padding>
-                </Label>
-                <!-- Contenedor con los campos a completar para el registro del usuario -->
-                <VBox alignment="CENTER_LEFT" maxHeight="315.0" maxWidth="250.0" prefHeight="315.0" prefWidth="250.0" spacing="10.0" styleClass="vbox-interno">
-                    <!-- Campo nombre y apellido -->
-                    <Label styleClass="labels" text="Nombre y apellido" />
-                    <TextField fx:id="nomYapeField" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Nombre y apellido" />
-                    <!-- Campo email -->
-                    <Label styleClass="labels" text="Correo electronico" />
-                    <TextField fx:id="emailField" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Correo electronico" />
-                    <!-- Campo documento -->
-                    <Label styleClass="labels" text="Documento" />
-                    <TextField fx:id="dniField" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Documento" />
-                    <!-- Campo contraseña -->
-                    <Label styleClass="labels" text="Contraseña" />
-                    <PasswordField fx:id="passwordField" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="156.0" promptText="Contraseña" />
-                    <!-- Campo repetir contraseña-->
-                    <Label styleClass="labels" text="Repetir contraseña" />
-                    <PasswordField fx:id="repeatPasswordField" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="156.0" promptText="Repetir contraseña" />
-                    <padding>
-                        <Insets bottom="5.0" left="25.0" right="25.0" />
-                    </padding>
-                </VBox>
-                <!-- Campo perfil -->
-                <MenuButton fx:id="perfilMenuButton" text="Tipo de perfil">
-                    <items>
-                        <MenuItem fx:id="adminMenuItem" text="Administrador" onAction="#initialize" />
-                        <MenuItem fx:id="gerenteMenuItem" text="Gerente" onAction="#initialize" />
-                        <MenuItem fx:id="vendedorMenuItem" text="Vendedor" onAction="#initialize" />
-                    </items>
-                </MenuButton>
-                <!-- Contenedor horizontal para botones -->
-                <HBox alignment="CENTER" spacing="10" styleClass="hbox">
-                    <Button text="Agregar" onAction="#agregarUsuario" prefHeight="25.0" prefWidth="68.0" style="-fx-background-color:  #b6dfaa;"/>
-                    <Button text="Cancelar" onAction="#cancelar" prefHeight="25.0" prefWidth="68.0" style="-fx-background-color: #fbb09d;"/>
-                </HBox>
+            </ImageView>
+            
+            <Label styleClass="texto-comun" text="Formulario de registro" textAlignment="CENTER" textFill="BLACK">
+                <padding>
+                    <Insets bottom="10.0" />
+                </padding>
+            </Label>
+
+            <VBox alignment="CENTER_LEFT" maxHeight="315.0" maxWidth="250.0" prefHeight="315.0" prefWidth="250.0" spacing="10.0" styleClass="vbox-interno formulario-container">
+                <!-- Campo nombre y apellido -->
+                <Label styleClass="labels" text="Nombre y apellido" />
+                <TextField fx:id="nomYapeField" styleClass="text-field-registro" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Nombre y apellido" />
+                <!-- Campo email -->
+                <Label styleClass="labels" text="Correo electronico" />
+                <TextField fx:id="emailField" styleClass="text-field-registro" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Correo electronico" />
+                <!-- Campo documento -->
+                <Label styleClass="labels" text="Documento" />
+                <TextField fx:id="dniField" styleClass="text-field-registro" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Documento" />
+                <!-- Campo contraseña -->
+                <Label styleClass="labels" text="Contraseña" />
+                <PasswordField fx:id="passwordField" styleClass="text-field-registro" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="156.0" promptText="Contraseña" />
+                <!-- Campo repetir contraseña-->
+                <Label styleClass="labels" text="Repetir contraseña" />
+                <PasswordField fx:id="repeatPasswordField" styleClass="text-field-registro" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="156.0" promptText="Repetir contraseña" />
+
+                <padding>
+                    <Insets bottom="5.0" left="25.0" right="25.0" />
+                </padding>
             </VBox>
+            
+            <!-- Campo perfil -->
+            <MenuButton fx:id="perfilMenuButton" text="Tipo de perfil">
+                <items>
+                    <MenuItem fx:id="adminMenuItem" text="Administrador" onAction="#initialize" />
+                    <MenuItem fx:id="gerenteMenuItem" text="Gerente" onAction="#initialize" />
+                    <MenuItem fx:id="vendedorMenuItem" text="Vendedor" onAction="#initialize" />
+                </items>
+            </MenuButton>
+            
+            <!-- Contenedor horizontal para botones -->
+            <HBox alignment="CENTER" styleClass="hbox">
+                <Button styleClass="boton-registro" onAction="#agregarUsuario" prefHeight="25.0" prefWidth="111.0" text="Registrar" />
+                <Button styleClass="boton-registro" onAction="#cancelar" prefHeight="25.0" prefWidth="111.0" text="Volver" />
+                <padding>
+                    <Insets top="15.0" />
+                </padding>
+                <VBox.margin>
+                    <Insets bottom="10.0" />
+                </VBox.margin>
+            </HBox>
+        </VBox>
     </VBox>
 </StackPane>

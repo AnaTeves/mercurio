@@ -11,7 +11,7 @@ import javafx.stage.StageStyle;
 public class LogoutController {
     
     public void handleLogout(Stage currentStage){
-        SessionManager.clearSession();
+        SessionManager.getInstance().clearSession();
         currentStage.close();
         redirectToLogin();
     }

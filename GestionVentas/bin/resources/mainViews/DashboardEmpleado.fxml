@@ -37,7 +37,7 @@
         <!-- Contenedor izquierdo -->
         <left>
             <!-- Contenedor vertical que contiene el menu de opciones -->
-            <VBox alignment="CENTER" spacing="50">
+            <VBox alignment="CENTER" spacing="50" style="-fx-background-color: #e3e3e3;">
                 <Button style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Vendedor" contentDisplay="TOP">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
@@ -56,7 +56,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleVentas" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Nueva&#10;Venta" contentDisplay="TOP">
+                <Button onAction="#handleVentas" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Registrar&#10;Venta" contentDisplay="TOP">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
@@ -74,15 +74,6 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleInventario" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Inventario" contentDisplay="TOP">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/inventario.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
                 <Button onAction="#cerrarSesion" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Cerrar sesión" contentDisplay="TOP">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
@@ -96,17 +87,9 @@
         </left>
         <!-- Contenedor central -->
         <center>
-            <StackPane fx:id="mainContent" style="-fx-background-color: #773939;">
-                <GridPane fx:id="gridPane" alignment="CENTER"> <!-- Espacio horizontal y vertical entre celdas -->
-                    <columnConstraints>
-                        <ColumnConstraints percentWidth="50" />
-                        <ColumnConstraints percentWidth="50" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints percentHeight="50" />
-                        <RowConstraints percentHeight="50" />
-                    </rowConstraints>
-                    <VBox spacing="10" alignment="CENTER"  GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <StackPane fx:id="mainContent" style="-fx-background-color: #f4f4f7;">
+    
+                    <VBox spacing="10" alignment="CENTER" >
                         <Label text="Total de ventas realizadas"/>
                         <HBox spacing="10" alignment="CENTER">
                             <VBox>
@@ -120,8 +103,7 @@
                         </HBox>
                         <Button text="Calcular reporte" onAction="#calcularReporteVentas" />
                     </VBox>
-
-                    <VBox fx:id="vbox" alignment="CENTER" spacing="20.0" styleClass="vbox" HBox.hgrow="ALWAYS" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <VBox fx:id="vbox" alignment="CENTER" spacing="20.0" styleClass="vbox" HBox.hgrow="ALWAYS" >
                         <Label text="Historial de ventas" textAlignment="CENTER" alignment="CENTER" textFill="WHITE">
                             <padding>
                                 <Insets bottom="10.0" />
@@ -143,8 +125,6 @@
                             <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
                         </padding>
                     </VBox>
-
-                </GridPane>
             </StackPane>
         </center>
     </BorderPane>

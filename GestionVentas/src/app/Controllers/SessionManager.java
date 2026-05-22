@@ -1,39 +1,26 @@
 package app.Controllers;
-// Clase que maneja la sesion del usuario
-public class SessionManager {
-    private static String currentUser;
-    private static SessionManager instance;
-    private String dniUsuario;
 
-    // Metodo que guarda al usuario que inicio sesion
-    public static void setCurrentUser(String user) {
-        currentUser = user;
-    }
+import app.Models.Usuario;
+
+public class SessionManager {
+    private static final SessionManager instance = new SessionManager();
+    private Usuario currentUser;
 
     private SessionManager() {}
 
     public static SessionManager getInstance() {
-        if (instance == null) {
-            instance = new SessionManager();
-        }
         return instance;
     }
 
-    public void setDniUsuario(String dni) {
-        this.dniUsuario = dni;
+    public void setCurrentUser(Usuario usuario) {
+        this.currentUser = usuario;
     }
 
-    public String getDniUsuario() {
-        return dniUsuario;
-    }
-
-    // Metodo que obtiene al usuario que inicio sesion
-    public static String getCurrentUser(){
+    public Usuario getCurrentUser() {
         return currentUser;
     }
 
-    // Meotodo que limpia el usuario que inicio sesion
-    public static void clearSession(){
+    public void clearSession() {
         currentUser = null;
     }
 }

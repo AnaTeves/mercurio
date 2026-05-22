@@ -73,7 +73,7 @@ public class CategoriaController {
                                 btn.setStyle("-fx-background-color: #fbb09d; -fx-text-fill: black;");
                             } else { // Si la categoria se encuentra inactiva
                                 btn.setText("Activar"); // El boton permite activar
-                                btn.setStyle("-fx-background-color: #b6dfaa;; -fx-text-fill: black;");
+                                btn.setStyle("-fx-background-color: #b6dfaa; -fx-text-fill: black;");
                             }
                             setGraphic(btn);
                         }
@@ -83,7 +83,6 @@ public class CategoriaController {
             }
         });
         tableView.getColumns().add(actionCol); // Agrega la nueva columna
-        tableView.prefWidthProperty().bind(vbox.widthProperty()); // Vincula el ancho de la table view con el vbox 
         cargarDatosDesdeBD(); // Cargo datos desde la base de datos
     }
 

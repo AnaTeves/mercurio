@@ -22,82 +22,89 @@
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.effect.Lighting?>
+<?import javafx.scene.effect.Light.Distant?>
 
 <!-- Vista del administrador al ingresar a la aplicacion-->
 <StackPane alignment="CENTER" maxHeight="800" maxWidth="1000" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.AdminController">
     <BorderPane fx:id="mainBorderPane" StackPane.alignment="CENTER">
         <!-- Contenedor izquierdo que contiene el menu de opciones -->
         <left>
-            <VBox style="-fx-background-color: #e3e3e3;" alignment="CENTER" spacing="30">
-                <Button onAction="#editProfile" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Administrador" contentDisplay="TOP">
+            <VBox style="-fx-background-color: rgb(90, 108, 128);" alignment="CENTER_LEFT" spacing="40" prefWidth="180">
+            <padding>
+                <Insets left="20" right="20" />
+            </padding>
+                <Button onAction="#editProfile" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Administrador" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/usuario.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#openBackupForm" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Backup" contentDisplay="TOP">
+                <Button onAction="#openBackupForm" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Backup" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/reportes.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleReports" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Reportes" contentDisplay="TOP">
+                <Button onAction="#handleReports" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Reportes" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/reportes.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <!-- <Button onAction="#seeSales" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Ventas" contentDisplay="TOP">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/ventas.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button> -->
-                <Button onAction="#handleUsers" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Usuarios" contentDisplay="TOP">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/usuario.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button onAction="#productManagement" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Inventario" contentDisplay="TOP">
+                <Button onAction="#productManagement" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Inventario" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/inventario.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#categoryManagement" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Categorias" contentDisplay="TOP">
+                <Button onAction="#categoryManagement" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Categorias" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/categorias.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#logout" fx:id="logoutButton" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Cerrar sesión" contentDisplay="TOP">
+                <Button onAction="#logout" fx:id="logoutButton" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Cerrar sesión" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/logout.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>

@@ -1,357 +1,269 @@
 package app.Controllers;
-import app.BDD.ClienteService;
-import app.BDD.InventService;
+
 import app.BDD.VentaService;
+import app.Models.Usuario;
+import app.Models.DetalleVenta;
+import app.Models.Producto;
+import app.Models.Venta;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import app.Models.Cliente;
-import java.time.LocalDate;
-import app.Models.DetalleVenta;
-import app.Models.Producto;
-import app.Models.Venta;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import java.time.LocalDateTime;
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Optional;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.geometry.Side;
 
-// Controlador de ventas
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
+
 public class VentaController {
-    @FXML
-    private DatePicker fechaPicker;
-    @FXML
-    private TextField dniUsuario;
-    @FXML
-    private ComboBox<Producto> comboBoxProductos;
-    @FXML
-    private ComboBox<Cliente> comboBoxClientes;
-    @FXML
-    private TextField cantidad;
-    @FXML
-    private TableView<DetalleVenta> tablaDetalleVenta;
-    @FXML
-    private TableColumn<DetalleVenta, String> colProducto;
-    @FXML
-    private TableColumn<DetalleVenta, Integer> colCantidad;
-    @FXML
-    private TableColumn<DetalleVenta, Integer> colIDProducto;
-    @FXML
-    private TableColumn<DetalleVenta, Float> colSubtotal;
-    @FXML
-    private TableColumn<DetalleVenta, Float> colTotalVenta;
-    private float totalAcumulado = 0.0f;
-    @FXML
-    private TextField totalVenta;
-    @FXML
-    private Button registrarVentaBtn;
-    @FXML
-    private Button agregarProductoBtn;
-    @FXML
-    private TextField buscarCliente;
-    @FXML
-    private TextField buscarProducto;
-    TableView<Producto> tableView = new TableView<>();
 
-    // NEW 
-    @FXML
-    private TextField campoCliente;
+    @FXML private TextField campoCliente; 
+    @FXML private TextField buscarProducto;
+    @FXML private Label dniLabel;   
+    @FXML private Label nameLabel;  
+    @FXML private Label lblTotal;
+
+    @FXML private TableView<DetalleVenta> tablaDetalleVenta;
+    @FXML private TableColumn<DetalleVenta, Integer> colIDProducto;
+    @FXML private TableColumn<DetalleVenta, String> colProducto;
+    @FXML private TableColumn<DetalleVenta, Integer> colCantidad;
+    @FXML private TableColumn<DetalleVenta, Float> colSubtotal;
+    @FXML private TableColumn<DetalleVenta, Void> colAcciones;
 
     private ObservableList<DetalleVenta> detallesVenta = FXCollections.observableArrayList();
-    private float totalProducto = 0.0f;
+    private float totalAcumulado = 0.0f;
+    
     private VentaService ventaService = new VentaService();
-    private ClienteService clienteService = new ClienteService();
-    private InventService inventService = new InventService();
-    Dialog<String> dialog = new Dialog<>();
-    CustomAlert customAlert = new CustomAlert();
+    // Menú flotante para el autocompletado
+    private ContextMenu popupAutocompletado = new ContextMenu();
 
     @FXML
     public void initialize() {
-        // colIDProducto.setCellValueFactory(new PropertyValueFactory<>("id_producto"));
-        // colProducto.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        // colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-        // colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));;
+        colIDProducto.setCellValueFactory(new PropertyValueFactory<>("id_producto"));
+        colProducto.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
 
-        // tablaDetalleVenta.setItems(detallesVenta);    TEMPORALMENTE COMENTADO
-    }
+        tablaDetalleVenta.setItems(detallesVenta);
+        configurarColumnaAcciones();
 
-    // Metodo que se ejecuta al presionar el boton buscar
-    public void buscarCliente(){
-        String dni = buscarCliente.getText(); // Extraigo el dni ingresado en el buscador
-        if(dni.isEmpty()){ // Si es vacio
-            customAlert.mostrarAlertaPersonalizada("Error", "Ingrese un DNI para buscar el cliente.");
-        } else {
-            Optional<Cliente> cliente = clienteService.buscarPorDni(dni);  // Busco el cliente en mi base de datos
+        // Configurar el autocompletado de productos
+        configurarBuscadorProductos();
 
-            if (cliente.isPresent()) { // Si se encuentra el cliente
-                mostrarSeleccion(cliente.get()); // Muestro la seleccion del cliente
-            } else {
-                mostrarRegistro(dni); // Pregunto si deseo registrarlo
-            }
+        // Cargar usuario de la sesión
+        Usuario usuario = SessionManager.getInstance().getCurrentUser();
+        if (usuario != null) {
+            dniLabel.setText(usuario.getDni());
+            nameLabel.setText(usuario.getNomYape());
         }
     }
 
-    private void mostrarSeleccion(Cliente cliente){
-        dialog.setTitle("Seleccionar cliente");
-        dialog.setHeaderText("¿Desea seleccionar el cliente " + cliente.getNombre() + "?");
+    // --- NUEVO SISTEMA DE BÚSQUEDA ---
+    private void configurarBuscadorProductos() {
+        buscarProducto.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.trim().isEmpty()) {
+                popupAutocompletado.hide();
+                return;
+            }
 
-        // Configuracion del contenido
-        VBox content = new VBox(10);
-        content.setAlignment(Pos.CENTER);
-        Label lblNombre = new Label("Nombre: " + cliente.getNombre());
-        Label lblDni = new Label("DNI: " + cliente.getDni());
-        Button btnSeleccionar = new Button("Seleccionar");
+            // Buscamos coincidencias en la base de datos
+            List<Producto> coincidencias = ventaService.buscarProductosPorFiltro(newValue);
+            popupAutocompletado.getItems().clear();
 
-        content.getChildren().addAll(lblNombre, lblDni, btnSeleccionar);
-        dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
-
-        // Acción al seleccionar
-        btnSeleccionar.setOnAction(event -> {
-            buscarCliente.setText(cliente.getDni());
-            dialog.close();
+            if (!coincidencias.isEmpty()) {
+                for (Producto p : coincidencias) {
+                    // Creamos el item del menú (Ej: "Coca Cola - $1500.0 | Stock: 10")
+                    MenuItem item = new MenuItem(p.getNombre() + " - $" + p.getPrecio() + " (Stock: " + p.getStock() + ")");
+                    
+                    item.setOnAction(event -> {
+                        if (p.getStock() > 0) {
+                            agregarOActualizarProductoEnTabla(p);
+                            buscarProducto.clear(); // Limpiamos el buscador para el siguiente
+                        } else {
+                            mostrarAlerta("Sin Stock", "El producto " + p.getNombre() + " no tiene stock disponible.");
+                        }
+                    });
+                    popupAutocompletado.getItems().add(item);
+                }
+                // Mostramos el menú debajo del TextField
+                popupAutocompletado.show(buscarProducto, Side.BOTTOM, 0, 0);
+            } else {
+                popupAutocompletado.hide();
+            }
         });
-
-        dialog.showAndWait();
     }
 
-    private void mostrarRegistro(String dni) {
-        dialog.setTitle("Cliente no encontrado.");
-        dialog.setHeaderText("El cliente con DNI " + dni + " no se encuentra registrado.");
+    @FXML
+    public void buscarProducto() {
+        // Este método se mantiene por si el usuario presiona el botón "Buscar" (la lupa)
+        // en lugar del autocompletado, pero ahora abrirá el menú si hay texto.
+        if(!buscarProducto.getText().isEmpty()){
+            popupAutocompletado.show(buscarProducto, Side.BOTTOM, 0, 0);
+        }
+    }
+    // ----------------------------------
 
-        // Configuracion del contenido
-        VBox content = new VBox(10);
-        content.setAlignment(Pos.CENTER);
-        Label lblMensajei = new Label("¿Desea registrar un nuevo cliente?");
-        Button btnRegistrar = new Button("Registrar");
-
-        content.getChildren().addAll(lblMensajei, btnRegistrar);
-        dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
-
-        // Acción al seleccionar
-        btnRegistrar.setOnAction(event -> {
-            abrirRegistro();
-            dialog.close();
-        });
-
-        dialog.showAndWait();
+    private void agregarOActualizarProductoEnTabla(Producto producto) {
+        for (DetalleVenta detalle : detallesVenta) {
+            if (detalle.getId_producto() == producto.getId()) {
+                detalle.setCantidad(detalle.getCantidad() + 1);
+                tablaDetalleVenta.refresh();
+                actualizarTotal();
+                return;
+            }
+        }
+        
+        DetalleVenta nuevoDetalle = new DetalleVenta(producto.getNombre(), 1, producto.getPrecio(), producto.getId());
+        detallesVenta.add(nuevoDetalle);
+        actualizarTotal();
     }
 
-    private void abrirRegistro(){
+    @FXML
+    public void openTheWindowClients() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/FormClient.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/ClientsList.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
-            stage.setTitle("Registrar Cliente");
             stage.setScene(new Scene(root));
-            stage.show();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            ClientsListController controller = loader.getController();
+            // IMPORTANTE: Asegúrate de que esto devuelve el DOCUMENTO (DNI), no el nombre
+            String clienteSeleccionado = controller.getClienteSeleccionado();
+
+            if (clienteSeleccionado != null) {
+                campoCliente.setText(clienteSeleccionado);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void buscarProducto() {
-        String termino = buscarProducto.getText().trim();
-
-        if(termino.isEmpty()){
-            return;
-        }
-
-        List<Producto> productos = inventService.buscarProductoPorNombre(termino);
-
-        if(productos.isEmpty()){
-            return;
-        }
-
-        Optional<Producto> productoSeleccionado = mostrarDialogoSeleccion(productos);
-
-        productoSeleccionado.ifPresent(producto -> {
-            buscarProducto.setText(producto.getNombre());
-        });
-    }
-
-    public Optional<Producto> mostrarDialogoSeleccion(List<Producto> productos) {
-        Dialog<Producto> dialog = new Dialog<>();
-        dialog.setTitle("Seleccionar Producto");
-        dialog.setHeaderText("Seleccione un producto de la lista");
-
-        // Crear tabla para mostrar productos
-        TableColumn<Producto, Integer> colId = new TableColumn<>("ID");
-        TableColumn<Producto, String> colNombre = new TableColumn<>("Nombre");
-        TableColumn<Producto, Float> colPrecio = new TableColumn<>("Precio");
-        TableColumn<Producto, Integer> colStock = new TableColumn<>("Stock");
-
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
-        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-
-        tableView.getColumns().addAll(List.of(colId, colNombre, colPrecio, colStock));
-        tableView.setItems(FXCollections.observableArrayList(productos));
-
-        // Configurar contenido del dialog
-        VBox content = new VBox(tableView);
-        content.setSpacing(10);
-        content.setPadding(new Insets(10));
-        dialog.getDialogPane().setContent(content);
-
-        // Botones del dialog
-        ButtonType seleccionarButtonType = new ButtonType("Seleccionar", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(seleccionarButtonType, ButtonType.CANCEL);
-
-        // Obtener producto seleccionado al presionar "Seleccionar"
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == seleccionarButtonType) {
-                return tableView.getSelectionModel().getSelectedItem();
-            }
-            return null;
-        });
-
-        // Mostrar el dialog y esperar respuesta
-        return dialog.showAndWait();
-    }
-
-
-    // private void cargarDatosDesdeBD() {
-    //     detallesVenta = ventaService.loadVentas();
-    //     tablaDetalleVenta.setItems(detallesVenta);
-    // }
-
-    // Metodo que se ejecuta al presionar el boton "Agregar"
     @FXML
-    private void agregarProducto() {
-        try{
-            String cliente = buscarCliente.getText();
-            Producto productoSeleccionado = tableView.getSelectionModel().getSelectedItem();
-
-        if (cliente.isEmpty() || productoSeleccionado == null) {
-            mostrarAlerta("Error", "Por favor complete todos los campos.");
-            return;
-        }
-        // Crear un nuevo detalle de venta
-        DetalleVenta detalle = new DetalleVenta(productoSeleccionado.getNombre(), 1, productoSeleccionado.getPrecio(), productoSeleccionado.getId());
-
-        // Agregar detalle a la lista y actualizar tabla
-        detallesVenta.add(detalle);
-
-        totalProducto += detalle.getSubtotal();
-        totalAcumulado += totalProducto;
-
-        totalVenta.setText(String.format("%.2f", totalAcumulado));
-
-        tablaDetalleVenta.getItems().add(detalle);
-        tablaDetalleVenta.refresh();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            mostrarAlerta("Error", "Complete todos los campos.");
-        }
+    private void confirmarVenta() {
+        registrarVenta();
     }
 
     @FXML
     private void registrarVenta() {
-
         try {
-            // Validar campos de entrada
-            LocalDate fechaVenta = fechaPicker.getValue();
-            Cliente clienteSeleccionado = comboBoxClientes.getSelectionModel().getSelectedItem();
-            String dni_Usuario = dniUsuario.getText();
+            Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
 
-            String dniCliente = clienteSeleccionado.getDni();
+            // 1. LIMPIEZA DE DATOS (Quitamos espacios para evitar errores)
+            String docCliente = campoCliente.getText().trim(); 
+            String dniVendedor = dniLabel.getText().trim();
 
-            LocalDateTime localDate = fechaVenta.atStartOfDay();
-            Timestamp timestamp = Timestamp.valueOf(localDate);
-            
-            if (fechaVenta == null || dniCliente.isEmpty() || dni_Usuario.isEmpty()) {
-                // Mostrar mensaje de error si hay campos vacíos
-                mostrarAlerta("Error", "Por favor complete todos los campos.");
+            if (docCliente.isEmpty() || docCliente.contains("Presione")) {
+                mostrarAlerta("Error", "Debe seleccionar un cliente.");
+                return;
+            }
+            if (detallesVenta.isEmpty()) {
+                mostrarAlerta("Error", "El carrito está vacío.");
                 return;
             }
 
-            // Obtener los IDs de cliente y usuario a partir de sus DNI
-            int idCliente = ventaService.obtenerIdCliente(dniCliente);
-            int idUsuario = ventaService.obtenerIdUsuario(dni_Usuario);
+            // 2. OBTENER IDs DESDE LA BDD
+            int idCliente = ventaService.obtenerIdCliente(docCliente);
+            int idUsuario = ventaService.obtenerIdUsuario(dniVendedor);
 
-            if (idCliente == -1 || idUsuario == -1) {
-                mostrarAlerta("Error", "Cliente o usuario no encontrados.");
+            // 3. VALIDACIÓN ESTRICTA
+            if (idCliente == -1) {
+                mostrarAlerta("Error", "Cliente no encontrado. Asegúrese de que el buscador ingresó el DNI del cliente: " + docCliente);
+                return;
+            }
+            if (idUsuario == -1) {
+                mostrarAlerta("Error", "Vendedor no encontrado. (DNI detectado: " + dniVendedor + ")");
                 return;
             }
 
-            for(DetalleVenta detalle : detallesVenta){
+            // 4. PROCESAR VENTA
+            for (DetalleVenta detalle : detallesVenta) {
                 ventaService.descontarStock(detalle.getId_producto(), detalle.getCantidad());
             }
 
-            // Crear el objeto Venta y registrar en base de datos
             Venta nuevaVenta = new Venta(timestamp, totalAcumulado, idUsuario, idCliente);
-            System.out.println(nuevaVenta);
             ventaService.registrarVenta(nuevaVenta, detallesVenta);
 
-            mostrarAlerta("Éxito", "Venta registrada con éxito.");
+            mostrarAlerta("Éxito", "Venta realizada correctamente.");
             limpiarCampos();
+
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "Ocurrió un error al registrar la venta.");
+            mostrarAlerta("Error", "Error al procesar: " + e.getMessage());
         }
+    }
+
+    private void actualizarTotal() {
+        totalAcumulado = 0;
+        for (DetalleVenta d : detallesVenta) {
+            totalAcumulado += d.getSubtotal();
+        }
+        lblTotal.setText(String.format("$ %.2f", totalAcumulado));
+    }
+
+    @FXML
+    private void cancelarVenta() {
+        limpiarCampos();
+    }
+
+    private void limpiarCampos() {
+        campoCliente.clear();
+        buscarProducto.clear();
+        detallesVenta.clear();
+        actualizarTotal();
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
+        alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
 
-    private void limpiarCampos() {
-        dniUsuario.clear();
-        detallesVenta.clear();
-        totalAcumulado = 0.0f;
-        tablaDetalleVenta.getItems().clear();
-    }
-
-
-
-    public void openTheWindowClients(){
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/ClientsList.fxml"));
-            Parent root = loader.load();
-            
-            Stage stage = new Stage();
-            stage.setTitle("Seleccionar Cliente");
-            stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-            
-            // Obtener el cliente seleccionado de la ventana emergente
-            ClientsListController controller = loader.getController();
-            String clienteSeleccionado = controller.getClienteSeleccionado();
-            
-            if (clienteSeleccionado != null) {
-                campoCliente.setText(clienteSeleccionado);
+    private void configurarColumnaAcciones() {
+        colAcciones.setCellFactory(param -> new TableCell<>() {
+            private final Button btnMenos = new Button("-");
+            private final Button btnMas = new Button("+");
+            private final Button btnEliminar = new Button("🗑");
+            private final HBox contenedor = new HBox(5, btnMenos, btnMas, btnEliminar);
+            {
+                contenedor.setAlignment(Pos.CENTER);
+                btnMas.setOnAction(e -> {
+                    DetalleVenta d = getTableView().getItems().get(getIndex());
+                    d.setCantidad(d.getCantidad() + 1);
+                    tablaDetalleVenta.refresh();
+                    actualizarTotal();
+                });
+                btnMenos.setOnAction(e -> {
+                    DetalleVenta d = getTableView().getItems().get(getIndex());
+                    if (d.getCantidad() > 1) {
+                        d.setCantidad(d.getCantidad() - 1);
+                        tablaDetalleVenta.refresh();
+                        actualizarTotal();
+                    }
+                });
+                btnEliminar.setOnAction(e -> {
+                    detallesVenta.remove(getTableView().getItems().get(getIndex()));
+                    actualizarTotal();
+                });
             }
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : contenedor);
+            }
+        });
     }
 }

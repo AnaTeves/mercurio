@@ -30,6 +30,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.effect.Lighting?>
+<?import javafx.scene.effect.Light.Distant?>
 
 <!-- Vista del vendedor al iniciar sesion -->
 <StackPane alignment="CENTER" maxHeight="800" maxWidth="1000" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.EmpleadoController">
@@ -37,49 +41,67 @@
         <!-- Contenedor izquierdo -->
         <left>
             <!-- Contenedor vertical que contiene el menu de opciones -->
-            <VBox alignment="CENTER" spacing="50" style="-fx-background-color: #e3e3e3;">
-                <Button style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Vendedor" contentDisplay="TOP">
+            <VBox fx:id="menuLateral" alignment="CENTER_LEFT" spacing="40" prefWidth="180" style="-fx-background-color: rgb(90, 108, 128);">
+            <padding>
+                <Insets left="20" right="20" />
+            </padding>
+                <Button style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Vendedor" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/usuario.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleReportes" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Reportes" contentDisplay="TOP">
+                <Button onAction="#handleReportes" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Reportes" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/reportes.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleVentas" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Registrar&#10;Venta" contentDisplay="TOP">
+                <Button onAction="#handleVentas" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Registrar&#10;Venta" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/ventas.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleClientes" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Clientes" contentDisplay="TOP">
+                <Button onAction="#handleClientes" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Clientes" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/clientes.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#cerrarSesion" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10;" text="Cerrar sesión" contentDisplay="TOP">
+                <Button fx:id="logoutButton" onAction="#cerrarSesion" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Cerrar sesión" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/logout.png" />
                             </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
                         </ImageView>
                     </graphic>
                 </Button>
@@ -88,7 +110,6 @@
         <!-- Contenedor central -->
         <center>
             <StackPane fx:id="mainContent" style="-fx-background-color: #f4f4f7;">
-    
                     <VBox spacing="10" alignment="CENTER" >
                         <Label text="Total de ventas realizadas"/>
                         <HBox spacing="10" alignment="CENTER">

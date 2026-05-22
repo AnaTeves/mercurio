@@ -21,7 +21,7 @@ import javafx.scene.control.TableCell;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Dialog;
 
-// Controlador del inventario
+/* Controlador que maneja la gestion de los productos */
 public class InventarioController {
     @FXML
     private TableView<Producto> tableProducts;
@@ -46,86 +46,15 @@ public class InventarioController {
     private TextField buscarProducto;
     @FXML
     private Button btnAñadir;
-
-    // Creamos una instancia del controlador de la base de datos
-    private InventService inventService = new InventService();
+    private InventService inventService = new InventService(); // Creamos una instancia del controlador que interactua con la base de datos
     Dialog<String> dialog = new Dialog<>();
-
-    // Metodo para configurar los permisos dependiendo del perfil ?????
-    public void configPermisos(String perfil){
-        switch (perfil) {
-            case "Administrador":
-                configPermisosAdmin();
-                break;
-            case "Gerente":
-                configPermisosGerente();
-                break;
-            case "Vendedor":
-                configPermisosEmpleado();
-                break;
-            default:
-                break;
-        }
-    }
-    
-    // Configuracion de los permisos del administrador
-    private void configPermisosAdmin(){
-        btnBuscarProd.setDisable(false);
-        btnAñadir.setDisable(false);
-        tableProducts.setEditable(false);
-    }
-
-    // Configurarion de los permisos del gerente
-    private void configPermisosGerente(){
-        btnBuscarProd.setDisable(false);
-        btnAñadir.setDisable(false);
-        tableProducts.setEditable(false);
-    }
-
-    // Configuracion de los permisos del empleado
-    private void configPermisosEmpleado(){
-        btnBuscarProd.setDisable(false);
-        btnAñadir.setDisable(true);
-        tableProducts.setEditable(true);
-    }
+    CustomAlert customAlert = new CustomAlert();
 
     @FXML
     public void initialize() {
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        estadoCol.setCellValueFactory(new PropertyValueFactory<>("estado"));
+        // estadoCol.setCellValueFactory(new PropertyValueFactory<>("estado"));
         codigoCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        String perfil = SessionManager.getCurrentUser();
-        configPermisos(perfil);
-
-        // Creo una columna para manejar la edicion de los productos
-        // TableColumn<Producto, String> editCol = new TableColumn<>("Modificar");
-        // editCol.setCellFactory(new Callback<TableColumn<Producto, String>, TableCell<Producto, String>>(){
-        //     @Override
-        //     public TableCell<Producto, String> call(final TableColumn<Producto, String> param) {
-        //         final TableCell<Producto, String> cell = new TableCell<Producto, String>() {
-        //             private final Button btn = new Button("Editar"); // Definicion del boton
-        //             {
-        //                 btn.setOnAction((ActionEvent event) -> {
-        //                     Producto producto = getTableView().getItems().get(getIndex());
-        //                     abrirFormularioEdicion(producto); // Abre formulario para editar el producto
-        //                 });
-        //             }
-
-        //             @Override
-        //             public void updateItem(String item, boolean empty) {
-        //                 super.updateItem(item, empty);
-        //                 if (empty) {
-        //                     setGraphic(null);
-        //                 } else {
-        //                     setGraphic(btn);
-        //                 }
-        //             }
-        //         };
-        //         return cell;
-        //     }
-        // });
-
         // Creo una columna que contiene un boton en cada fila que permite cambiar el estado del producto
         TableColumn<Producto, Boolean> estadoCol = new TableColumn<>("Estado");
         estadoCol.setCellFactory(new Callback<TableColumn<Producto, Boolean>, TableCell<Producto, Boolean>>(){
@@ -137,8 +66,6 @@ public class InventarioController {
                         btn.setOnAction((ActionEvent event) -> {
                             Producto producto = getTableView().getItems().get(getIndex());
                             cambiarEstadoProducto(producto); // Llama funcion que cambia el estado del producto
-                            updateItem(producto.getEstado(), false);
-                            getTableView().refresh();
                         });
                     }
 
@@ -146,18 +73,16 @@ public class InventarioController {
                     public void updateItem(Boolean item, boolean empty) {
                         super.updateItem(item, empty);
                         if (empty) {
-                            System.out.println("vacio");
                             setGraphic(null); // No muestra nada si la celda esta vacia
                         } else {
                             Producto producto = getTableView().getItems().get(getIndex());
                             if(producto.getEstado()){
                                 btn.setText("Desactivar");
-                                btn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                                btn.setStyle("-fx-background-color: #fbb09d; -fx-text-fill: black;");
                             } else {
                                 btn.setText("Activar");
-                                btn.setStyle("-fx-background-color: green; -fx-text-fill: white;");
+                                btn.setStyle("-fx-background-color: #b6dfaa; -fx-text-fill: black;");
                             }
-
                             setGraphic(btn); // Muestra el boton en la celda
                         }
                     }
@@ -205,11 +130,12 @@ public class InventarioController {
     // Metodo que modifica el estado del producto
     private void cambiarEstadoProducto(Producto producto){
         boolean nuevoProducto = producto.getEstado() ? false : true;
-        producto.setEstado(nuevoProducto);
-        inventService.actualizarProducto(producto);
-        cargarDatosDesdeBD();
+        producto.setEstado(nuevoProducto); // Asigna el nuevo estado al producto
+        inventService.actualizarProducto(producto); // Actualiza el estado en la base de datos
+        cargarDatosDesdeBD(); // Vuelve a cargar los datos para reflejar el cambio en la tabla
     }
 
+    // Metodo que abre un formulario con los detalles del producto seleccionado
     private void verDetalles(Producto producto) {
         // dialog.setTitle("Detalles del producto");
         // dialog.setHeaderText("Nombre:" + producto.getNombre());
@@ -246,18 +172,27 @@ public class InventarioController {
         }
     }
 
+    // Metodo que carga los datos desde la base de datos
     private void cargarDatosDesdeBD() {
         productos = inventService.loadProducts();
         tableProducts.setItems(productos);
     }
 
+    // Metodo que me permite buscar un producto
     @FXML
     private void buscarProducto(){
-        String termino = buscarProducto.getText();  // Obtener el texto de búsqueda
+        String termino = buscarProducto.getText().trim();  // Obtiene el texto de búsqueda
+        if(termino.isEmpty()){
+            customAlert.mostrarAlertaPersonalizada("Error", "Ingrese el nombre de un producto.");
+            return;
+        }
         List<Producto> resultados = inventService.buscarProductoPorNombre(termino);  // Buscar productos por nombre
-
-        ObservableList<Producto> productos = FXCollections.observableArrayList(resultados);  // Convertir la lista a ObservableList
-        tableProducts.setItems(productos);
+        if(resultados != null){
+            ObservableList<Producto> productos = FXCollections.observableArrayList(resultados);  // Convertir la lista a ObservableList
+            tableProducts.setItems(productos);
+        } else {
+            customAlert.mostrarAlertaPersonalizada("Error", "Producto no encontrado.");
+        }
     }
 
     public void mostrarAlerta(String titulo, String mensaje) {

@@ -42,7 +42,7 @@ public class ClientsListController {
     public void seleccionarCliente() {
         Cliente cliente = tablaClientes.getSelectionModel().getSelectedItem();
         if (cliente != null) {
-            clienteSeleccionado = cliente.getNombre() + " - " + cliente.getDni();
+            clienteSeleccionado = cliente.getDni();
             ((Stage) tablaClientes.getScene().getWindow()).close();
         }
     }

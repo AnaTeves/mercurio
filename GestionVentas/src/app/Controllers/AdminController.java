@@ -21,7 +21,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 import javafx.scene.control.Label;
 
-// Controlador del administrador que hereda del controlador de los metodos comunes
+/* Controlador del administrador que hereda del controlador de metodos comunes */
 public class AdminController extends ComunesController {
 
     @FXML
@@ -76,7 +76,7 @@ public class AdminController extends ComunesController {
     }
 
     public void productosMasVendidos(){
-         List<Pair<String, Integer>> productosMasVendidos = ventaService.obtenerProductosMasVendidos();
+        List<Pair<String, Integer>> productosMasVendidos = ventaService.obtenerProductosMasVendidos();
         productosPieChart.getData().clear(); // Limpiar datos previos
 
         for (Pair<String, Integer> producto : productosMasVendidos) {
@@ -178,12 +178,6 @@ public class AdminController extends ComunesController {
     private void ingresosMensuales(int mesSeleccionado) {
         double ingresosMensuales = ventaService.obtenerIngresosMensuales(mesSeleccionado);
         lblIngresosMes.setText(String.format("S/ %.2f", ingresosMensuales));
-    }
-
-    // Metodo que carga la vista de los usuarios
-    @FXML
-    public void handleUsers(){
-        setView("/resources/UserView.fxml");
     }
 
     // Metodo que carga la vista del inventario

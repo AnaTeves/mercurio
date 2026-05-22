@@ -87,7 +87,7 @@ public class VentaService {
     public List<Producto> obtenerProductos() {
         List<Producto> productos = new ArrayList<>();
     
-        String query = "SELECT id_producto, nombre, descripcion, precio, stock, estado, id_categoria FROM PRODUCTO";
+        String query = "SELECT id_producto, nombre, descripcion, precio_venta, stock, estado, id_categoria FROM PRODUCTO";
         
         try (Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
@@ -99,7 +99,7 @@ public class VentaService {
                 String descripcion = resultSet.getString("descripcion");
                 float precio = resultSet.getFloat("precio");
                 int stock = resultSet.getInt("stock");
-                boolean estado = resultSet.getBoolean("estado");
+                Boolean estado = resultSet.getBoolean("estado");
                 int id_categoria = resultSet.getInt("id_categoria");
 
                 Producto producto = new Producto(id, nombre, descripcion, precio, stock, estado, id_categoria);
@@ -116,7 +116,7 @@ public class VentaService {
     // Método para registrar la venta y devolver el id generado
     public void registrarVenta(Venta venta, List<DetalleVenta> detallesVenta) throws SQLException {
         // SQL para insertar una venta
-        String sqlVenta = "INSERT INTO Venta(fecha_venta, total_venta, id_usuario, id_cliente) VALUES (?, ?, ?, ?)";
+        String sqlVenta = "INSERT INTO VENTA(fecha_venta, total_venta, id_usuario, id_cliente) VALUES (?, ?, ?, ?)";
         // String sqlID = "SELECT SCOPE_IDENTITY() AS idVentaGenerada";
         
         System.out.println(venta.getFechaVenta());
@@ -312,7 +312,6 @@ public class VentaService {
         return ventasPorVendedor;
     }
     
-
     public ObservableList<XYChart.Series<String, Number>> obtenerProductosVendidos() {
         ObservableList<XYChart.Series<String, Number>> barChartData = FXCollections.observableArrayList();
 
@@ -483,8 +482,6 @@ public class VentaService {
         return data;
     }
 
-
-
      public List<Pair<String, Integer>> obtenerProductosMasVendidos() {
         List<Pair<String, Integer>> lista = new ArrayList<>();
         String query = "SELECT TOP 5 p.nombre, SUM(dv.cantidad) AS total_vendido "
@@ -525,5 +522,44 @@ public class VentaService {
             e.printStackTrace();
         }
         return ingresosDelDia;
+    }
+
+    // Método para el autocompletado: Busca por coincidencia de nombre o código
+    public List<Producto> buscarProductosPorFiltro(String filtro) {
+        List<Producto> productos = new ArrayList<>();
+        
+        // Ahora filtramos por estado = 1 y mantenemos la búsqueda insensible a mayúsculas
+        String query = "SELECT id_producto, nombre, descripcion, precio_venta, stock, estado, id_categoria " +
+                       "FROM PRODUCTO WHERE estado = 1 AND (UPPER(nombre) LIKE UPPER(?) OR CAST(id_producto AS VARCHAR) LIKE ?)";
+        
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            
+            String parametro = "%" + filtro + "%";
+            statement.setString(1, parametro);
+            statement.setString(2, parametro);
+            
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id_producto");
+                    String nombre = resultSet.getString("nombre");
+                    String descripcion = resultSet.getString("descripcion");
+                    
+                    // RECUERDA: Si antes cambiaste "precio" por otro nombre (ej. precio_unitario), 
+                    // hazlo aquí también. Si en tu BDD se llama "precio", déjalo así.
+                    float precio = resultSet.getFloat("precio_venta"); 
+                    
+                    int stock = resultSet.getInt("stock");
+                    Boolean estado = resultSet.getBoolean("estado"); // Aunque sea 1, get string funciona, o usa getInt()
+                    int id_categoria = resultSet.getInt("id_categoria");
+
+                    Producto producto = new Producto(id, nombre, descripcion, precio, stock, estado, id_categoria);
+                    productos.add(producto);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productos;
     }
 }

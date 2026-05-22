@@ -16,15 +16,13 @@ public class DetalleVenta {
         this.nombre = nombre; 
         this.cantidad = cantidad;
         this.precioUnitario = precioUnitario;
-        this.id_producto = id_producto;
-        this.subtotal = cantidad * precioUnitario;
+        this.id_producto = id_producto;                          
     }
 
     public DetalleVenta(int cantidad, float precioUnitario, int id_producto){
         this.cantidad = cantidad;
         this.precioUnitario = precioUnitario;
         this.id_producto = id_producto;
-        this.subtotal = cantidad * precioUnitario;
     }
 
     // Constructor completo
@@ -33,7 +31,6 @@ public class DetalleVenta {
         this.precioUnitario = precioUnitario;
         this.id_venta = id_venta;
         this.id_producto = id_producto; 
-        this.subtotal = cantidad * precioUnitario;
     }
 
     public String getNombre(){
@@ -93,6 +90,6 @@ public class DetalleVenta {
     }
 
     public float getSubtotal() {
-        return subtotal;
+        return cantidad * precioUnitario;
     }
 }

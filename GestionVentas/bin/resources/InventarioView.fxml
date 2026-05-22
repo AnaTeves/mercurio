@@ -16,22 +16,21 @@
 
 <!-- Vista gestion de inventario - Agregar, ver, buscar -->
 <StackPane fx:id="mainContent" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.InventarioController">
-    <HBox alignment="CENTER" spacing="40.0" HBox.hgrow="ALWAYS" style="-fx-background-color: #773939;"> 
+    <HBox alignment="CENTER" spacing="40.0" HBox.hgrow="ALWAYS" style="-fx-background-color: #f4f4f7;"> 
         <VBox alignment="CENTER" spacing="20.0" HBox.hgrow="ALWAYS" styleClass="vbox">
-            <Label text="Gestión de inventario" textAlignment="CENTER" textFill="WHITE" styleClass="titulo">
-                <padding>
-                    <Insets bottom="5.0" />
-                </padding>
-            </Label>
-            <Line startX="0.0" startY="0.0" endX="550.0" endY="0.0" stroke="WHITE" strokeWidth="1.0"/>
+            <VBox alignment="CENTER_LEFT" maxWidth="600.0">
+                <Label text="Gestión de inventario" textFill="BLACK" styleClass="titulo"></Label>
+                <Line startX="0.0" startY="0.0" endX="600.0" endY="0.0" stroke="BLACK" strokeWidth="1.0"/>
+            </VBox>
             <!-- Contenedor horizontal -->
-            <HBox alignment="CENTER">
-                <VBox spacing="5.0">
-                    <Label text="Nombre del producto"/>
-                    <HBox>
-                        <TextField fx:id="buscarProducto" promptText="Nombre" />
-                        <Button fx:id="btnBuscarProd" onAction="#buscarProducto" text="Buscar"/>
-                        <Button onAction="#recarga">
+            <HBox alignment="CENTER" spacing="100" styleClass="finderContainer" maxWidth="600.0">
+                <VBox spacing="10.0"> 
+                    <!-- Buscador -->
+                    <Label text="Nombre" textFill="BLACK" styleClass="labels"/>
+                    <HBox spacing="2">
+                        <TextField fx:id="buscarProducto" promptText="Ingrese el nombre" />
+                        <Button fx:id="btnBuscarProd" text="Buscar" onAction="#buscarProducto" style="-fx-background-color:  #b6dfaa;"/>
+                        <Button onAction="#recarga" style="-fx-background-color: #9fdfe2;">
                             <graphic>
                                 <ImageView fitHeight="17" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -42,21 +41,22 @@
                         </Button>
                     </HBox>
                 </VBox>
-                <VBox spacing="5.0" alignment="CENTER">
-                    <Label text="¿Desea agregar un nuevo producto?"/>
-                    <Button fx:id="btnAñadir" text="Agregar producto" onAction="#añadirProducto"/>
+                <VBox spacing="5" alignment="CENTER">
+                <!-- Añadir un nuevo producto -->
+                    <Label text="¿Desea agregar un nuevo producto?" styleClass="labels" textFill="BLACK"/>
+                    <Button fx:id="btnAñadir" text="Agregar producto" onAction="#añadirProducto" style="-fx-background-color: #fbb09d;"/>
                 </VBox>
             </HBox> 
             <padding>
                 <Insets top="40.0" right="40.0" bottom="40.0" left="40.0" />
             </padding>
             <!-- Tabla que visualiza los productos -->
-            <Label text="Productos disponibles" textFill="WHITE" styleClass="texto-comun" />
+            <Label text="Productos disponibles" textFill="BLACK" styleClass="texto-comun" />
             <TableView fx:id="tableProducts" maxWidth="600.0" maxHeight="400.0">
                 <columns>
                     <TableColumn fx:id="codigoCol" prefWidth="70" text="Codigo" />
                     <TableColumn fx:id="nombreCol" prefWidth="164.00003051757812" text="Producto" />
-                    <TableColumn fx:id="estadoCol" prefWidth="145.33334350585938" text="Estado" />
+                    <!-- <TableColumn fx:id="estadoCol" prefWidth="145.33334350585938" text="Estado" /> -->
                 </columns>
             </TableView>
         </VBox>
