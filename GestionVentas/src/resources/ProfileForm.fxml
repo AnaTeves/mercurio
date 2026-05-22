@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 
-<!-- Vista del perfil del administrador -->
+<!-- Vista del perfil -->
 <StackPane fx:id="mainContentForm" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.ProfileFormController">
     <VBox spacing="10.0" alignment="TOP_CENTER" style="-fx-background-color: #f4f4f7;" HBox.hgrow="ALWAYS">
         <Label styleClass="texto-comun" text="Perfil administrador" textAlignment="CENTER" textFill="BLACK">

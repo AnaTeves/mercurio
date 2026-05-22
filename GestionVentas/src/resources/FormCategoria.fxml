@@ -18,7 +18,7 @@
             <padding>
                 <Insets bottom="40.0" left="50.0" right="50.0" top="40.0" />
             </padding>
-            
+            <!-- Icono de la categoría -->
             <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
                 <image>
                     <Image url="@files/categorias.png" />
@@ -27,24 +27,22 @@
                     <Insets top="25.0" />
                 </VBox.margin>
             </ImageView>
-            
+            <!-- Título del formulario -->
             <Label styleClass="texto-comun" text="Formulario de registro" textAlignment="CENTER" textFill="BLACK">
                 <padding>
                     <Insets bottom="10.0" />
                 </padding>
             </Label>
-
+            <!-- Campos del formulario -->
             <VBox alignment="CENTER_LEFT" maxHeight="315.0" maxWidth="250.0" prefHeight="315.0" prefWidth="250.0" spacing="10.0" styleClass="vbox-interno formulario-container">
                 <Label styleClass="labels" text="Nombre" />
                 <TextField fx:id="nombreField" styleClass="text-field-registro" alignment="TOP_LEFT" prefWidth="100.0" prefHeight="30.0" maxWidth="200.0" minWidth="100.0" promptText="Nombre" />
                 <Label styleClass="labels" text="Descripcion" />
                 <TextField fx:id="descripcionField" styleClass="text-field-registro" alignment="TOP_LEFT" prefWidth="100.0" prefHeight="30.0" maxWidth="200.0" minWidth="100.0" promptText="Descripcion" />
-
                 <padding>
                     <Insets bottom="5.0" left="25.0" right="25.0" />
                 </padding>
             </VBox>
-            
             <!-- Contenedor horizontal para botones -->
             <HBox alignment="CENTER" styleClass="hbox">
                 <Button styleClass="boton-registro" onAction="#agregarCategoria" prefHeight="25.0" prefWidth="111.0" text="Registrar" />

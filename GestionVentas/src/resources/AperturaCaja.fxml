@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<!-- Vista del formulario para realizar la apertura de caja -->
 <VBox alignment="CENTER" prefHeight="250.0" prefWidth="400.0" spacing="20.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.AperturaCajaController">
    <padding>
       <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />

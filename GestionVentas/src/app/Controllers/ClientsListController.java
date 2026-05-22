@@ -2,7 +2,6 @@ package app.Controllers;
 
 import java.io.IOException;
 import java.util.List;
-
 import app.BDD.ClienteService;
 import app.Models.Cliente;
 import javafx.fxml.FXML;

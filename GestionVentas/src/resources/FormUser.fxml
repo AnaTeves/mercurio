@@ -20,7 +20,7 @@
             <padding>
                 <Insets bottom="40.0" left="50.0" right="50.0" top="40.0" />
             </padding>
-            
+            <!-- Imagen -->
             <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
                 <image>
                     <Image url="@files/usuario.png" />
@@ -29,13 +29,13 @@
                     <Insets top="25.0" />
                 </VBox.margin>
             </ImageView>
-            
+            <!-- Título -->
             <Label styleClass="texto-comun" text="Formulario de registro" textAlignment="CENTER" textFill="BLACK">
                 <padding>
                     <Insets bottom="10.0" />
                 </padding>
             </Label>
-
+            <!-- Formulario -->
             <VBox alignment="CENTER_LEFT" maxHeight="315.0" maxWidth="250.0" prefHeight="315.0" prefWidth="250.0" spacing="10.0" styleClass="vbox-interno formulario-container">
                 <!-- Campo nombre y apellido -->
                 <Label styleClass="labels" text="Nombre y apellido" />
@@ -52,12 +52,10 @@
                 <!-- Campo repetir contraseña-->
                 <Label styleClass="labels" text="Repetir contraseña" />
                 <PasswordField fx:id="repeatPasswordField" styleClass="text-field-registro" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="156.0" promptText="Repetir contraseña" />
-
                 <padding>
                     <Insets bottom="5.0" left="25.0" right="25.0" />
                 </padding>
             </VBox>
-            
             <!-- Campo perfil -->
             <MenuButton fx:id="perfilMenuButton" text="Tipo de perfil">
                 <items>
@@ -66,7 +64,6 @@
                     <MenuItem fx:id="vendedorMenuItem" text="Vendedor" onAction="#initialize" />
                 </items>
             </MenuButton>
-            
             <!-- Contenedor horizontal para botones -->
             <HBox alignment="CENTER" styleClass="hbox">
                 <Button styleClass="boton-registro" onAction="#agregarUsuario" prefHeight="25.0" prefWidth="111.0" text="Registrar" />

@@ -10,32 +10,32 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
+<!-- Vista del formulario de venta -->
 <StackPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.VentaController">
     <VBox alignment="CENTER" spacing="20.0" HBox.hgrow="ALWAYS" style="-fx-background-color: #f4f4f7;">
         <padding>
             <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
         </padding>
-
+        <!-- Título -->
         <VBox alignment="CENTER_LEFT" maxWidth="800.0">
             <Label text="Registro de venta" textFill="BLACK" styleClass="titulo" style="-fx-font-size: 24px;" />
             <Line endX="800.0" stroke="BLACK" strokeWidth="1.0" />
         </VBox>
-
         <VBox maxWidth="800.0" spacing="20.0" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
             <padding>
                 <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
             </padding>
-
             <HBox spacing="50" alignment="CENTER_LEFT">
-                
+                <!-- Datos del cliente -->
                 <VBox spacing="10" HBox.hgrow="ALWAYS">
                     <Label text="Datos del Cliente" style="-fx-font-weight: bold;" textFill="#5a6c80" />
+                    <!-- Campo de búsqueda del cliente -->
                     <HBox spacing="10">
                         <TextField fx:id="campoCliente" promptText="Presione el botón para buscar..." styleClass="text-field-registro" HBox.hgrow="ALWAYS" prefHeight="35.0" editable="false" />
                         <Button text="Buscar 🔍" onAction="#openTheWindowClients" style="-fx-background-color: rgb(90, 108, 128); -fx-text-fill: White; -fx-font-weight: bold; -fx-cursor: hand;" prefHeight="35.0" />
                     </HBox>
                 </VBox>
-                
+                <!-- Datos del vendedor -->
                 <VBox spacing="10" minWidth="200.0">
                     <Label text="Vendedor Activo" style="-fx-font-weight: bold;" textFill="#5a6c80" />
                     <HBox spacing="10" alignment="CENTER_LEFT">
@@ -44,9 +44,8 @@
                     </HBox>
                 </VBox>
             </HBox>
-
             <Line endX="720.0" stroke="#e0e0e0" strokeWidth="1.0" />
-
+            <!-- Buscar producto -->
             <VBox spacing="10">
                 <Label text="Agregar Producto" style="-fx-font-weight: bold;" textFill="#5a6c80" />
                 <HBox spacing="10">
@@ -54,7 +53,7 @@
                     <Button onAction="#buscarProducto" text="Buscar 🔍" style="-fx-background-color: rgb(90, 108, 128); -fx-text-fill: White; -fx-font-weight: bold; -fx-cursor: hand;" prefHeight="35.0" />
                 </HBox>
             </VBox>
-
+            <!-- Tabla de detalle de venta -->
             <TableView fx:id="tablaDetalleVenta" VBox.vgrow="ALWAYS" prefHeight="250.0">
                 <columns>
                     <TableColumn fx:id="colIDProducto" prefWidth="60.0" text="ID" />    
@@ -67,7 +66,7 @@
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                 </columnResizePolicy>
             </TableView>
-
+            <!-- Total de la venta -->
             <HBox alignment="CENTER_RIGHT" spacing="20.0">
                 <padding>
                     <Insets top="10.0" bottom="10.0"/>
@@ -75,12 +74,11 @@
                 <Label text="TOTAL:" style="-fx-font-size: 22px; -fx-font-weight: bold;" textFill="#5a6c80" />
                 <Label fx:id="lblTotal" text="\$ 0.00" style="-fx-font-size: 26px; -fx-font-weight: bold;" textFill="BLACK" />
             </HBox>
-
+            <!-- Botones de acción -->
             <HBox alignment="CENTER_RIGHT" spacing="15.0">
                 <Button onAction="#cancelarVenta" style="-fx-background-color: #d32f2f; -fx-text-fill: White; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 10 20; -fx-background-radius: 5;" text="Cancelar" />
                 <Button onAction="#confirmarVenta" style="-fx-background-color: rgb(90, 108, 128); -fx-text-fill: White; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 10 30; -fx-background-radius: 5;" text="Confirmar Venta" />
             </HBox>
-
         </VBox>
     </VBox>
 </StackPane>
