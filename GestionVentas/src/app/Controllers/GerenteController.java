@@ -1,5 +1,6 @@
 package app.Controllers;
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 import app.BDD.VentaService;
 import app.BDD.DatabaseConnection;
@@ -20,6 +21,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Tooltip;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import javafx.scene.layout.GridPane;
@@ -38,48 +40,26 @@ import javafx.util.Pair;
 public class GerenteController extends ComunesController {
 
     private VentaService ventaService = new VentaService();
-    @FXML
-    private BarChart<String, Number> ventasPorDiaChart; 
-    @FXML
-    private LineChart<String, Number> ventasLineChart;
-    @FXML
-    private PieChart pieChart;
-    @FXML
-    private BarChart<String, Number> barChart;
-    @FXML
-    private BarChart<String, Number> vendedoresBarChart;
-    @FXML
-    private BarChart<String, Number> productosMasVendidosBarChart;
-    @FXML
-    private PieChart rankingProductosPieChart;
-    @FXML
-    private TableView<Producto> tablaStockBajo;
-    @FXML
-    private TableColumn<Producto, String> productoStockCol;
-    @FXML
-    private TableColumn<Producto, Integer> stockActualCol;
-    @FXML
-    private TableColumn<Producto, String> estadoStockCol;
-    @FXML
-    private ComboBox<String> comboVendedores;
-    @FXML
-    private NumberAxis xAxis;
-    @FXML
-    private NumberAxis yAxis;
-    @FXML
-    private StackPane mainContent;
-    @FXML
-    private BorderPane mainBorderPane;
-
+    @FXML private BarChart<String, Number> ventasPorDiaChart; 
+    @FXML private LineChart<String, Number> ventasLineChart;
+    @FXML private PieChart pieChart;
+    @FXML private BarChart<String, Number> barChart;
+    @FXML private BarChart<String, Number> vendedoresBarChart;
+    @FXML private BarChart<String, Number> productosMasVendidosBarChart;
+    @FXML private PieChart rankingProductosPieChart;
+    @FXML private TableView<Producto> tablaStockBajo;
+    @FXML private TableColumn<Producto, String> productoStockCol;
+    @FXML private TableColumn<Producto, Integer> stockActualCol;
+    @FXML private TableColumn<Producto, String> estadoStockCol;
+    @FXML private ComboBox<String> comboVendedores;
+    @FXML private NumberAxis xAxis;
+    @FXML private NumberAxis yAxis;
+    @FXML private StackPane mainContent;
+    @FXML private BorderPane mainBorderPane;
     @FXML GridPane gridPane;
-    @FXML
-    private ComboBox<String> comboReporte;
-
-    @FXML
-    private DatePicker fechaInicio, fechaFin;
-
-    @FXML
-    private PieChart graficoReporte;
+    @FXML private ComboBox<String> comboReporte;
+    @FXML private DatePicker fechaInicio, fechaFin;
+    @FXML private PieChart graficoReporte;
 
     @FXML
     public void initialize(){
@@ -107,8 +87,8 @@ public class GerenteController extends ComunesController {
         String query = "SELECT nombreyape FROM USUARIO WHERE id_perfil = 3"; // Asumiendo que 3 es el perfil de vendedor
         
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 vendedores.add(rs.getString("nombreyape"));
             }
@@ -186,9 +166,17 @@ public class GerenteController extends ComunesController {
     private void cargarProductosMasVendidos() {
         productosMasVendidosBarChart.setData(ventaService.obtenerProductosVendidos());
         
-        // Rotar las etiquetas del eje X
+        // Ocultar las etiquetas del eje X
         CategoryAxis xAxis = (CategoryAxis) productosMasVendidosBarChart.getXAxis();
-        xAxis.setTickLabelRotation(45);
+        xAxis.setTickLabelsVisible(false);
+
+        // Agregar tooltips a cada barra
+        for (XYChart.Series<String, Number> series : productosMasVendidosBarChart.getData()) {
+            for (XYChart.Data<String, Number> data : series.getData()) {
+                Tooltip tooltip = new Tooltip(data.getXValue() + ": " + data.getYValue() + " vendidos");
+                Tooltip.install(data.getNode(), tooltip);
+            }
+        }
     }
 
     /* Funcion que carga la vista de inventario */
@@ -213,6 +201,11 @@ public class GerenteController extends ComunesController {
     @FXML
     public void handleGestionPrecios(){
         setView("/resources/InventarioView.fxml");
+    }
+
+    @FXML
+    public void handleReports(){
+        mainBorderPane.setCenter(mainContent);
     }
 
     /* Funcion que cierra la sesion */

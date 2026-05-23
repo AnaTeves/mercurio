@@ -18,7 +18,7 @@ public class CajaService {
         String query = "SELECT COUNT(*) FROM Caja WHERE DNI = ? AND estado = 1";
         
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+            PreparedStatement stmt = conn.prepareStatement(query)) {
             
             stmt.setString(1, dniUsuario);
             
@@ -46,7 +46,7 @@ public class CajaService {
         
         // 1. Nuevamente, usamos PreparedStatement
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+            PreparedStatement stmt = conn.prepareStatement(query)) {
             
             // 2. Seteamos ambos valores
             stmt.setString(1, dniUsuario);

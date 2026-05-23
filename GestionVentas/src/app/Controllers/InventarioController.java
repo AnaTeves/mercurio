@@ -41,7 +41,7 @@ public class InventarioController {
     @FXML
     private StackPane mainContent;
     @FXML
-    private Button btnBuscarProd;
+    private TextField btnBuscarProd;
     @FXML
     private TextField buscarProducto;
     @FXML
@@ -181,7 +181,7 @@ public class InventarioController {
     // Metodo que me permite buscar un producto
     @FXML
     private void buscarProducto(){
-        String termino = buscarProducto.getText().trim();  // Obtiene el texto de búsqueda
+        String termino = btnBuscarProd.getText().trim();  // Obtiene el texto de búsqueda
         if(termino.isEmpty()){
             customAlert.mostrarAlertaPersonalizada("Error", "Ingrese el nombre de un producto.");
             return;

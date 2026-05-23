@@ -255,6 +255,11 @@ public class EmpleadoController extends ComunesController {
     }
 
     @FXML
+    public void handleReports(){
+        mainBorderPane.setCenter(mainContent);
+    }
+
+    @FXML
     public void handleArqueoCaja(){
         setView("/resources/CierreCaja.fxml");
     }

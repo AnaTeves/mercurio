@@ -12,6 +12,7 @@ public class Venta {
     private String  dni_cliente;
     private int id_usuario;
     private int id_cliente;
+    private int id_caja;
     private List<DetalleVenta> detallesVenta;  // Lista de detalles asociados a la venta
 
     // Constructor vacío
@@ -25,11 +26,20 @@ public class Venta {
         this.dni_cliente = dni_cliente;
     }
 
-    public Venta(Timestamp fechaVenta, float totalVenta, int id_usuario, int id_cliente) {
+    public Venta(Timestamp fechaVenta, float totalVenta, int id_usuario, int id_cliente, int id_caja) {
         this.fechaVenta = fechaVenta;
         this.totalVenta = totalVenta;
         this.id_usuario = id_usuario;
         this.id_cliente = id_cliente;
+        this.id_caja = id_caja;
+    }
+
+    public int getIdcaja(){
+        return id_caja;
+    }
+
+    public void setIdcaja(int id_caja){
+        this.id_caja = id_caja;
     }
 
     public int getIdusuario(){

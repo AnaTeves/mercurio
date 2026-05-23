@@ -51,11 +51,11 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleInventario" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Inventario" contentDisplay="LEFT" graphicTextGap="15">
+                <Button onAction="#handleReports" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Reportes" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
-                                <Image url="@../files/inventario.png" />
+                                <Image url="@../files/reportes.png" />
                             </image>
                             <effect>
                                 <ColorAdjust brightness="1.0" />
@@ -63,11 +63,11 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleAnularVentas" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Anular Ventas" contentDisplay="LEFT" graphicTextGap="15">
+                <Button onAction="#handleInventario" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Inventario" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
-                                <Image url="@../files/ventas.png" />
+                                <Image url="@../files/inventario.png" />
                             </image>
                             <effect>
                                 <ColorAdjust brightness="1.0" />
@@ -116,11 +116,11 @@
         <!-- Contenedor central -->
         <center>
             <StackPane fx:id="mainContent" style="-fx-background-color: #f4f4f7;">
-                <GridPane fx:id="gridPane" alignment="CENTER" hgap="20" vgap="20">
+                <GridPane fx:id="gridPane" alignment="CENTER" hgap="25" vgap="25">
                     <columnConstraints>
-                        <ColumnConstraints percentWidth="30" />
-                        <ColumnConstraints percentWidth="35" />
-                        <ColumnConstraints percentWidth="35" />
+                        <ColumnConstraints percentWidth="27" />
+                        <ColumnConstraints percentWidth="32" />
+                        <ColumnConstraints percentWidth="32" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints percentHeight="45" />
@@ -129,8 +129,8 @@
                     
                     <!-- Productos pronto a agotarse - TableView -->
                     <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
-                        <Label text="Stock Bajo" styleClass="titulo" style="-fx-font-size: 16px;"/>
-                        <TableView fx:id="tablaStockBajo" prefHeight="200.0" prefWidth="250.0">
+                        <Label text="Productos con bajo stock" styleClass="titulo" style="-fx-font-size: 11px;"/>
+                        <TableView fx:id="tablaStockBajo" prefHeight="150.0" prefWidth="200.0">
                             <columns>
                                 <TableColumn fx:id="productoStockCol" prefWidth="120.0" text="Producto" />
                                 <TableColumn fx:id="stockActualCol" prefWidth="60.0" text="Stock" />
@@ -141,9 +141,9 @@
                     
                     <!-- Comparativo de Vendedores - Bar Chart -->
                     <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
-                        <Label text="Comparativo Vendedores" styleClass="titulo" style="-fx-font-size: 16px;"/>
+                        <Label text="Comparativo Vendedores" styleClass="titulo" style="-fx-font-size: 11px;"/>
                         <ComboBox fx:id="comboVendedores" promptText="Seleccionar vendedor" prefWidth="200.0"/>
-                        <BarChart fx:id="vendedoresBarChart" prefHeight="180.0" prefWidth="280.0">
+                        <BarChart fx:id="vendedoresBarChart" prefHeight="140.0" prefWidth="220.0">
                             <xAxis>
                                 <CategoryAxis label="Día" />
                             </xAxis>
@@ -155,14 +155,14 @@
                     
                     <!-- Ranking de Productos - Pie Chart -->
                     <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
-                        <Label text="Ranking Productos" styleClass="titulo" style="-fx-font-size: 16px;"/>
-                        <PieChart fx:id="rankingProductosPieChart" prefHeight="200.0" prefWidth="280.0"/>
+                        <Label text="Ranking Productos" styleClass="titulo" style="-fx-font-size: 11px;"/>
+                        <PieChart fx:id="rankingProductosPieChart" prefHeight="140.0" prefWidth="220.0"/>
                     </VBox>
                     
                     <!-- Productos Más Vendidos por Categoría -->
                     <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="1" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
-                        <Label text="Productos Más Vendidos" styleClass="titulo" style="-fx-font-size: 16px;"/>
-                        <BarChart fx:id="productosMasVendidosBarChart" prefHeight="200.0" prefWidth="800.0">
+                        <Label text="Productos Más Vendidos" styleClass="titulo" style="-fx-font-size: 11px;"/>
+                        <BarChart fx:id="productosMasVendidosBarChart" prefHeight="160.0" prefWidth="700.0">
                             <xAxis>
                                 <CategoryAxis label="Producto" />
                             </xAxis>

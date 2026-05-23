@@ -1,5 +1,6 @@
 package app.Controllers;
 
+import app.BDD.CajaService;
 import app.BDD.VentaService;
 import app.Models.Usuario;
 import app.Models.DetalleVenta;
@@ -46,6 +47,7 @@ public class VentaController {
     private VentaService ventaService = new VentaService();
     // Menú flotante para el autocompletado
     private ContextMenu popupAutocompletado = new ContextMenu();
+    CajaService caja = new CajaService();
 
     @FXML
     public void initialize() {
@@ -68,7 +70,7 @@ public class VentaController {
         }
     }
 
-    // --- NUEVO SISTEMA DE BÚSQUEDA ---
+    // --- SISTEMA DE BÚSQUEDA ---
     private void configurarBuscadorProductos() {
         buscarProducto.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.trim().isEmpty()) {
@@ -111,7 +113,6 @@ public class VentaController {
             popupAutocompletado.show(buscarProducto, Side.BOTTOM, 0, 0);
         }
     }
-    // ----------------------------------
 
     private void agregarOActualizarProductoEnTabla(Producto producto) {
         for (DetalleVenta detalle : detallesVenta) {
@@ -139,7 +140,6 @@ public class VentaController {
             stage.showAndWait();
 
             ClientsListController controller = loader.getController();
-            // IMPORTANTE: Asegúrate de que esto devuelve el DOCUMENTO (DNI), no el nombre
             String clienteSeleccionado = controller.getClienteSeleccionado();
 
             if (clienteSeleccionado != null) {
@@ -152,17 +152,13 @@ public class VentaController {
 
     @FXML
     private void confirmarVenta() {
-        registrarVenta();
-    }
-
-    @FXML
-    private void registrarVenta() {
         try {
             Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
 
-            // 1. LIMPIEZA DE DATOS (Quitamos espacios para evitar errores)
+            // Limpieza de datos
             String docCliente = campoCliente.getText().trim(); 
             String dniVendedor = dniLabel.getText().trim();
+            int idCaja = caja.obtenerIdCajaAbierta(dniVendedor);
 
             if (docCliente.isEmpty() || docCliente.contains("Presione")) {
                 mostrarAlerta("Error", "Debe seleccionar un cliente.");
@@ -173,11 +169,11 @@ public class VentaController {
                 return;
             }
 
-            // 2. OBTENER IDs DESDE LA BDD
+            // Obtenemos los Ids desde la base de datos
             int idCliente = ventaService.obtenerIdCliente(docCliente);
             int idUsuario = ventaService.obtenerIdUsuario(dniVendedor);
 
-            // 3. VALIDACIÓN ESTRICTA
+            // Validacion de usuarios no encontrados
             if (idCliente == -1) {
                 mostrarAlerta("Error", "Cliente no encontrado. Asegúrese de que el buscador ingresó el DNI del cliente: " + docCliente);
                 return;
@@ -187,12 +183,12 @@ public class VentaController {
                 return;
             }
 
-            // 4. PROCESAR VENTA
+            // Proceso de venta
             for (DetalleVenta detalle : detallesVenta) {
                 ventaService.descontarStock(detalle.getId_producto(), detalle.getCantidad());
             }
 
-            Venta nuevaVenta = new Venta(timestamp, totalAcumulado, idUsuario, idCliente);
+            Venta nuevaVenta = new Venta(timestamp, totalAcumulado, idUsuario, idCliente, idCaja);
             ventaService.registrarVenta(nuevaVenta, detallesVenta);
 
             mostrarAlerta("Éxito", "Venta realizada correctamente.");

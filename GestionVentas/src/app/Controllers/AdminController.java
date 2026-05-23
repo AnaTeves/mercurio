@@ -122,6 +122,11 @@ public class AdminController extends ComunesController {
         setView("/resources/ProfileForm.fxml");
     }
 
+    @FXML
+    public void handleReports(){
+        mainBorderPane.setCenter(mainContent);
+    }
+
     // Metodo que cierra la sesion heredada de los metodos comunes
     @FXML
     public void logout(){

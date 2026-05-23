@@ -97,7 +97,7 @@ public class VentaService {
                 int id = resultSet.getInt("id_producto");
                 String nombre = resultSet.getString("nombre");
                 String descripcion = resultSet.getString("descripcion");
-                float precio = resultSet.getFloat("precio");
+                float precio = resultSet.getFloat("precio_venta");
                 int stock = resultSet.getInt("stock");
                 Boolean estado = resultSet.getBoolean("estado");
                 int id_categoria = resultSet.getInt("id_categoria");
@@ -116,26 +116,20 @@ public class VentaService {
     // Método para registrar la venta y devolver el id generado
     public void registrarVenta(Venta venta, List<DetalleVenta> detallesVenta) throws SQLException {
         // SQL para insertar una venta
-        String sqlVenta = "INSERT INTO VENTA(fecha_venta, total_venta, id_usuario, id_cliente) VALUES (?, ?, ?, ?)";
-        // String sqlID = "SELECT SCOPE_IDENTITY() AS idVentaGenerada";
-        
-        System.out.println(venta.getFechaVenta());
-        System.out.println(venta.getTotalVenta());
-        System.out.println(venta.getIdusuario());
-        System.out.println(venta.getIdcliente());
-
+        String sqlVenta = "INSERT INTO VENTA(fecha_venta, total_venta, id_usuario, id_cliente, id_caja) VALUES (?, ?, ?, ?, ?)";
+        // Conexion a la base de datos
         try(Connection conn = DatabaseConnection.getConnection()){
             conn.setAutoCommit(false);
         
             int idVenta = 0;
 
-            // Este valor se utilizará para obtener el ID de la venta
             try (PreparedStatement statement = conn.prepareStatement(sqlVenta, Statement.RETURN_GENERATED_KEYS)) {
                 // Setear los parámetros de la venta
                 statement.setTimestamp(1, venta.getFechaVenta());  // Fecha de la venta
                 statement.setFloat(2, venta.getTotalVenta());  // Total de la venta
                 statement.setInt(3, venta.getIdusuario());  // ID del usuario
                 statement.setInt(4, venta.getIdcliente());  // ID del cliente
+                statement.setInt(5, venta.getIdcaja());  // ID de la caja
                 
                 // Ejecutar la consulta de inserción
                 int affectedRows = statement.executeUpdate();
@@ -320,11 +314,11 @@ public class VentaService {
         series.setName("Cantidad de Productos Vendidos");
 
         String query = "SELECT p.nombre AS producto, SUM(dv.cantidad) AS cantidad_vendida " +
-                       "FROM VENTA v " +
-                       "JOIN DETALLE_VENTA dv ON v.id_venta = dv.id_venta " +
-                       "JOIN PRODUCTO p ON dv.id_producto = p.id_producto " +
-                       "GROUP BY p.nombre " +
-                       "ORDER BY cantidad_vendida DESC";
+                    "FROM VENTA v " +
+                    "JOIN DETALLE_VENTA dv ON v.id_venta = dv.id_venta " +
+                    "JOIN PRODUCTO p ON dv.id_producto = p.id_producto " +
+                    "GROUP BY p.nombre " +
+                    "ORDER BY cantidad_vendida DESC";
 
         try (Connection connection = DatabaseConnection.getConnection();
             Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
@@ -378,13 +372,13 @@ public class VentaService {
     public Map<String, Double> obtenerIngresosPorMes() {
         Map<String, Double> ingresosPorMes = new LinkedHashMap<>();
         String query = "SELECT FORMAT(fecha_venta, 'yyyy-MM') AS mes, SUM(total_venta) AS total "
-                     + "FROM VENTA "
-                     + "GROUP BY FORMAT(fecha_venta, 'yyyy-MM'), YEAR(fecha_venta), MONTH(fecha_venta) "
-                     + "ORDER BY YEAR(fecha_venta), MONTH(fecha_venta)";
+                    + "FROM VENTA "
+                    + "GROUP BY FORMAT(fecha_venta, 'yyyy-MM'), YEAR(fecha_venta), MONTH(fecha_venta) "
+                    + "ORDER BY YEAR(fecha_venta), MONTH(fecha_venta)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 ingresosPorMes.put(rs.getString("mes"), rs.getDouble("total"));
@@ -450,7 +444,6 @@ public class VentaService {
         return null;
     }
 
-    // NEW METHODS
     public ObservableList<PieChart.Data> obtenerProductosMasVendidos(LocalDate inicio, LocalDate fin) throws SQLException {
         String query = """
                 SELECT TOP 5 p.nombre, SUM(dv.cantidad) AS total
@@ -482,13 +475,13 @@ public class VentaService {
         return data;
     }
 
-     public List<Pair<String, Integer>> obtenerProductosMasVendidos() {
+    public List<Pair<String, Integer>> obtenerProductosMasVendidos() {
         List<Pair<String, Integer>> lista = new ArrayList<>();
         String query = "SELECT TOP 5 p.nombre, SUM(dv.cantidad) AS total_vendido "
-                     + "FROM detalle_venta dv "
-                     + "JOIN producto p ON dv.id_producto = p.id_producto "
-                     + "GROUP BY p.nombre "
-                     + "ORDER BY total_vendido DESC;";
+                    + "FROM detalle_venta dv "
+                    + "JOIN producto p ON dv.id_producto = p.id_producto "
+                    + "GROUP BY p.nombre "
+                    + "ORDER BY total_vendido DESC;";
 
         try (Connection conn = DatabaseConnection.getConnection();
         PreparedStatement stmt = conn.prepareStatement(query);
@@ -530,10 +523,10 @@ public class VentaService {
         
         // Ahora filtramos por estado = 1 y mantenemos la búsqueda insensible a mayúsculas
         String query = "SELECT id_producto, nombre, descripcion, precio_venta, stock, estado, id_categoria " +
-                       "FROM PRODUCTO WHERE estado = 1 AND (UPPER(nombre) LIKE UPPER(?) OR CAST(id_producto AS VARCHAR) LIKE ?)";
+                    "FROM PRODUCTO WHERE estado = 1 AND (UPPER(nombre) LIKE UPPER(?) OR CAST(id_producto AS VARCHAR) LIKE ?)";
         
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+            PreparedStatement statement = connection.prepareStatement(query)) {
             
             String parametro = "%" + filtro + "%";
             statement.setString(1, parametro);
