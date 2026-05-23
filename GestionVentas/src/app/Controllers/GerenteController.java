@@ -1,24 +1,29 @@
 package app.Controllers;
 import java.util.List;
+import java.util.ArrayList;
 import app.BDD.VentaService;
-import app.BDD.CategoriaService;
 import app.BDD.DatabaseConnection;
-// import app.BDD.UserService;
+import app.Models.Producto;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.PropertyValueFactory;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 
 import java.sql.Connection;
@@ -27,12 +32,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import javafx.collections.FXCollections;
 import javafx.scene.control.Label;
+import javafx.util.Pair;
 
 public class GerenteController extends ComunesController {
 
-    private CategoriaService categoriaService = new CategoriaService();
     private VentaService ventaService = new VentaService();
     @FXML
     private BarChart<String, Number> ventasPorDiaChart; 
@@ -43,6 +47,22 @@ public class GerenteController extends ComunesController {
     @FXML
     private BarChart<String, Number> barChart;
     @FXML
+    private BarChart<String, Number> vendedoresBarChart;
+    @FXML
+    private BarChart<String, Number> productosMasVendidosBarChart;
+    @FXML
+    private PieChart rankingProductosPieChart;
+    @FXML
+    private TableView<Producto> tablaStockBajo;
+    @FXML
+    private TableColumn<Producto, String> productoStockCol;
+    @FXML
+    private TableColumn<Producto, Integer> stockActualCol;
+    @FXML
+    private TableColumn<Producto, String> estadoStockCol;
+    @FXML
+    private ComboBox<String> comboVendedores;
+    @FXML
     private NumberAxis xAxis;
     @FXML
     private NumberAxis yAxis;
@@ -52,7 +72,6 @@ public class GerenteController extends ComunesController {
     private BorderPane mainBorderPane;
 
     @FXML GridPane gridPane;
-    private Node vistaInicial;
     @FXML
     private ComboBox<String> comboReporte;
 
@@ -65,91 +84,141 @@ public class GerenteController extends ComunesController {
     @FXML
     public void initialize(){
         super.initialize();
-        vistaInicial = mainContent;
-        // Combo box para seleccionar el tipo de reporte
-        comboReporte.setItems(FXCollections.observableArrayList("Productos más vendidos", "Categorías más vendidas"));
-
+        cargarProductosStockBajo();
+        cargarRankingProductos();
+        cargarProductosMasVendidos();
+        inicializarComboVendedores();
     }
 
-    /* Funcion que carga la vista de gestion de los usuarios */
-    @FXML
-    public void handleUsers(){
-        setView("/resources/UserView.fxml");
+    private void inicializarComboVendedores() {
+        // Cargar lista de vendedores desde la base de datos
+        comboVendedores.setItems(FXCollections.observableArrayList(obtenerNombresVendedores()));
+        
+        comboVendedores.setOnAction(event -> {
+            String vendedorSeleccionado = comboVendedores.getValue();
+            if (vendedorSeleccionado != null) {
+                cargarComparativoVendedores(vendedorSeleccionado);
+            }
+        });
     }
 
-    /* Funcion que carga los reportes */
+    private List<String> obtenerNombresVendedores() {
+        List<String> vendedores = new ArrayList<>();
+        String query = "SELECT nombreyape FROM USUARIO WHERE id_perfil = 3"; // Asumiendo que 3 es el perfil de vendedor
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                vendedores.add(rs.getString("nombreyape"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vendedores;
+    }
+
+    private void cargarProductosStockBajo() {
+        try {
+            List<Producto> productos = ventaService.obtenerProductos();
+            ObservableList<Producto> productosStockBajo = FXCollections.observableArrayList();
+            
+            // Filtrar productos con stock bajo (menos de 10 unidades)
+            for (Producto producto : productos) {
+                if (producto.getStock() < 10) {
+                    productosStockBajo.add(producto);
+                }
+            }
+            
+            productoStockCol.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+            stockActualCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+            estadoStockCol.setCellValueFactory(new PropertyValueFactory<>("estado"));
+            
+            tablaStockBajo.setItems(productosStockBajo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cargarComparativoVendedores(String vendedorSeleccionado) {
+        try {
+            Map<String, Integer> ventasPorVendedor = ventaService.obtenerVentasPorVendedor(vendedorSeleccionado);
+            vendedoresBarChart.getData().clear();
+            
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName("Ventas de " + vendedorSeleccionado);
+            
+            for (Map.Entry<String, Integer> entry : ventasPorVendedor.entrySet()) {
+                series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+            }
+            
+            vendedoresBarChart.getData().add(series);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cargarRankingProductos() {
+        try {
+            List<Pair<String, Integer>> productosRanking = ventaService.obtenerProductosMasVendidos();
+            rankingProductosPieChart.getData().clear();
+            
+            for (Pair<String, Integer> producto : productosRanking) {
+                PieChart.Data data = new PieChart.Data(producto.getKey(), producto.getValue());
+                rankingProductosPieChart.getData().add(data);
+            }
+            
+            // Calcular porcentajes
+            double sum = 0;
+            for (PieChart.Data d : rankingProductosPieChart.getData()) {
+                sum += d.getPieValue();
+            }
+            
+            for (PieChart.Data d : rankingProductosPieChart.getData()) {
+                double porcentaje = (d.getPieValue() / sum) * 100;
+                d.setName(d.getName() + " (" + String.format("%.2f", porcentaje) + "%)");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cargarProductosMasVendidos() {
+        productosMasVendidosBarChart.setData(ventaService.obtenerProductosVendidos());
+        
+        // Rotar las etiquetas del eje X
+        CategoryAxis xAxis = (CategoryAxis) productosMasVendidosBarChart.getXAxis();
+        xAxis.setTickLabelRotation(45);
+    }
+
+    /* Funcion que carga la vista de inventario */
     @FXML
-    public void handleReportes(){
-        mainBorderPane.setCenter(vistaInicial);
+    public void handleInventario(){
+        setView("/resources/InventarioView.fxml");
+    }
+
+    /* Funcion que carga la vista para anular ventas */
+    @FXML
+    public void handleAnularVentas(){
+        setView("/resources/VentasView.fxml");
+    }
+
+    /* Funcion que carga la vista de arqueo de caja */
+    @FXML
+    public void handleArqueoCaja(){
+        setView("/resources/CierreCaja.fxml");
+    }
+
+    /* Funcion que carga la vista de gestion de precios */
+    @FXML
+    public void handleGestionPrecios(){
+        setView("/resources/InventarioView.fxml");
     }
 
     /* Funcion que cierra la sesion */
     @FXML
     public void cerrarSesion(){
         handleLogout();
-    }
-
-    // Metodo que genera el reporte de los mas vendidos (categorias o productos)
-    @FXML
-    private void generarReporte(){
-        String opcionSeleccionada = comboReporte.getValue();
-        LocalDate inicio = fechaInicio.getValue();
-        LocalDate fin = fechaFin.getValue();
-        filtrarDatos(); // REVIEW
-
-        if (opcionSeleccionada == null || inicio == null || fin == null) {
-            showAlert("Error", "Debe completar todos los campos para generar el reporte.");
-            return;
-        }
-
-        if (opcionSeleccionada.equals("Productos más vendidos")) {
-            generarGraficoProductos(inicio, fin);
-        } else if (opcionSeleccionada.equals("Categorías más vendidas")) {
-            generarGraficoCategorias(inicio, fin);
-        }
-    }
-
-    private void generarGraficoProductos(LocalDate inicio, LocalDate fin) {
-        // try{
-        //     ObservableList<PieChart.Data> data = ventaService.obtenerProductosMasVendidos(inicio, fin);
-        //     graficoReporte.setData(data);
-        //     // graficoReporte.setTitle("Productos mas vendidos");
-        // } catch(SQLException e){
-        //     e.printStackTrace();
-        // }
-        try{
-            ObservableList<PieChart.Data> data = ventaService.obtenerProductosMasVendidos(inicio, fin);
-            graficoReporte.setData(data);
-            // graficoReporte.setTitle("Categorias mas vendidas");
-
-            double sum = 0;
-            for (PieChart.Data d : data) {
-                sum += d.getPieValue();
-            }
-                
-            for (PieChart.Data d : data) {
-                double porcentaje = (d.getPieValue() / sum) * 100;
-                d.setName(d.getName() + " (" + String.format("%.2f", porcentaje) + "%)");
-            }
-        } catch(SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    private void generarGraficoCategorias(LocalDate inicio, LocalDate fin) {
-            ObservableList<PieChart.Data> data = categoriaService.obtenerVentasPorCategoriaFiltradas(inicio, fin);
-            graficoReporte.setData(data);
-            // graficoReporte.setTitle("Categorias mas vendidas");
-
-            double sum = 0;
-            for (PieChart.Data d : data) {
-                sum += d.getPieValue();
-            }
-            
-            for (PieChart.Data d : data) {
-                double porcentaje = (d.getPieValue() / sum) * 100;
-                d.setName(d.getName() + " (" + String.format("%.2f", porcentaje) + "%)");
-            }
     }
 
     @FXML
@@ -162,11 +231,9 @@ public class GerenteController extends ComunesController {
     } 
 
     public void filtrarDatos() {
-        // Obtener las fechas de los DatePicker
         LocalDate fromDateLocal = fechaInicio.getValue();
         LocalDate toDateLocal = fechaFin.getValue();
 
-        // Validar las fechas
         if (fromDateLocal == null || toDateLocal == null) {
             System.out.println("Por favor, seleccione ambas fechas para filtrar.");
             return;

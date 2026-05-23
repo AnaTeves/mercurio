@@ -1,10 +1,8 @@
 package app.Controllers;
 
 import java.io.IOException;
-import java.sql.SQLException;
+
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.util.Map;
 
 import app.BDD.VentaService;
 import app.BDD.CajaService; 
@@ -15,14 +13,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.DatePicker;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Label;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -30,20 +28,21 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.control.TableCell;
 
 // Controlador del empleado que hereda del controlador de metodos comunes
 public class EmpleadoController extends ComunesController {
     
-    // Tabla y columnas de la tabla
-    @FXML private TableView<Venta> tableView;
+    // Tabla y columnas de la tabla de ventas del día
+    @FXML private TableView<Venta> tableViewVentasDia;
     @FXML private TableColumn<Venta, Timestamp> fechaventaCol;
     @FXML private TableColumn<Venta, Float> totalventaCol;
-    @FXML private TableColumn<Venta, String> dniusuarioCol;
     @FXML private TableColumn<Venta, String> dniclienteCol;
+    @FXML private TableColumn<Venta, String> detalleCol;
     
-    // Controlar las fechas de los reportes
-    @FXML private DatePicker datePickerInicio;
-    @FXML private DatePicker datePickerFin;
+    // Etiquetas de resumen
+    @FXML private Label lblTotalVentasDia;
+    @FXML private Label lblMontoTotalDia;
 
     private VentaService ventaService = new VentaService(); 
     private CajaService cajaService = new CajaService();
@@ -53,24 +52,81 @@ public class EmpleadoController extends ComunesController {
     @FXML private VBox menuLateral; 
     @FXML private GridPane gridPane;
     
-    private Node vistaInicial;
-    
     // Usamos tu SessionManager para obtener el usuario actual
     private SessionManager sessionManager = SessionManager.getInstance();
 
     @FXML
     public void initialize() {
         super.initialize();
-        vistaInicial = mainContent; // Asigno la vista inicial que contiene los reportes
         
-        // Configuracion de las columnas de la tabla
+        // Configuración de las columnas de la tabla
         fechaventaCol.setCellValueFactory(new PropertyValueFactory<>("fechaVenta"));
         totalventaCol.setCellValueFactory(new PropertyValueFactory<>("totalVenta"));
-        dniusuarioCol.setCellValueFactory(new PropertyValueFactory<>("dni_usuario"));
         dniclienteCol.setCellValueFactory(new PropertyValueFactory<>("dni_cliente"));
+        
+        // Configurar columna de detalle con botón
+        detalleCol.setCellFactory(col -> new TableCell<Venta, String>() {
+            private final Button btnVerDetalle = new Button("Ver Detalle");
+            
+            {
+                btnVerDetalle.setStyle("-fx-background-color: rgb(90, 108, 128); -fx-text-fill: White; -fx-cursor: hand;");
+                btnVerDetalle.setOnAction(event -> {
+                    Venta venta = getTableView().getItems().get(getIndex());
+                    verDetalleVenta(venta);
+                });
+            }
+            
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnVerDetalle);
+                }
+            }
+        });
 
         // Verificamos el estado de la caja antes de permitirle hacer nada
         verificarYMostrarCaja();
+    }
+
+    private void cargarVentasDelDia() {
+        Usuario usuarioActual = sessionManager.getCurrentUser();
+        if (usuarioActual == null) return;
+        
+        String dniUsuario = usuarioActual.getDni();
+        
+        try {
+            // Cargar ventas del día del usuario actual
+            ObservableList<Venta> ventasDia = FXCollections.observableArrayList(
+                ventaService.obtenerVentasDelDiaPorUsuario(dniUsuario)
+            );
+            tableViewVentasDia.setItems(ventasDia);
+            
+            // Calcular resumen
+            int totalVentas = ventasDia.size();
+            double montoTotal = ventasDia.stream().mapToDouble(Venta::getTotalVenta).sum();
+            
+            lblTotalVentasDia.setText(String.valueOf(totalVentas));
+            lblMontoTotalDia.setText(String.format("S/ %.2f", montoTotal));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void verDetalleVenta(Venta venta) {
+        // Por ahora, mostramos una alerta con el detalle
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Detalle de Venta");
+        alert.setHeaderText("Detalle de la venta");
+        alert.setContentText(
+            "Fecha: " + venta.getFechaVenta() + "\n" +
+            "Total: S/ " + venta.getTotalVenta() + "\n" +
+            "Cliente: " + venta.getDni_cliente()
+        );
+        alert.showAndWait();
     }
 
     // ==========================================
@@ -90,7 +146,7 @@ public class EmpleadoController extends ComunesController {
 
         if (tieneCajaAbierta) {
             if (menuLateral != null) menuLateral.setDisable(false);
-            loadVentas(); 
+            cargarVentasDelDia(); 
         } else {
             mostrarPantallaApertura(dniEmpleado);
         }
@@ -120,7 +176,7 @@ public class EmpleadoController extends ComunesController {
             // Si la caja se abrió correctamente, habilitamos todo
             if (controller.isCajaAbierta()) {
                 if (menuLateral != null) menuLateral.setDisable(false);
-                loadVentas();
+                cargarVentasDelDia();
             } else {
                 // Si por alguna razón forzó el cierre sin abrir caja, lo sacamos del sistema
                 handleLogout();
@@ -175,56 +231,8 @@ public class EmpleadoController extends ComunesController {
     }
 
     // ==========================================
-    // MÉTODOS DE REPORTES Y NAVEGACIÓN
+    // MÉTODOS DE NAVEGACIÓN
     // ==========================================
-
-    private void loadVentas() {
-        ObservableList<Venta> ventas = FXCollections.observableArrayList(ventaService.getAllVentas());
-        tableView.setItems(ventas);
-    }
-
-    @FXML
-    public void calcularReporteVentas() {
-        LocalDate fechaInicio = datePickerInicio.getValue();
-        LocalDate fechaFin = datePickerFin.getValue();
-
-        if (fechaInicio != null && fechaFin != null && !fechaInicio.isAfter(fechaFin)) {
-            try {
-                Map<String, Object> reporte = ventaService.obtenerReporteVentas(fechaInicio, fechaFin);
-                if (reporte != null) {
-                    int totalVentas = (int) reporte.get("total_ventas");
-                    double montoTotal = (double) reporte.get("monto_total");
-                    mostrarReporte(totalVentas, montoTotal);
-                } else {
-                    mostrarReporte(0, 0.0);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                mostrarAlertaError("Error al calcular el reporte", "Ha ocurrido un error al obtener los datos.");
-            }
-        } else {
-            mostrarAlertaError("Fechas inválidas", "Por favor, selecciona un rango de fechas válido.");
-        }
-    }
-
-    private void mostrarReporte(int totalVentas, double montoTotal) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Reporte de Ventas");
-        alert.setHeaderText("Resumen del rango seleccionado");
-        alert.setContentText(
-                "Total de Ventas: " + totalVentas + "\n" +
-                "Monto Generado: $" + String.format("%.2f", montoTotal)
-        );
-        alert.showAndWait();
-    }
-
-    private void mostrarAlertaError(String titulo, String mensaje) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(titulo);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
 
     @FXML
     public void handleInventario(){
@@ -242,7 +250,20 @@ public class EmpleadoController extends ComunesController {
     }
 
     @FXML
-    public void handleReportes(){
-        mainBorderPane.setCenter(vistaInicial);
+    public void handleConsultaStock(){
+        setView("/resources/InventarioView.fxml");
+    }
+
+    @FXML
+    public void handleArqueoCaja(){
+        setView("/resources/CierreCaja.fxml");
+    }
+
+    private void mostrarAlertaError(String titulo, String mensaje) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(titulo);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }

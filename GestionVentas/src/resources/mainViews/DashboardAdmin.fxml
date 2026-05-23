@@ -48,47 +48,23 @@
                         </ImageView>
                     </graphic>
                 </Button>
+                <Button onAction="#userManagement" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Usuarios" contentDisplay="LEFT" graphicTextGap="15">
+                    <graphic>
+                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
+                            <image>
+                                <Image url="@../files/clientes.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button onAction="#openBackupForm" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Backup" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
                                 <Image url="@../files/reportes.png" />
-                            </image>
-                            <effect>
-                                <ColorAdjust brightness="1.0" />
-                            </effect>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button onAction="#handleReports" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Reportes" contentDisplay="LEFT" graphicTextGap="15">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/reportes.png" />
-                            </image>
-                            <effect>
-                                <ColorAdjust brightness="1.0" />
-                            </effect>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button onAction="#productManagement" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Inventario" contentDisplay="LEFT" graphicTextGap="15">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/inventario.png" />
-                            </image>
-                            <effect>
-                                <ColorAdjust brightness="1.0" />
-                            </effect>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button onAction="#categoryManagement" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Categorias" contentDisplay="LEFT" graphicTextGap="15">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/categorias.png" />
                             </image>
                             <effect>
                                 <ColorAdjust brightness="1.0" />
@@ -113,7 +89,7 @@
         <!-- Contenedor central -->
         <center>
             <StackPane fx:id="mainContent" style="-fx-background-color: #f4f4f7;">
-                <GridPane fx:id="gridPane" alignment="CENTER"> <!-- Espacio horizontal y vertical entre celdas -->
+                <GridPane fx:id="gridPane" alignment="CENTER">
                     <columnConstraints>
                         <ColumnConstraints percentWidth="45" />
                         <ColumnConstraints percentWidth="45" />
@@ -122,10 +98,19 @@
                         <RowConstraints percentHeight="45" />
                         <RowConstraints percentHeight="45" />
                     </rowConstraints>
-                    <!-- Grafico que muestra los ingresos por mes y permite filtrar los ingresos de cada mes -->
-                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    
+                    <!-- Ganancia Neta -->
+                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
+                        <Label text="Ganancia Neta" styleClass="titulo" style="-fx-font-size: 16px;"/>
+                        <StackPane styleClass="cuadro-ingresos">
+                            <Label fx:id="lblGananciaNeta" text="S/ 0.00" styleClass="texto-ingresos"/>
+                        </StackPane>
+                        <Label text="*(En desarrollo)" style="-fx-text-fill: gray; -fx-font-size: 10px;"/>
+                    </VBox>
+
+                    <!-- Ingresos del día y mensual -->
+                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
                         <Label text="Ingresos del dia"/>
-                        <!-- Cuadro gris con ingresos -->
                         <StackPane styleClass="cuadro-ingresos">
                             <Label fx:id="lblIngresosDia" text="S/ 0.00" styleClass="texto-ingresos"/>
                         </StackPane>
@@ -136,29 +121,25 @@
                             <Label fx:id="lblIngresosMes" text="S/ 0.00" styleClass="texto-ingresos"/>
                         </StackPane>
                     </VBox>
-
                     
-                    <PieChart fx:id="productosPieChart" layoutX="70" layoutY="70" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <!-- Auditoría del Sistema -->
+                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
+                        <Label text="Auditoría del Sistema" styleClass="titulo" style="-fx-font-size: 16px;"/>
+                        <Label text="*(En desarrollo - Tracking de cambios)" style="-fx-text-fill: gray; -fx-font-size: 12px; -fx-wrap-text: true;"/>
+                    </VBox>
 
-
-                    <LineChart fx:id="ingresosLineChart" layoutX="50.0" layoutY="50.0" prefHeight="200.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <xAxis>
-                            <CategoryAxis label="Meses" />
-                        </xAxis>
-                        <yAxis>
-                            <NumberAxis fx:id="yAxis" label="Ingresos" autoRanging="false" lowerBound="0" upperBound="50" tickUnit="10"/>
-                        </yAxis>
-                    </LineChart>
-
-
-                    <!-- <BarChart fx:id="barChart" layoutX="100" layoutY="100" prefHeight="200" prefWidth="400"  GridPane.columnIndex="0" GridPane.rowIndex="1">
-                        <xAxis>
-                            <CategoryAxis label="Producto" />
-                        </xAxis>
-                        <yAxis>
-                            <NumberAxis label="Cantidad Vendida" />
-                        </yAxis>
-                    </BarChart> -->
+                    <!-- Balance Mensual/Anual - Line Chart -->
+                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
+                        <Label text="Balance Mensual/Anual" styleClass="titulo" style="-fx-font-size: 16px;"/>
+                        <LineChart fx:id="ingresosLineChart" prefHeight="200.0" prefWidth="350.0">
+                            <xAxis>
+                                <CategoryAxis label="Meses" />
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis fx:id="yAxis" label="Ingresos" autoRanging="false" lowerBound="0" upperBound="50" tickUnit="10"/>
+                            </yAxis>
+                        </LineChart>
+                    </VBox>
                 </GridPane>
             </StackPane>
         </center>

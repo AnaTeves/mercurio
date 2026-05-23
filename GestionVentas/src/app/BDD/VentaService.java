@@ -562,4 +562,43 @@ public class VentaService {
         }
         return productos;
     }
+
+    // Método para obtener las ventas del día de un usuario específico
+    public List<Venta> obtenerVentasDelDiaPorUsuario(String dniUsuario) {
+        List<Venta> ventas = new ArrayList<>();
+        String query = """
+            SELECT 
+                V.fecha_venta, 
+                V.total_venta, 
+                U.DNI AS dniUsuario, 
+                C.documento AS dniCliente
+            FROM 
+                VENTA V
+            JOIN USUARIO U ON V.id_usuario = U.id_usuario
+            JOIN CLIENTE C ON V.id_cliente = C.id_cliente
+            WHERE U.DNI = ? 
+            AND CAST(V.fecha_venta AS DATE) = CAST(GETDATE() AS DATE)
+            ORDER BY V.fecha_venta DESC;
+        """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setString(1, dniUsuario);
+            ResultSet resultSet = stmt.executeQuery();
+
+            while (resultSet.next()) {
+                Timestamp fechaVenta = resultSet.getTimestamp("fecha_venta");
+                float totalVenta = resultSet.getFloat("total_venta");
+                String dniUsuarioResult = resultSet.getString("dniUsuario");
+                String dniCliente = resultSet.getString("dniCliente");
+                
+                ventas.add(new Venta(fechaVenta, totalVenta, dniUsuarioResult, dniCliente));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return ventas;
+    }
 }

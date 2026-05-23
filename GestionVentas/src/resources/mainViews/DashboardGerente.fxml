@@ -25,6 +25,9 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 
 <!-- Vista del gerente al ingresar -->
 <StackPane alignment="CENTER" maxHeight="800" maxWidth="1000" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.GerenteController">
@@ -48,7 +51,31 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleReportes" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Reportes" contentDisplay="LEFT" graphicTextGap="15">
+                <Button onAction="#handleInventario" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Inventario" contentDisplay="LEFT" graphicTextGap="15">
+                    <graphic>
+                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
+                            <image>
+                                <Image url="@../files/inventario.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button onAction="#handleAnularVentas" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Anular Ventas" contentDisplay="LEFT" graphicTextGap="15">
+                    <graphic>
+                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
+                            <image>
+                                <Image url="@../files/ventas.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button onAction="#handleArqueoCaja" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Arqueo Caja" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
@@ -60,11 +87,11 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleUsers" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Usuarios" contentDisplay="LEFT" graphicTextGap="15">
+                <Button onAction="#handleGestionPrecios" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Gestión Precios" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
-                                <Image url="@../files/usuario.png" />
+                                <Image url="@../files/categorias.png" />
                             </image>
                             <effect>
                                 <ColorAdjust brightness="1.0" />
@@ -89,29 +116,62 @@
         <!-- Contenedor central -->
         <center>
             <StackPane fx:id="mainContent" style="-fx-background-color: #f4f4f7;">
-                <VBox alignment="CENTER" spacing="20">
-                    <HBox spacing="10" alignment="CENTER" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);" minHeight="70" maxWidth="700">
-                        <padding>
-                            <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
-                        </padding>
-                        <VBox spacing="5">
-                            <Label styleClass="labels" text="Fecha inicio:" />
-                            <DatePicker fx:id="fechaInicio" promptText="Seleccione.." prefWidth="150.0"/>
-                        </VBox>
-                        <VBox spacing="5">
-                            <Label styleClass="labels" text="Fecha fin:" />
-                            <DatePicker fx:id="fechaFin" promptText="Seleccione.." prefWidth="150.0"/>
-                        </VBox>
-                        <VBox spacing="5">
-                            <Label styleClass="labels" text="Tipo reporte:" />
-                            <ComboBox fx:id="comboReporte" promptText="Seleccione reporte" prefWidth="150.0"/>
-                        </VBox>
-                        <Button text="Generar Reporte" onAction="#generarReporte" style="-fx-background-color: rgb(90, 108, 128); -fx-text-fill: White; -fx-font-weight: bold; -fx-cursor: hand;" prefHeight="35.0" prefWidth="120.0"/>
-                    </HBox>
-                    <HBox alignment="CENTER" style="-fx-padding: 20;">
-                        <PieChart fx:id="graficoReporte" prefHeight="400.0" prefWidth="600.0"/>
-                    </HBox>
-                </VBox>
+                <GridPane fx:id="gridPane" alignment="CENTER" hgap="20" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="30" />
+                        <ColumnConstraints percentWidth="35" />
+                        <ColumnConstraints percentWidth="35" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints percentHeight="45" />
+                        <RowConstraints percentHeight="45" />
+                    </rowConstraints>
+                    
+                    <!-- Productos pronto a agotarse - TableView -->
+                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
+                        <Label text="Stock Bajo" styleClass="titulo" style="-fx-font-size: 16px;"/>
+                        <TableView fx:id="tablaStockBajo" prefHeight="200.0" prefWidth="250.0">
+                            <columns>
+                                <TableColumn fx:id="productoStockCol" prefWidth="120.0" text="Producto" />
+                                <TableColumn fx:id="stockActualCol" prefWidth="60.0" text="Stock" />
+                                <TableColumn fx:id="estadoStockCol" prefWidth="70.0" text="Estado" />
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    
+                    <!-- Comparativo de Vendedores - Bar Chart -->
+                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
+                        <Label text="Comparativo Vendedores" styleClass="titulo" style="-fx-font-size: 16px;"/>
+                        <ComboBox fx:id="comboVendedores" promptText="Seleccionar vendedor" prefWidth="200.0"/>
+                        <BarChart fx:id="vendedoresBarChart" prefHeight="180.0" prefWidth="280.0">
+                            <xAxis>
+                                <CategoryAxis label="Día" />
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Ventas" />
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                    
+                    <!-- Ranking de Productos - Pie Chart -->
+                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
+                        <Label text="Ranking Productos" styleClass="titulo" style="-fx-font-size: 16px;"/>
+                        <PieChart fx:id="rankingProductosPieChart" prefHeight="200.0" prefWidth="280.0"/>
+                    </VBox>
+                    
+                    <!-- Productos Más Vendidos por Categoría -->
+                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="1" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
+                        <Label text="Productos Más Vendidos" styleClass="titulo" style="-fx-font-size: 16px;"/>
+                        <BarChart fx:id="productosMasVendidosBarChart" prefHeight="200.0" prefWidth="800.0">
+                            <xAxis>
+                                <CategoryAxis label="Producto" />
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Cantidad" />
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                </GridPane>
             </StackPane>
         </center>
     </BorderPane>
