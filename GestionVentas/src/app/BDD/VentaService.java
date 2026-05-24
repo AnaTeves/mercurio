@@ -498,6 +498,29 @@ public class VentaService {
         return lista;
     }
 
+    public List<Pair<String, Integer>> obtenerTodosProductosConVentas() {
+        List<Pair<String, Integer>> lista = new ArrayList<>();
+        String query = "SELECT p.nombre, ISNULL(SUM(dv.cantidad), 0) AS total_vendido "
+                    + "FROM producto p "
+                    + "LEFT JOIN detalle_venta dv ON p.id_producto = dv.id_producto "
+                    + "GROUP BY p.nombre "
+                    + "ORDER BY total_vendido ASC;";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String nombre = rs.getString("nombre");
+                int totalVendido = rs.getInt("total_vendido");
+                lista.add(new Pair<>(nombre, totalVendido));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
 
     // FUNCIONA Y SE USA
     public double obtenerIngresosDelDia(){

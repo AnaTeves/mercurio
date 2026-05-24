@@ -159,10 +159,10 @@
                         <PieChart fx:id="rankingProductosPieChart" prefHeight="140.0" prefWidth="220.0"/>
                     </VBox>
                     
-                    <!-- Productos Más Vendidos por Categoría -->
-                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="1" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
+                    <!-- Productos Más Vendidos - Bar Chart -->
+                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
                         <Label text="Productos Más Vendidos" styleClass="titulo" style="-fx-font-size: 11px;"/>
-                        <BarChart fx:id="productosMasVendidosBarChart" prefHeight="160.0" prefWidth="700.0">
+                        <BarChart fx:id="productosMasVendidosBarChart" prefHeight="160.0" prefWidth="500.0">
                             <xAxis>
                                 <CategoryAxis label="Producto" />
                             </xAxis>
@@ -170,6 +170,35 @@
                                 <NumberAxis label="Cantidad" />
                             </yAxis>
                         </BarChart>
+                    </VBox>
+
+                    <!-- Top 3 y Menos Vendidos - Listado -->
+                    <VBox spacing="15" alignment="TOP_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="1" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20;">
+                        <Label text="Ranking de Ventas" styleClass="titulo" style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+
+                        <!-- Top 5 Más Vendidos -->
+                        <VBox spacing="5">
+                            <Label text="🏆 Top 5 Más Vendidos" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                            <VBox fx:id="topMasVendidosContainer" spacing="3">
+                                <Label text="1. Cargando..." style="-fx-font-size: 10px;"/>
+                                <Label text="2. Cargando..." style="-fx-font-size: 10px;"/>
+                                <Label text="3. Cargando..." style="-fx-font-size: 10px;"/>
+                                <Label text="4. Cargando..." style="-fx-font-size: 10px;"/>
+                                <Label text="5. Cargando..." style="-fx-font-size: 10px;"/>
+                            </VBox>
+                        </VBox>
+
+                        <!-- Top 5 Menos Vendidos -->
+                        <VBox spacing="5">
+                            <Label text="📉 Top 5 Menos Vendidos" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                            <VBox fx:id="topMenosVendidosContainer" spacing="3">
+                                <Label text="1. Cargando..." style="-fx-font-size: 10px;"/>
+                                <Label text="2. Cargando..." style="-fx-font-size: 10px;"/>
+                                <Label text="3. Cargando..." style="-fx-font-size: 10px;"/>
+                                <Label text="4. Cargando..." style="-fx-font-size: 10px;"/>
+                                <Label text="5. Cargando..." style="-fx-font-size: 10px;"/>
+                            </VBox>
+                        </VBox>
                     </VBox>
                 </GridPane>
             </StackPane>

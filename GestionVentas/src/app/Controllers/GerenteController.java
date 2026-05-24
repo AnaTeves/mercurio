@@ -23,16 +23,17 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Tooltip;
 import java.time.LocalDate;
-import java.time.LocalTime;
+
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+
 
 import javafx.scene.control.Label;
 import javafx.util.Pair;
@@ -51,6 +52,8 @@ public class GerenteController extends ComunesController {
     @FXML private TableColumn<Producto, String> productoStockCol;
     @FXML private TableColumn<Producto, Integer> stockActualCol;
     @FXML private TableColumn<Producto, String> estadoStockCol;
+    @FXML private VBox topMasVendidosContainer;
+    @FXML private VBox topMenosVendidosContainer;
     @FXML private ComboBox<String> comboVendedores;
     @FXML private NumberAxis xAxis;
     @FXML private NumberAxis yAxis;
@@ -176,6 +179,46 @@ public class GerenteController extends ComunesController {
                 Tooltip tooltip = new Tooltip(data.getXValue() + ": " + data.getYValue() + " vendidos");
                 Tooltip.install(data.getNode(), tooltip);
             }
+        }
+
+        // Cargar listados de top 5 más y menos vendidos
+        cargarRankingListados();
+    }
+
+    private void cargarRankingListados() {
+        try {
+            // Obtener todos los productos con sus ventas (ordenados ascendentemente por ventas)
+            List<Pair<String, Integer>> productosTodosConVentas = ventaService.obtenerTodosProductosConVentas();
+
+            // Obtener productos más vendidos (ordenados descendentemente)
+            List<Pair<String, Integer>> productosMasVendidos = ventaService.obtenerProductosMasVendidos();
+
+            // Limpiar contenedores
+            topMasVendidosContainer.getChildren().clear();
+            topMenosVendidosContainer.getChildren().clear();
+
+            // Top 5 más vendidos (primeros 5 de la lista de más vendidos)
+            for (int i = 0; i < Math.min(5, productosMasVendidos.size()); i++) {
+                Pair<String, Integer> producto = productosMasVendidos.get(i);
+                Label label = new Label((i + 1) + ". " + producto.getKey() + " (" + producto.getValue() + ")");
+                label.setStyle("-fx-font-size: 10px;");
+                topMasVendidosContainer.getChildren().add(label);
+            }
+
+            // Top 5 menos vendidos (primeros 5 de la lista ordenada ascendentemente)
+            for (int i = 0; i < Math.min(5, productosTodosConVentas.size()); i++) {
+                Pair<String, Integer> producto = productosTodosConVentas.get(i);
+                Label label = new Label((i + 1) + ". " + producto.getKey() + " (" + producto.getValue() + ")");
+                label.setStyle("-fx-font-size: 10px;");
+                topMenosVendidosContainer.getChildren().add(label);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // En caso de error, mostrar mensaje de error
+            topMasVendidosContainer.getChildren().clear();
+            topMenosVendidosContainer.getChildren().clear();
+            topMasVendidosContainer.getChildren().add(new Label("Error al cargar datos"));
+            topMenosVendidosContainer.getChildren().add(new Label("Error al cargar datos"));
         }
     }
 
