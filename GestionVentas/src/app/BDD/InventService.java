@@ -115,7 +115,7 @@ public class InventService {
     }
 
     public void actualizarProducto(Producto producto){
-        String sql = "UPDATE PRODUCTO SET nombre = ?, descripcion = ?, precio = ?, stock = ?, id_categoria = ? WHERE id_producto = ?";
+        String sql = "UPDATE PRODUCTO SET nombre = ?, descripcion = ?, precio_venta = ?, stock = ?, id_categoria = ?, estado = ? WHERE id_producto = ?";
 
         try(Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);){
@@ -125,7 +125,8 @@ public class InventService {
                 stmt.setFloat(3, producto.getPrecio());
                 stmt.setInt(4, producto.getStock());
                 stmt.setInt(5, producto.getId_categoria());
-                stmt.setInt(6, producto.getId());
+                stmt.setBoolean(6, producto.getEstado());
+                stmt.setInt(7, producto.getId());
 
                 int filasActualizadas = stmt.executeUpdate();
 

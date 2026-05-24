@@ -75,6 +75,18 @@
                         </ImageView>
                     </graphic>
                 </Button>
+                <Button onAction="#handleCategorias" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Categorias" contentDisplay="LEFT" graphicTextGap="15">
+                    <graphic>
+                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
+                            <image>
+                                <Image url="@../files/categorias.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button onAction="#handleArqueoCaja" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Arqueo Caja" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">

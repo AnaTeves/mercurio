@@ -87,7 +87,7 @@ public class VentaService {
     public List<Producto> obtenerProductos() {
         List<Producto> productos = new ArrayList<>();
     
-        String query = "SELECT id_producto, nombre, descripcion, precio_venta, stock, estado, id_categoria FROM PRODUCTO";
+        String query = "SELECT id_producto, nombre, descripcion, precio_venta, stock, estado, id_categoria FROM PRODUCTO WHERE estado = 1";
         
         try (Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(query);

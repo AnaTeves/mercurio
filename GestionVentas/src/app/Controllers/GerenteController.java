@@ -258,6 +258,11 @@ public class GerenteController extends ComunesController {
     }
 
     @FXML
+    public void handleCategorias(){
+        setView("/resources/CategoriasView.fxml");
+    }
+
+    @FXML
     public void showAlert(String titulo, String mensaje) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(titulo);
