@@ -17,7 +17,6 @@
             <padding>
                 <Insets bottom="40.0" left="50.0" right="50.0" top="40.0" />
             </padding>
-            
                 <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
                     <image>
                         <Image url="@files/clientes.png" />
@@ -26,38 +25,35 @@
                 <Insets top="25.0" />
                 </VBox.margin>
                 </ImageView>
-            
             <Label styleClass="texto-comun" text="Formulario de registro" textAlignment="CENTER" textFill="BLACK">
                 <padding>
                     <Insets bottom="10.0" />
                 </padding>
             </Label>
-
-            <VBox alignment="CENTER_LEFT" maxHeight="315.0" maxWidth="250.0" prefHeight="315.0" prefWidth="250.0" spacing="10.0" styleClass="vbox-interno">
+            <VBox alignment="CENTER_LEFT" maxHeight="315.0" maxWidth="250.0" prefHeight="315.0" prefWidth="250.0" spacing="10.0" styleClass="vbox-interno formulario-container">
                 <!-- Campo nombre y apellido -->
                 <Label styleClass="labels" text="Nombre y apellido" />
-                <TextField fx:id="nombreField" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Nombre y apellido" />
+                <TextField fx:id="nombreField" styleClass="text-field-registro" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Nombre y apellido" />
                 <!-- Campo dni -->
                 <Label styleClass="labels" text="Documento" />
-                <TextField fx:id="dniField" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="156.0" promptText="DNI">
+                <TextField fx:id="dniField" styleClass="text-field-registro" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="156.0" promptText="DNI">
                 <VBox.margin>
                 <Insets />
                 </VBox.margin></TextField>
                 <!-- Campo email -->
                 <Label styleClass="labels" text="Correo electronico" />
-                <TextField fx:id="emailField" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Correo electronico" />
+                <TextField fx:id="emailField" styleClass="text-field-registro" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Correo electronico" />
                 <!-- Campo telefono -->
                 <Label styleClass="labels" text="Telefono" />
-                <TextField fx:id="telefonoField" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Telefono" />
-
+                <TextField fx:id="telefonoField" styleClass="text-field-registro" alignment="TOP_LEFT" maxWidth="200.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="Telefono" />
                 <padding>
                     <Insets bottom="5.0" left="25.0" right="25.0" />
                 </padding>
             </VBox>
             <!-- Contenedor horizontal para botones -->
             <HBox alignment="CENTER" styleClass="hbox">
-                <Button onAction="#agregarCliente" prefHeight="25.0" prefWidth="111.0" text="Registrar" />
-                <Button onAction="#cancelar" prefHeight="25.0" prefWidth="111.0" text="Volver" />
+                <Button styleClass="boton-registro" onAction="#agregarCliente" prefHeight="25.0" prefWidth="111.0" text="Registrar" />
+                <Button styleClass="boton-registro" onAction="#cancelar" prefHeight="25.0" prefWidth="111.0" text="Volver" />
             <padding>
             <Insets top="15.0" />
             </padding>

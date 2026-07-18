@@ -45,14 +45,19 @@ public class AdminController extends ComunesController {
         cargarMeses();
         ingresosDelDia();
         cargarVentasPorDia();
-        // Ganancia neta en desarrollo
-        lblGananciaNeta.setText("S/ 0.00");
+        cargarGananciaNeta();
     }
 
     // FUNCIONA Y SE USA
     public void ingresosDelDia(){
         double ingresos = ventaService.obtenerIngresosDelDia();
         lblIngresosDia.setText(String.format("S/ %.2f", ingresos));
+    }
+
+    // FUNCIONA Y SE USA
+    public void cargarGananciaNeta(){
+        double gananciaNeta = ventaService.obtenerGananciaNeta();
+        lblGananciaNeta.setText(String.format("S/ %.2f", gananciaNeta));
     }
 
     // FUNCIONA Y SE USA

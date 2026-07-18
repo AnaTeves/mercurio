@@ -117,7 +117,6 @@
                         <StackPane styleClass="cuadro-ingresos">
                             <Label fx:id="lblGananciaNeta" text="S/ 0.00" styleClass="texto-ingresos"/>
                         </StackPane>
-                        <Label text="*(En desarrollo)" style="-fx-text-fill: gray; -fx-font-size: 10px;"/>
                     </VBox>
 
                     <!-- Ingresos del día y mensual -->

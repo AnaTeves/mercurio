@@ -17,6 +17,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.shape.Line?>
 
+<!-- Ventana que permite seleccionar un cliente existente o crear uno nuevo -->
 <VBox spacing="10" alignment="CENTER" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.ClientsListController">
     <Label text="Seleccione un cliente:" />
     <TableView fx:id="tablaClientes">

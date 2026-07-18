@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -8,34 +10,40 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
 
 <!-- Vista del inicio de sesion -->
 <StackPane prefHeight="450.0" prefWidth="400.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.LoginController">
     <VBox fx:id="logoLabelContainer" alignment="CENTER" spacing="20.0" styleClass="vbox" StackPane.alignment="CENTER">
+        <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+        </padding>
         <!-- Imagen -->
         <ImageView fx:id="logoView" fitHeight="116.0" fitWidth="339.0" styleClass="image-view">
             <image>
                 <Image url="@files/logonegro.png" />
             </image>
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
         </ImageView>
         <!-- Campo documento -->
-        <VBox alignment="CENTER">
-            <Label text="Documento" textFill="BLACK"/>
+        <VBox alignment="CENTER_LEFT" maxWidth="250.0" spacing="8.0">
+            <Label styleClass="labels" text="Documento" textFill="BLACK"/>
+            <TextField fx:id="dniField" maxWidth="250.0" prefHeight="40.0" prefWidth="250.0" promptText="Ingrese su DNI" styleClass="text-field-registro"/>
         </VBox>
-        
-        <TextField fx:id="dniField" maxWidth="200.0" prefHeight="35.0" promptText="Ingrese su DNI" />
         <!-- Campo contraseña -->
-        <VBox alignment="CENTER">
-            <Label text="Contraseña" textFill="BLACK"/>
+        <VBox alignment="CENTER_LEFT" maxWidth="250.0" spacing="8.0">
+            <Label styleClass="labels" text="Contraseña" textFill="BLACK"/>
+            <PasswordField fx:id="passwordField" maxWidth="250.0" prefHeight="40.0" prefWidth="250.0" promptText="Contraseña" styleClass="text-field-registro"/>
         </VBox>
-        
-        <PasswordField fx:id="passwordField" maxWidth="200.0" prefHeight="35.0" promptText="Contraseña" />
         <!-- Contenedor horizontal para botones -->
-        <HBox alignment="CENTER" spacing="10" styleClass="hbox">
+        <HBox alignment="CENTER" spacing="15.0" styleClass="hbox">
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
             <!-- Botones -->
-            <Button fx:id="btnLogin" onAction="#handleLogin" prefHeight="30.0" prefWidth="70.0" text="Ingresar" textAlignment="CENTER" style="-fx-background-color: #b6dfaa;"/>
-            <Button fx:id="btnOut" onAction="#handleCancel" prefHeight="30.0" prefWidth="70.0" text="Cerrar" textAlignment="CENTER" style="-fx-background-color: #fbb09d;"/>
+            <Button fx:id="btnLogin" onAction="#handleLogin" prefHeight="35.0" prefWidth="110.0" text="Ingresar" textAlignment="CENTER" styleClass="boton-registro"/>
+            <Button fx:id="btnOut" onAction="#handleCancel" prefHeight="35.0" prefWidth="110.0" text="Cerrar" textAlignment="CENTER" styleClass="boton-registro"/>
         </HBox>
     </VBox>
 </StackPane>

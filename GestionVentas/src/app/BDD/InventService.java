@@ -17,7 +17,7 @@ public class InventService {
 
     public Producto buscarProductoPorId(int id) {
     Producto producto = null;
-    String sql = "SELECT id_producto, nombre, descripcion, precio_venta, stock, estado, id_categoria FROM PRODUCTO WHERE id_producto = ?";
+    String sql = "SELECT id_producto, nombre, descripcion, precio_venta, precio_costo, stock, estado, id_categoria FROM PRODUCTO WHERE id_producto = ?";
 
     try (Connection conn = DatabaseConnection.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -31,7 +31,7 @@ public class InventService {
                     int stock = rs.getInt("stock");
                     boolean estado = rs.getBoolean("estado");
                     int id_categoria = rs.getInt("id_categoria");
-                    producto = new Producto(productoId, nombre, descripcion, precio, stock, estado, id_categoria);
+                    producto = new Producto(productoId, nombre, descripcion, precio, precio_costo, stock, estado, id_categoria);
                 }
             }
         } catch (SQLException e) {
@@ -44,7 +44,7 @@ public class InventService {
     // Metodo que carga todos los productos desde la base de datos
     public ObservableList<Producto> loadProducts(){
         ObservableList<Producto> productos = FXCollections.observableArrayList(); // Creamos una lista observable de productos
-        String query = "SELECT id_producto,nombre, descripcion, precio_venta, stock, estado, id_categoria FROM PRODUCTO"; // Consulta SQL que selecciona las columnas de la tabla producto
+        String query = "SELECT id_producto,nombre, descripcion, precio_venta, precio_costo, stock, estado, id_categoria FROM PRODUCTO"; // Consulta SQL que selecciona las columnas de la tabla producto
         // Abrimos la conexion a la base de datos y ejecutamos la consulta
         try(Connection conn = DatabaseConnection.getConnection();
             Statement stmt = conn.createStatement();
@@ -59,7 +59,7 @@ public class InventService {
                 boolean estado = rs.getBoolean("estado");
                 int id_categoria = rs.getInt("id_categoria");
 
-                Producto producto = new Producto(id, nombre, desc, precio, stock, estado, id_categoria);
+                Producto producto = new Producto(id, nombre, desc, precio, precio_costo, stock, estado, id_categoria);
                 productos.add(producto);
             }    
         } catch (SQLException e) {

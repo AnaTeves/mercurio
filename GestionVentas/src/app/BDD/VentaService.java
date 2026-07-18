@@ -87,7 +87,7 @@ public class VentaService {
     public List<Producto> obtenerProductos() {
         List<Producto> productos = new ArrayList<>();
     
-        String query = "SELECT id_producto, nombre, descripcion, precio_venta, stock, estado, id_categoria FROM PRODUCTO WHERE estado = 1";
+        String query = "SELECT id_producto, nombre, descripcion, precio_venta, precio_costo, stock, estado, id_categoria FROM PRODUCTO WHERE estado = 1";
         
         try (Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
@@ -102,7 +102,7 @@ public class VentaService {
                 Boolean estado = resultSet.getBoolean("estado");
                 int id_categoria = resultSet.getInt("id_categoria");
 
-                Producto producto = new Producto(id, nombre, descripcion, precio, stock, estado, id_categoria);
+                Producto producto = new Producto(id, nombre, descripcion, precio, 0, stock, estado, id_categoria);
                 productos.add(producto);
             }
             
@@ -545,7 +545,7 @@ public class VentaService {
         List<Producto> productos = new ArrayList<>();
         
         // Ahora filtramos por estado = 1 y mantenemos la búsqueda insensible a mayúsculas
-        String query = "SELECT id_producto, nombre, descripcion, precio_venta, stock, estado, id_categoria " +
+        String query = "SELECT id_producto, nombre, descripcion, precio_venta, precio_costo, stock, estado, id_categoria " +
                     "FROM PRODUCTO WHERE estado = 1 AND (UPPER(nombre) LIKE UPPER(?) OR CAST(id_producto AS VARCHAR) LIKE ?)";
         
         try (Connection connection = DatabaseConnection.getConnection();
@@ -569,7 +569,7 @@ public class VentaService {
                     Boolean estado = resultSet.getBoolean("estado"); // Aunque sea 1, get string funciona, o usa getInt()
                     int id_categoria = resultSet.getInt("id_categoria");
 
-                    Producto producto = new Producto(id, nombre, descripcion, precio, stock, estado, id_categoria);
+                    Producto producto = new Producto(id, nombre, descripcion, precio, 0, stock, estado, id_categoria);
                     productos.add(producto);
                 }
             }
@@ -616,5 +616,30 @@ public class VentaService {
         }
 
         return ventas;
+    }
+
+    // Método para calcular la ganancia neta (ventas totales - costo de compras)
+    public double obtenerGananciaNeta() {
+        double gananciaNeta = 0;
+        String query = "SELECT " +
+                      "SUM(dv.cantidad * p.precio_venta) AS total_ventas, " +
+                      "SUM(dv.cantidad * p.precio_costo) AS total_costo " +
+                      "FROM detalle_venta dv " +
+                      "JOIN producto p ON dv.id_producto = p.id_producto " +
+                      "JOIN venta v ON dv.id_venta = v.id_venta";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            if (rs.next()) {
+                double totalVentas = rs.getDouble("total_ventas");
+                double totalCosto = rs.getDouble("total_costo");
+                gananciaNeta = totalVentas - totalCosto;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return gananciaNeta;
     }
 }
