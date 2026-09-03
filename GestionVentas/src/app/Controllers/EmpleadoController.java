@@ -8,6 +8,8 @@ import app.BDD.VentaService;
 import app.BDD.CajaService; 
 import app.Models.Usuario;
 import app.Models.Venta;
+import app.Controllers.AperturaCajaController;
+
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -46,6 +48,7 @@ public class EmpleadoController extends ComunesController {
 
     private VentaService ventaService = new VentaService(); 
     private CajaService cajaService = new CajaService();
+    private AperturaCajaController cajaController = new AperturaCajaController();
 
     @FXML private StackPane mainContent;
     @FXML private BorderPane mainBorderPane;
@@ -160,8 +163,8 @@ public class EmpleadoController extends ComunesController {
             Parent root = loader.load();
 
             // Pasamos el DNI al controlador de apertura
-            AperturaCajaController controller = loader.getController();
-            controller.inicializarDatos(dniEmpleado);
+            cajaController = loader.getController();
+            cajaController.inicializarDatos(dniEmpleado);
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana principal
@@ -174,7 +177,7 @@ public class EmpleadoController extends ComunesController {
             stage.showAndWait();
 
             // Si la caja se abrió correctamente, habilitamos todo
-            if (controller.isCajaAbierta()) {
+            if (cajaController.isCajaAbierta()) {
                 if (menuLateral != null) menuLateral.setDisable(false);
                 cargarVentasDelDia();
             } else {

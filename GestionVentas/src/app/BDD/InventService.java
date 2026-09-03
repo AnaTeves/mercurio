@@ -28,6 +28,7 @@ public class InventService {
                     String nombre = rs.getString("nombre");
                     String descripcion = rs.getString("descripcion");
                     float precio = rs.getFloat("precio_venta");
+                    float precio_costo = rs.getFloat("precio_costo");
                     int stock = rs.getInt("stock");
                     boolean estado = rs.getBoolean("estado");
                     int id_categoria = rs.getInt("id_categoria");
@@ -55,6 +56,7 @@ public class InventService {
                 String nombre = rs.getString("nombre");
                 String desc = rs.getString("descripcion");
                 float precio = rs.getFloat("precio_venta");
+                float precio_costo = rs.getFloat("precio_costo");
                 int stock = rs.getInt("stock");
                 boolean estado = rs.getBoolean("estado");
                 int id_categoria = rs.getInt("id_categoria");
@@ -71,7 +73,7 @@ public class InventService {
     // Método para buscar productos por nombre
     public List<Producto> buscarProductoPorNombre(String termino) {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM PRODUCTO WHERE LOWER(nombre) LIKE LOWER(?) AND estado = 1"; // Búsqueda insensible a mayúsculas
+        String sql = "SELECT * FROM PRODUCTO WHERE LOWER(nombre) LIKE LOWER(?) AND estado = 1"; 
 
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -114,30 +116,28 @@ public class InventService {
         }
     }
 
-    public void actualizarProducto(Producto producto){
-        String sql = "UPDATE PRODUCTO SET nombre = ?, descripcion = ?, precio_venta = ?, stock = ?, id_categoria = ?, estado = ? WHERE id_producto = ?";
+    public boolean actualizarProducto(Producto producto){
+    String sql = "UPDATE PRODUCTO SET nombre = ?, descripcion = ?, precio_venta = ?, stock = ?, estado = ?, id_categoria = ?, precio_costo = ? WHERE id_producto = ?";
 
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql);){
+    try(Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)){
 
-                stmt.setString(1, producto.getNombre());
-                stmt.setString(2, producto.getDescripcion());
-                stmt.setFloat(3, producto.getPrecio());
-                stmt.setInt(4, producto.getStock());
-                stmt.setInt(5, producto.getId_categoria());
-                stmt.setBoolean(6, producto.getEstado());
-                stmt.setInt(7, producto.getId());
+            stmt.setString(1, producto.getNombre());
+            stmt.setString(2, producto.getDescripcion());
+            stmt.setFloat(3, producto.getPrecio());
+            stmt.setInt(4, producto.getStock());
+            stmt.setBoolean(5, producto.getEstado());
+            stmt.setInt(6, producto.getId_categoria());
+            stmt.setFloat(7, producto.getPrecio_costo());
+            stmt.setInt(8, producto.getId());
 
-                int filasActualizadas = stmt.executeUpdate();
+            int filasActualizadas = stmt.executeUpdate();
+            return filasActualizadas > 0;
 
-                if(filasActualizadas > 0){
-                    // Emitir dialog
-                    System.out.println("Producto actualizado correctamente.");
-                }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
     }
 
     public int obtenerIdCategoria(String categoriaDescripcion) {
