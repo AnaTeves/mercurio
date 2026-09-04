@@ -1,73 +1,96 @@
 package app.Controllers;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
+
+import app.BDD.BackupService;
+import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class BackupController {
 
-    @FXML
-    private TextField backupNameField;
+    @FXML private StackPane mainContentForm;
+    @FXML private Label lblEstado;
+
+    private final BackupService backupService = new BackupService();
 
     @FXML
-    private TextField backupLocationField;
-
-    // Método para seleccionar la ubicación del backup
-    @FXML
-    private void selectLocation() {
+    public void handleGenerarBackup() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Backup Files", "*.bak"));
-        File file = fileChooser.showSaveDialog(null);
-        if (file != null) {
-            backupLocationField.setText(file.getAbsolutePath());
+        fileChooser.setTitle("Guardar Copia de Seguridad");
+        fileChooser.setInitialFileName(backupService.obtenerNombreSugerido());
+        fileChooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Copia de seguridad de SQL Server (*.bak)", "*.bak")
+        );
+
+        Stage stage = (Stage) mainContentForm.getScene().getWindow();
+        File archivoDestino = fileChooser.showSaveDialog(stage);
+
+        if (archivoDestino != null) {
+            lblEstado.setText("Generando copia de seguridad...");
+            lblEstado.setStyle("-fx-text-fill: #333;");
+
+            boolean exito = backupService.crearBackup(archivoDestino);
+
+            if (exito) {
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "La copia de seguridad de DB_GESTIONVENTAS se creó correctamente.");
+                lblEstado.setText("Último backup realizado con éxito.");
+                lblEstado.setStyle("-fx-text-fill: green;");
+            } else {
+                mostrarAlerta(Alert.AlertType.ERROR, "Error", "Ocurrió un error al intentar crear el respaldo.");
+                lblEstado.setText("Error al generar el backup.");
+                lblEstado.setStyle("-fx-text-fill: red;");
+            }
         }
     }
 
-    // Método para realizar el backup
     @FXML
-    private void performBackup() {
-        String backupName = backupNameField.getText();
-        String backupLocation = backupLocationField.getText();
+    public void handleRestaurarBackup() {
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar Restauración");
+        confirmacion.setHeaderText("¿Restaurar la base de datos DB_GESTIONVENTAS?");
+        confirmacion.setContentText("Atención: Los datos actuales se reemplazarán por completo con el respaldo seleccionado.");
 
-        if (backupName.isEmpty() || backupLocation.isEmpty()) {
-            showAlert("Error", "Por favor, ingrese el nombre y la ubicación del backup.", AlertType.ERROR);
+        if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
             return;
         }
 
-        // Definir la consulta SQL para el backup
-        String sql = "BACKUP DATABASE [DB_GESTIONVENTAS] "
-                   + "TO DISK = '" + backupLocation + "' "
-                   + "WITH FORMAT, MEDIANAME = '" + backupName + "', NAME = 'Full Backup of DB_GESTIONVENTAS'";
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleccionar Archivo .bak de Respaldo");
+        fileChooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Copia de seguridad de SQL Server (*.bak)", "*.bak")
+        );
 
-        // Configuración de la conexión a la base de datos
-        String url = "jdbc:sqlserver://localhost:1433;databaseName=DB_GESTIONVENTAS;encrypt=false;";
-        String username = "analuzteves";
-        String password = "1234analuz";
+        Stage stage = (Stage) mainContentForm.getScene().getWindow();
+        File archivoOrigen = fileChooser.showOpenDialog(stage);
 
-        // Ejecutar el backup
-        try (Connection conn = DriverManager.getConnection(url, username, password);
-             Statement stmt = conn.createStatement()) {
+        if (archivoOrigen != null) {
+            lblEstado.setText("Restaurando base de datos...");
+            lblEstado.setStyle("-fx-text-fill: #333;");
 
-            stmt.executeUpdate(sql);
-            showAlert("Éxito", "El backup se realizó correctamente.", AlertType.INFORMATION);
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "Hubo un error al realizar el backup.", AlertType.ERROR);
+            boolean exito = backupService.restaurarBackup(archivoOrigen);
+
+            if (exito) {
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "La base de datos DB_GESTIONVENTAS fue restaurada correctamente.");
+                lblEstado.setText("Base de datos restaurada con éxito.");
+                lblEstado.setStyle("-fx-text-fill: green;");
+            } else {
+                mostrarAlerta(Alert.AlertType.ERROR, "Error", "Ocurrió un error al restaurar. Verifique que SQL Server tenga permisos para leer el archivo.");
+                lblEstado.setText("Error al restaurar el backup.");
+                lblEstado.setStyle("-fx-text-fill: red;");
+            }
         }
     }
 
-    // Método para mostrar alertas
-    private void showAlert(String title, String message, AlertType type) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
+    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText(mensaje);
         alert.showAndWait();
     }
 }

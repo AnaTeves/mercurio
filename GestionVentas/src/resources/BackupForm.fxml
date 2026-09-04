@@ -1,27 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.stage.FileChooser?>
-<?import javafx.scene.control.Label?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
-<!-- Vista del formulario para realizar el backup -->
-<StackPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.BackupController">
-    <VBox alignment="CENTER" spacing="20.0" HBox.hgrow="ALWAYS" styleClass="vbox" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #f5deb3, #c7916b);">
-        <VBox alignment="CENTER" spacing="10.0" style="-fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 10;" minWidth="400.0" maxWidth="400.0" maxHeight="600.0">
 
-            <Label text="Nombre del Backup"/>
-            <TextField fx:id="backupNameField" promptText="Escribe el nombre del backup" prefHeight="30.0" maxWidth="250.0" minWidth="100.0"/>
-            <Label text="Ubicación"/>
-            <HBox spacing="10" alignment="CENTER">
-                <TextField fx:id="backupLocationField" promptText="Selecciona la ubicación"/>
-                <Button text="Seleccionar..." onAction="#selectLocation"/>
-            </HBox>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="mainContentForm" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.BackupController">
+    <VBox alignment="CENTER" style="-fx-background-color: #f4f4f7;" HBox.hgrow="ALWAYS">
+        <VBox alignment="CENTER" maxHeight="850.0" maxWidth="500.0" minWidth="420.0" spacing="15.0" styleClass="vbox-externo">
+            <padding>
+                <Insets bottom="35.0" left="40.0" right="40.0" top="35.0" />
+            </padding>
             
-            <Button text="Realizar Backup" onAction="#performBackup"/>
+            <!-- Icono de Backup -->
+            <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
+                <image>
+                    <Image url="@files/categorias.png" /> 
+                </image>
+                <VBox.margin>
+                    <Insets top="10.0" />
+                </VBox.margin>
+            </ImageView>
+
+            <!-- Título principal -->
+            <Label styleClass="texto-comun" text="Gestión de Respaldos (Backup)" textAlignment="CENTER" textFill="BLACK">
+                <padding>
+                    <Insets bottom="5.0" />
+                </padding>
+            </Label>
+
+            <!-- Bloque 1: Generar Copia de Seguridad -->
+            <VBox alignment="CENTER" maxWidth="380.0" spacing="10.0" styleClass="vbox-interno formulario-container">
+                <padding>
+                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                </padding>
+
+                <Label styleClass="labels" text="Generar Copia de Seguridad" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                <Label text="Exporta la base de datos actual a un archivo .sql estructurado." textAlignment="CENTER" wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #666;" />
+
+                <Button fx:id="btnGenerar" onAction="#handleGenerarBackup" prefHeight="35.0" prefWidth="220.0" styleClass="boton-registro" text="Crear Copia (.sql)" />
+            </VBox>
+
+            <!-- Bloque 2: Restaurar Copia de Seguridad -->
+            <VBox alignment="CENTER" maxWidth="380.0" spacing="10.0" styleClass="vbox-interno formulario-container">
+                <padding>
+                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                </padding>
+
+                <Label styleClass="labels" text="Restaurar Base de Datos" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                <Label text="Atención: Esta acción reemplazará la información actual con los datos del respaldo seleccionado." textAlignment="CENTER" wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #d9534f;" />
+
+                <Button fx:id="btnRestaurar" onAction="#handleRestaurarBackup" prefHeight="35.0" prefWidth="220.0" styleClass="boton-registro" text="Restaurar Copia (.sql)" />
+            </VBox>
+
+            <!-- Estado/Feedback -->
+            <Label fx:id="lblEstado" text="" textAlignment="CENTER" wrapText="true" style="-fx-font-size: 12px; -fx-font-weight: bold;" />
+
         </VBox>
     </VBox>
 </StackPane>

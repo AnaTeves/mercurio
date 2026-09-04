@@ -176,7 +176,7 @@
 
                         <!-- Top 5 Más Vendidos -->
                         <VBox spacing="5">
-                            <Label text="🏆 Top 5 Más Vendidos" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+                            <Label text="Top 5 Más Vendidos" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
                             <VBox fx:id="topMasVendidosContainer" spacing="3">
                                 <Label text="1. Cargando..." style="-fx-font-size: 10px;"/>
                                 <Label text="2. Cargando..." style="-fx-font-size: 10px;"/>
@@ -188,7 +188,7 @@
 
                         <!-- Top 5 Menos Vendidos -->
                         <VBox spacing="5">
-                            <Label text="📉 Top 5 Menos Vendidos" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
+                            <Label text="Top 5 Menos Vendidos" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #c62828;"/>
                             <VBox fx:id="topMenosVendidosContainer" spacing="3">
                                 <Label text="1. Cargando..." style="-fx-font-size: 10px;"/>
                                 <Label text="2. Cargando..." style="-fx-font-size: 10px;"/>

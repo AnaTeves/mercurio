@@ -6,62 +6,77 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.DetalleProductoController">
-    <children>
-        <!-- Título -->
-        <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333333;" text="Detalles del Producto" />
+<StackPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.DetalleProductoController">
+    <VBox alignment="CENTER" style="-fx-background-color: #f4f4f7;" HBox.hgrow="ALWAYS">
+        <VBox alignment="CENTER" maxHeight="850.0" maxWidth="450.0" minWidth="400.0" spacing="10.0" styleClass="vbox-externo">
+            <padding>
+                <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+            </padding>
+            
+            <!-- Icono del Producto -->
+            <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
+                <image>
+                    <Image url="@files/categorias.png" />
+                </image>
+                <VBox.margin>
+                    <Insets top="15.0" />
+                </VBox.margin>
+            </ImageView>
 
-        <!-- Formulario -->
-        <GridPane hgap="15.0" vgap="15.0">
-            <columnConstraints>
-                <ColumnConstraints halignment="RIGHT" percentWidth="30.0" />
-                <ColumnConstraints percentWidth="70.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="30.0" />
-                <RowConstraints minHeight="30.0" />
-                <RowConstraints minHeight="70.0" />
-                <RowConstraints minHeight="30.0" />
-                <RowConstraints minHeight="30.0" />
-                <RowConstraints minHeight="30.0" />
-                <RowConstraints minHeight="30.0" />
-            </rowConstraints>
-            <children>
-                <Label text="ID Producto:" GridPane.rowIndex="0" />
-                <TextField fx:id="txtId" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <!-- Título -->
+            <Label styleClass="texto-comun" text="Detalles del Producto" textAlignment="CENTER" textFill="BLACK">
+                <padding>
+                    <Insets bottom="5.0" />
+                </padding>
+            </Label>
 
-                <Label text="Nombre:" GridPane.rowIndex="1" />
-                <TextField fx:id="nombreField" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <!-- Campos del Formulario -->
+            <VBox alignment="CENTER_LEFT" maxWidth="280.0" prefWidth="280.0" spacing="8.0" styleClass="vbox-interno formulario-container">
+                <padding>
+                    <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
+                </padding>
 
-                <Label text="Descripción:" GridPane.rowIndex="2" />
-                <TextArea fx:id="descripcionField" disable="true" prefHeight="60.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Label styleClass="labels" text="ID Producto" />
+                <TextField fx:id="txtId" alignment="TOP_LEFT" disable="true" prefHeight="30.0" styleClass="text-field-registro" />
 
-                <Label text="Precio ($):" GridPane.rowIndex="3" />
-                <TextField fx:id="precioField" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Label styleClass="labels" text="Nombre" />
+                <TextField fx:id="nombreField" alignment="TOP_LEFT" disable="true" prefHeight="30.0" promptText="Nombre del producto" styleClass="text-field-registro" />
 
-                <Label text="Stock:" GridPane.rowIndex="4" />
-                <TextField fx:id="stockField" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Label styleClass="labels" text="Descripción" />
+                <TextArea fx:id="descripcionField" disable="true" prefHeight="55.0" promptText="Descripción" styleClass="text-field-registro" wrapText="true" />
 
-                <Label text="Categoría (ID):" GridPane.rowIndex="5" />
-                <TextField fx:id="categoriaField" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Label styleClass="labels" text="Precio ($)" />
+                <TextField fx:id="precioField" alignment="TOP_LEFT" disable="true" prefHeight="30.0" promptText="0.00" styleClass="text-field-registro" />
 
-                <Label text="Estado:" GridPane.rowIndex="6" />
-                <CheckBox fx:id="chkEstado" disable="true" text="Activo / Disponible" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            </children>
-        </GridPane>
+                <Label styleClass="labels" text="Stock" />
+                <TextField fx:id="stockField" alignment="TOP_LEFT" disable="true" prefHeight="30.0" promptText="Cantidad" styleClass="text-field-registro" />
 
-        <!-- Botones de Acción -->
-        <HBox alignment="CENTER" spacing="15.0">
-            <children>
-                <Button fx:id="btnModificar" onAction="#handleModificarGuardar" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20;" text="Modificar" />
-                <Button fx:id="btnCancelar" onAction="#handleCancelar" style="-fx-background-color: #e0e0e0; -fx-text-fill: #333333; -fx-padding: 8 20;" text="Cancelar" visible="false" />
-            </children>
-        </HBox>
-    </children>
-</VBox>
+                <Label styleClass="labels" text="Categoría (ID)" />
+                <TextField fx:id="categoriaField" alignment="TOP_LEFT" disable="true" prefHeight="30.0" promptText="ID Categoria" styleClass="text-field-registro" />
+
+                <Label styleClass="labels" text="Estado" />
+                <CheckBox fx:id="chkEstado" disable="true" styleClass="labels" text="Activo / Disponible" />
+            </VBox>
+
+            <!-- Botones de Acción -->
+            <HBox alignment="CENTER" spacing="15.0" styleClass="hbox">
+                <children>
+                    <Button fx:id="btnModificar" onAction="#handleModificarGuardar" prefHeight="25.0" prefWidth="111.0" styleClass="boton-registro" text="Modificar" />
+                    <Button fx:id="btnCancelar" onAction="#handleCancelar" prefHeight="25.0" prefWidth="111.0" styleClass="boton-registro" text="Cancelar" visible="false" />
+                </children>
+                <padding>
+                    <Insets top="10.0" />
+                </padding>
+                <VBox.margin>
+                    <Insets bottom="10.0" />
+                </VBox.margin>
+            </HBox>
+        </VBox>
+    </VBox>
+</StackPane>
