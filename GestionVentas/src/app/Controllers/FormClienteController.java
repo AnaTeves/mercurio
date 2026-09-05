@@ -6,8 +6,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 public class FormClienteController {
     @FXML
@@ -20,6 +22,7 @@ public class FormClienteController {
     private TextField telefonoField;
     @FXML
     private StackPane mainContentForm;
+    @FXML private Button btnGuardar;
 
     // Creamos una instancia de user service
     private ClienteService clientes = new ClienteService();
@@ -44,6 +47,8 @@ public class FormClienteController {
         clientes.addCliente(nombre, dni, email, telefono);
         limpiarCampos();
         clienteController.mostrarAlerta("Éxito", "Usuario agregado correctamente.");
+        Stage stage = (Stage) btnGuardar.getScene().getWindow();
+        stage.close();
     }
 
     private void limpiarCampos() {

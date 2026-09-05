@@ -9,8 +9,6 @@ import app.BDD.CajaService;
 import app.Models.Usuario;
 import app.Models.Venta;
 import app.Controllers.AperturaCajaController;
-
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -61,6 +59,9 @@ public class EmpleadoController extends ComunesController {
     @FXML
     public void initialize() {
         super.initialize();
+        if (mainBorderPane != null) {
+            ComunesController.setMainBorderPane(mainBorderPane);
+        }
         
         // Configuración de las columnas de la tabla
         fechaventaCol.setCellValueFactory(new PropertyValueFactory<>("fechaVenta"));

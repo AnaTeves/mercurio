@@ -8,15 +8,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 public class ClientsListController {
+
     @FXML private TableView<Cliente> tablaClientes;
     @FXML private TableColumn<Cliente, Integer> colId;
     @FXML private TableColumn<Cliente, String> colNombre;
@@ -38,6 +37,7 @@ public class ClientsListController {
         tablaClientes.getItems().setAll(clientes);
     }
 
+    @FXML
     public void seleccionarCliente() {
         Cliente cliente = tablaClientes.getSelectionModel().getSelectedItem();
         if (cliente != null) {
@@ -46,9 +46,10 @@ public class ClientsListController {
         }
     }
 
+    @FXML
     public void abrirFormularioCliente() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/ClientsList.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/FormClient.fxml"));
             Parent root = loader.load();
             
             Stage stage = new Stage();
@@ -57,7 +58,7 @@ public class ClientsListController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
             
-            // Recargar clientes después de registrar uno nuevo
+            // Recargar lista al volver
             cargarClientesActivos();
 
         } catch (IOException e) {

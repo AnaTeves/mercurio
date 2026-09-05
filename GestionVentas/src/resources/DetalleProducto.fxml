@@ -57,15 +57,19 @@
                 <CheckBox fx:id="chkEstado" disable="true" styleClass="labels" text="Activo / Disponible" />
             </VBox>
 
-            <HBox alignment="CENTER" spacing="10.0">
+            <!-- Contenedor horizontal para botones alineado al estilo de Categorías -->
+            <HBox alignment="CENTER" spacing="10.0" styleClass="hbox">
                 <children>
-                    <Button fx:id="btnModificar" onAction="#handleModificarGuardar" prefHeight="28.0" prefWidth="85.0" styleClass="boton-registro" text="Modificar" />
-                    <Button fx:id="btnCancelar" onAction="#handleCancelar" prefHeight="28.0" prefWidth="85.0" styleClass="boton-registro" text="Cancelar" visible="false" />
-                    <Button fx:id="btnVolver" onAction="#handleVolver" prefHeight="28.0" prefWidth="85.0" styleClass="boton-registro" text="Volver" />
+                    <Button fx:id="btnModificar" onAction="#handleModificarGuardar" prefHeight="25.0" prefWidth="111.0" styleClass="boton-registro" text="Modificar" />
+                    <Button fx:id="btnCancelar" managed="${btnCancelar.visible}" onAction="#handleCancelar" prefHeight="25.0" prefWidth="111.0" styleClass="boton-registro" text="Cancelar" visible="false" />
+                    <Button fx:id="btnVolver" onAction="#handleVolver" prefHeight="25.0" prefWidth="111.0" styleClass="boton-registro" text="Volver" />
                 </children>
                 <padding>
-                    <Insets top="5.0" />
+                    <Insets top="15.0" />
                 </padding>
+                <VBox.margin>
+                    <Insets bottom="10.0" />
+                </VBox.margin>
             </HBox>
         </VBox>
     </VBox>

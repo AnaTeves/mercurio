@@ -52,7 +52,7 @@
             </VBox>
             <!-- Contenedor horizontal para botones -->
             <HBox alignment="CENTER" styleClass="hbox">
-                <Button styleClass="boton-registro" onAction="#agregarCliente" prefHeight="25.0" prefWidth="111.0" text="Registrar" />
+                <Button fx:id="btnGuardar" styleClass="boton-registro" onAction="#agregarCliente" prefHeight="25.0" prefWidth="111.0" text="Registrar" />
                 <Button styleClass="boton-registro" onAction="#cancelar" prefHeight="25.0" prefWidth="111.0" text="Volver" />
             <padding>
             <Insets top="15.0" />
