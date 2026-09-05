@@ -3,6 +3,7 @@ import app.BDD.ClienteService;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
@@ -10,9 +11,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import app.Models.Cliente;
+import javafx.scene.control.TableCell;
 import java.io.IOException;
 
 public class ClienteController {
@@ -31,6 +34,7 @@ public class ClienteController {
     private StackPane mainContent;
     @FXML
     private TextField buscarCliente;
+    @FXML private TableColumn<Cliente, Void> accionCol;
     // Creamos una instancia de user service
     private ClienteService client = new ClienteService();
     CustomAlert customAlert = new CustomAlert();
@@ -43,9 +47,48 @@ public class ClienteController {
         emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
         telefonoCol.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         cargarDatosDesdeBD(); // Cargar datos desde la base de datos
+        accionCol.setCellFactory(param -> {
+            return new TableCell<Cliente, Void>() {
+                private final Button btn = new Button("Modificar");
+                {
+                    btn.setOnAction((ActionEvent event) -> {
+                        Cliente cliente = getTableView().getItems().get(getIndex());
+                        modificarCliente(cliente);
+                    });
+                }
+                @Override
+                public void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        setGraphic(btn);
+                    }
+                }
+            };
+        });
     }
 
-    // Metodo que llama al metodo loadUsers de la clase ClienteService y actualiza la tabla
+    private void modificarCliente(Cliente cliente) {
+        try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/DetalleClienteView.fxml"));
+                Node view = loader.load();
+        
+                DetalleClienteController controller = loader.getController();
+                controller.setCliente(cliente); // Pasa el producto al controlador.
+        
+                mainContent.getChildren().clear();
+                mainContent.getChildren().add(view);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("No se pudo cargar la vista.");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+        }
+    }
+
     private void cargarDatosDesdeBD() {
         clientes = client.loadClients();
         tableView.setItems(clientes);
@@ -54,11 +97,6 @@ public class ClienteController {
     // Metodo que muestra una alerta
     @FXML
     public void mostrarAlerta(String titulo, String mensaje) {
-        // Alert alert = new Alert(AlertType.INFORMATION);
-        // alert.setTitle(titulo);
-        // alert.setHeaderText(null);
-        // alert.setContentText(mensaje);
-        // alert.showAndWait();
         customAlert.mostrarAlertaPersonalizada(titulo, mensaje);
     }
 

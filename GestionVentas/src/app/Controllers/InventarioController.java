@@ -137,22 +137,6 @@ public class InventarioController {
 
     // Metodo que abre un formulario con los detalles del producto seleccionado
     private void verDetalles(Producto producto) {
-        // dialog.setTitle("Detalles del producto");
-        // dialog.setHeaderText("Nombre:" + producto.getNombre());
-        
-        // VBox content = new VBox(10);
-        // content.setAlignment(Pos.CENTER);
-        // Label descripcion = new Label("Descripcion: " + producto.getDescripcion());
-        // Label precio = new Label("Precio: " + producto.getPrecio());
-        // Label stock = new Label("Stock: " + producto.getStock());
-
-        // content.getChildren().addAll(descripcion, precio, stock);
-        // dialog.getDialogPane().setContent(content);
-        // dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
-
-        // dialog.showAndWait();
-        // DetalleProductoController detalleProducto = new DetalleProductoController();
-        // detalleProducto.verDetalles(producto);
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/DetalleProducto.fxml"));
             Node view = loader.load();

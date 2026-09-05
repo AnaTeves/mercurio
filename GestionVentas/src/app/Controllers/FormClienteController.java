@@ -23,13 +23,10 @@ public class FormClienteController {
     @FXML
     private StackPane mainContentForm;
     @FXML private Button btnGuardar;
-
-    // Creamos una instancia de user service
     private ClienteService clientes = new ClienteService();
-    // Creamos una instancia de user controller
     private ClienteController clienteController = new ClienteController();
     
-    // Metodo que agrega un nuevo usuario
+    // Metodo que agrega un nuevo cliente
     @FXML
     public void agregarCliente() {
         String nombre = nombreField.getText();

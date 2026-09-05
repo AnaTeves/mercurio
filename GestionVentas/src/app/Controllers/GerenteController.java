@@ -128,11 +128,6 @@ public class GerenteController extends ComunesController {
         cargarComparativoVendedores(vendedor, numeroMes, desde, hasta);
     }
 
-    // Sobrecarga por compatibilidad si requieres llamada simple
-    private void cargarComparativoVendedores(String vendedor) {
-        cargarComparativoVendedores(vendedor, null, null, null);
-    }
-
     private void cargarComparativoVendedores(String vendedor, Integer mes, LocalDate desde, LocalDate hasta) {
         try {
             Map<String, Integer> ventasPorVendedor = ventaService.obtenerVentasPorVendedor(vendedor, mes, desde, hasta);
@@ -161,8 +156,8 @@ public class GerenteController extends ComunesController {
         String query = "SELECT nombreyape FROM USUARIO WHERE id_perfil = 3";
         
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 vendedores.add(rs.getString("nombreyape"));
             }
@@ -270,6 +265,7 @@ public class GerenteController extends ComunesController {
     @FXML public void handleReports() { mainBorderPane.setCenter(mainContent); }
     @FXML public void cerrarSesion() { handleLogout(); }
     @FXML public void handleCategorias() { setView("/resources/CategoriasView.fxml"); }
+    @FXML public void handleClientes(){ setView("/resources/ClientesView.fxml"); }
 
     @FXML
     public void showAlert(String titulo, String mensaje) {
