@@ -34,7 +34,7 @@
                 <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                     <Label styleClass="labels" text="Documento" textFill="BLACK" />
                     <HBox spacing="5">
-                        <TextField fx:id="buscarUser" promptText="Ingrese el documento" HBox.hgrow="ALWAYS" prefHeight="35.0" />
+                        <TextField onAction="#buscarUsuario" fx:id="buscarUser" promptText="Ingrese el documento" HBox.hgrow="ALWAYS" prefHeight="35.0" />
                         <Button onAction="#recarga" style="-fx-background-color: #9fdfe2; -fx-cursor: hand;">
                             <graphic>
                                 <ImageView fitHeight="17" fitWidth="20" pickOnBounds="true" preserveRatio="true">

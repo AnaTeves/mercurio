@@ -1,9 +1,14 @@
 package app.BDD;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import app.Models.ArqueoCaja;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import java.text.SimpleDateFormat;
+import app.Models.ArqueoCaja;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import java.sql.*;
+import java.text.SimpleDateFormat;
 
 public class CajaService {
 
@@ -16,23 +21,16 @@ public class CajaService {
      */
     public boolean isCajaAbierta(String dniUsuario) {
         String query = "SELECT COUNT(*) FROM Caja WHERE DNI = ? AND estado = 1";
-        
         try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
-            
+             PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, dniUsuario);
-            
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    int count = rs.getInt(1);
-                    return count > 0; // Si hay 1 o más, la caja está abierta
-                }
+                if (rs.next()) return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            System.err.println("Error BDD - verificar caja abierta: " + e.getMessage());
+            e.printStackTrace();
         }
-        
-        return false; 
+        return false;
     }
 
     /**
@@ -43,46 +41,32 @@ public class CajaService {
      */
     public boolean abrirCaja(String dniUsuario, double montoInicial) {
         String query = "INSERT INTO Caja (DNI, monto_inicial, estado) VALUES (?, ?, 1)";
-        
-        // 1. Nuevamente, usamos PreparedStatement
         try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
-            
-            // 2. Seteamos ambos valores
+             PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, dniUsuario);
             stmt.setDouble(2, montoInicial);
-            
-            // 3. Ejecutamos un executeUpdate() porque es un INSERT, no un SELECT
-            int filasAfectadas = stmt.executeUpdate();
-            return filasAfectadas > 0; 
-            
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Error BDD - abrir caja: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
 
-
-/**
+    /**
      * Obtiene el ID de la caja que está actualmente abierta para un usuario.
      */
     public int obtenerIdCajaAbierta(String dniUsuario) {
-        // OJO: Cambia 'id' por el nombre real de tu clave primaria en la tabla Caja (ej: id_caja)
         String query = "SELECT id_caja FROM Caja WHERE DNI = ? AND estado = 1";
-        
         try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
-            
+             PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, dniUsuario);
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
+                if (rs.next()) return rs.getInt(1);
             }
         } catch (SQLException e) {
-            System.err.println("Error BDD - obtener ID caja: " + e.getMessage());
+            e.printStackTrace();
         }
-        return -1; // Retorna -1 si no encuentra caja abierta
+        return -1;
     }
 
     /**
@@ -148,5 +132,50 @@ public class CajaService {
             System.err.println("Error al calcular ventas: " + e.getMessage());
         }
         return 0.0;
+    }
+
+    public ObservableList<ArqueoCaja> obtenerHistorialArqueos() {
+        ObservableList<ArqueoCaja> lista = FXCollections.observableArrayList();
+        
+        String query = "SELECT c.id_caja, u.nombreyape, c.DNI, " +
+                       "c.fecha_apertura, c.fecha_cierre, " +
+                       "c.monto_inicial, c.monto_final_sistema, c.monto_final_real, " +
+                       "c.diferencia, c.estado " +
+                       "FROM Caja c " +
+                       "JOIN USUARIO u ON c.DNI = u.DNI " +
+                       "ORDER BY c.id_caja DESC";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id_caja");
+                String vendedor = rs.getString("nombreyape");
+                String dni = rs.getString("DNI");
+                
+                Timestamp fApertura = rs.getTimestamp("fecha_apertura");
+                Timestamp fCierre = rs.getTimestamp("fecha_cierre");
+                String strApertura = (fApertura != null) ? sdf.format(fApertura) : "-";
+                String strCierre = (fCierre != null) ? sdf.format(fCierre) : "En proceso";
+
+                double inicial = rs.getDouble("monto_inicial");
+                double sistema = rs.getDouble("monto_final_sistema");
+                double real = rs.getDouble("monto_final_real");
+                double dif = rs.getDouble("diferencia");
+                boolean estadoBit = rs.getBoolean("estado");
+                
+                String estadoStr = estadoBit ? "ABIERTA" : "CERRADA";
+
+                lista.add(new ArqueoCaja(id, vendedor, dni, strApertura, strCierre, inicial, sistema, real, dif, estadoStr));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al consultar historial de arqueos: " + e.getMessage());
+        }
+
+        return lista;
     }
 }

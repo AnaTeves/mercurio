@@ -43,6 +43,7 @@ public class CategoriaController {
 
     @FXML
     public void initialize() {
+        buscarCategoria.setOnAction(event -> buscarCategoria());
         // Configuramos las columnas de la table view
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("nombre"));

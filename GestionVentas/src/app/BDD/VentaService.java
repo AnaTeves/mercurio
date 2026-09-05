@@ -2,17 +2,12 @@ package app.BDD;
 import app.Models.Venta;
 import app.Models.DetalleVenta;
 import app.Models.Producto;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.util.Pair;
-import java.sql.Timestamp;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -20,6 +15,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class VentaService {
@@ -262,47 +261,70 @@ public class VentaService {
         return ventasPorDia;
     }
 
-    public Map<String, Integer> obtenerVentasPorVendedor(String vendedorSeleccionado) {
-        Map<String, Integer> ventasPorVendedor = new HashMap<>();
-        
-        // Consulta SQL para filtrar las ventas por el vendedor seleccionado
-        String query = """
-                SELECT DATENAME(WEEKDAY, v.fecha_venta) AS dia, COUNT(*) AS total_ventas
-                FROM VENTA v
-                JOIN USUARIO u ON v.id_usuario = u.id_usuario 
-                WHERE u.nombreyape = ? 
-                GROUP BY DATENAME(WEEKDAY, v.fecha_venta)
-                ORDER BY 
-                    CASE DATENAME(WEEKDAY, v.fecha_venta)
-                        WHEN 'Monday' THEN 1
-                        WHEN 'Tuesday' THEN 2
-                        WHEN 'Wednesday' THEN 3
-                        WHEN 'Thursday' THEN 4
-                        WHEN 'Friday' THEN 5
-                        WHEN 'Saturday' THEN 6
-                        WHEN 'Sunday' THEN 7
-                    END;
-                """;
-    
+    public Map<String, Integer> obtenerVentasPorVendedor(String vendedorSeleccionado, Integer mes, LocalDate desde, LocalDate hasta) {
+    // LinkedHashMap preserva el orden del ORDER BY del SQL
+    Map<String, Integer> ventasPorVendedor = new LinkedHashMap<>();
+
+    StringBuilder query = new StringBuilder("""
+        SELECT DATENAME(WEEKDAY, v.fecha_venta) AS dia, COUNT(*) AS total_ventas
+        FROM VENTA v
+        JOIN USUARIO u ON v.id_usuario = u.id_usuario 
+        WHERE u.nombreyape = ?
+    """);
+
+    // Construcción dinámica de condiciones
+    if (mes != null) {
+        query.append(" AND MONTH(v.fecha_venta) = ? AND YEAR(v.fecha_venta) = YEAR(GETDATE()) ");
+    } else if (desde != null && hasta != null) {
+        query.append(" AND CAST(v.fecha_venta AS DATE) BETWEEN ? AND ? ");
+    } else if (desde != null) {
+        query.append(" AND CAST(v.fecha_venta AS DATE) >= ? ");
+    } else if (hasta != null) {
+        query.append(" AND CAST(v.fecha_venta AS DATE) <= ? ");
+    }
+
+    query.append("""
+        GROUP BY DATENAME(WEEKDAY, v.fecha_venta)
+        ORDER BY 
+            CASE DATENAME(WEEKDAY, v.fecha_venta)
+                WHEN 'Monday' THEN 1
+                WHEN 'Tuesday' THEN 2
+                WHEN 'Wednesday' THEN 3
+                WHEN 'Thursday' THEN 4
+                WHEN 'Friday' THEN 5
+                WHEN 'Saturday' THEN 6
+                WHEN 'Sunday' THEN 7
+            END;
+    """);
+
         try (Connection connection = DatabaseConnection.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query)) {
-            
-            // Establece el valor del parámetro del vendedor seleccionado
-            statement.setString(1, vendedorSeleccionado);
-    
+            PreparedStatement statement = connection.prepareStatement(query.toString())) {
+
+            int paramIndex = 1;
+            statement.setString(paramIndex++, vendedorSeleccionado);
+
+            if (mes != null) {
+                statement.setInt(paramIndex++, mes);
+            } else if (desde != null && hasta != null) {
+                statement.setDate(paramIndex++, Date.valueOf(desde));
+                statement.setDate(paramIndex++, Date.valueOf(hasta));
+            } else if (desde != null) {
+                statement.setDate(paramIndex++, Date.valueOf(desde));
+            } else if (hasta != null) {
+                statement.setDate(paramIndex++, Date.valueOf(hasta));
+            }
+
             try (ResultSet resultSet = statement.executeQuery()) {
-                // Itera sobre los resultados y agrega al mapa
                 while (resultSet.next()) {
                     String dia = resultSet.getString("dia");
-                    int totalVentas = resultSet.getInt("total_ventas");      
-                    
+                    int totalVentas = resultSet.getInt("total_ventas");
                     ventasPorVendedor.put(dia, totalVentas);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
+
         return ventasPorVendedor;
     }
     

@@ -12,8 +12,11 @@ import javafx.stage.Stage;
 import java.io.IOException;
 // Controlador que maneja metodos comunes entre los perfiles
 public class ComunesController {
-    @FXML
-    private BorderPane mainBorderPane;
+    
+    protected static BorderPane mainBorderPane;
+    public static void setMainBorderPane(BorderPane borderPane) {
+        mainBorderPane = borderPane;
+    }
     @FXML
     private StackPane mainContent;
     @FXML
@@ -32,16 +35,19 @@ public class ComunesController {
     @FXML
     public void setView(String fxmlPath) {
         try {
+            if (mainBorderPane == null) {
+                System.err.println("Error: mainBorderPane no está configurado.");
+                return;
+            }
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Node view = loader.load();
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
             e.printStackTrace();
-            // Mostramos mensaje de error en caso de que no se pueda cargar la vista
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("No se pudo cargar la vista");
-            alert.setContentText("Verifica que la ruta del archivo FXML sea correcta.");
+            alert.setContentText("Verifica que la ruta del archivo FXML (" + fxmlPath + ") sea correcta.");
             alert.showAndWait();
         }
     }

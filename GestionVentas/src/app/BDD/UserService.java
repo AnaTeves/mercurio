@@ -48,27 +48,33 @@ public class UserService {
     }
 
     // Metodo que carga todos los usuarios desde la base de datos
-    public ObservableList<Usuario> loadUsers(){
-        ObservableList<Usuario> usuarios = FXCollections.observableArrayList(); // Creamos una lista observable de usuarios
-        String query = "SELECT nombreyape, DNI, email, id_perfil, estado FROM USUARIO"; // Consulta SQL que selecciona las columnas de la tabla usuarios
-        // Abrimos la conexion a la base de datos y ejecutamos la consulta
-        try(Connection conn = DatabaseConnection.getConnection();
+    public ObservableList<Usuario> loadUsers() {
+    ObservableList<Usuario> usuarios = FXCollections.observableArrayList();
+    // Consulta SQL con INNER JOIN a la tabla PERFIL
+    String query = "SELECT u.nombreyape, u.DNI, u.email, u.id_perfil, u.estado, p.descripcion AS tipoPerfil " +
+                   "FROM USUARIO u " +
+                   "JOIN PERFIL p ON u.id_perfil = p.id_perfil";
+
+        try (Connection conn = DatabaseConnection.getConnection();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);){
-            // Recorremos el resultado de la consulta y lo añadimos a la lista observable
-            while(rs.next()){
+            ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
                 String nomYape = rs.getString("nombreyape");
                 String dni = rs.getString("DNI");
                 String email = rs.getString("email");
                 int idPerfil = rs.getInt("id_perfil");
                 String estado = rs.getString("estado");
+                String tipoPerfil = rs.getString("tipoPerfil");
+
                 Usuario user = new Usuario(nomYape, dni, email, idPerfil, estado);
+                user.setTipoPerfil(tipoPerfil); // <--- Asignamos la descripción del perfil
                 usuarios.add(user);
             }    
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return usuarios; // Retorna la lista
+        return usuarios;
     }
 
     public List<String> loadUsersName(){
@@ -90,22 +96,30 @@ public class UserService {
     }
 
     // Metodo que busca a un ususario por su DNI
-    public Usuario searchUser(String dni){
-        String query = "SELECT * FROM USUARIO WHERE DNI = ?"; // Consulta SQL para buscar usuario por su DNI
-        Usuario usuario = null;
-        // Realizo la conexion con la base de datos
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query);){
-            stmt.setString(1, dni); // Asigna el valor dni al parametro de la consulta
-            ResultSet rs = stmt.executeQuery(); // Ejecuta la consulta
-            // Si encuentra un resultado, extrae los datos y crea un objeto Usuario
-            if(rs.next()){
+    public Usuario searchUser(String dni) {
+    // Consulta SQL con INNER JOIN a la tabla PERFIL
+    String query = "SELECT u.nombreyape, u.DNI, u.email, u.id_perfil, u.estado, p.descripcion AS tipoPerfil " +
+                   "FROM USUARIO u " +
+                   "JOIN PERFIL p ON u.id_perfil = p.id_perfil " +
+                   "WHERE u.DNI = ?";
+    Usuario usuario = null;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setString(1, dni);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
                 String nomYape = rs.getString("nombreyape");
                 String documento = rs.getString("DNI");
                 String email = rs.getString("email");
                 int idPerfil = rs.getInt("id_perfil"); 
                 String estado = rs.getString("estado"); 
+                String tipoPerfil = rs.getString("tipoPerfil");
+
                 usuario = new Usuario(nomYape, documento, email, idPerfil, estado);
+                usuario.setTipoPerfil(tipoPerfil); // <--- Asignamos la descripción del perfil
             }
         } catch (SQLException e) {
             e.printStackTrace();            

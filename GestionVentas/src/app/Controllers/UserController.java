@@ -42,11 +42,13 @@ public class UserController {
 
     @FXML
     public void initialize() {
+        buscarUser.setOnAction(event -> buscarUsuario());
+        
         // Cargo las columnas de la tabla, las propiedades son las definidas en mi clase Usuario
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("nomYape"));
         dniCol.setCellValueFactory(new PropertyValueFactory<>("dni"));
         emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
-        tipoUsuarioCol.setCellValueFactory(new PropertyValueFactory<>("idPerfil"));
+        tipoUsuarioCol.setCellValueFactory(new PropertyValueFactory<>("tipoPerfil"));
         estadoCol.setCellValueFactory(new PropertyValueFactory<>("estado"));
         // Creo una nueva columna para manejar la activacion y desactivacion del usuario
         TableColumn<Usuario, String> actionCol = new TableColumn<>("Acciones");

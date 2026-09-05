@@ -7,6 +7,7 @@ public class Usuario {
     private int idPerfil;
     private String estado;
     private String contraseña;
+    private String tipoPerfil;
 
     public Usuario(String nomYape, String dni, String email, int idPerfil, String estado, String contraseña){
         this.nomYape = nomYape;
@@ -84,5 +85,13 @@ public class Usuario {
 
     public String getEstado(){
         return estado;
+    }
+
+    public String getTipoPerfil() {
+        return tipoPerfil;
+    }
+
+    public void setTipoPerfil(String tipoPerfil) {
+        this.tipoPerfil = tipoPerfil;
     }
 }

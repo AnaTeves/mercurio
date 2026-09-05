@@ -20,6 +20,7 @@
 <?import javafx.scene.effect.ColorAdjust?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.DatePicker?>
 
 <!-- Vista del gerente al ingresar -->
 <StackPane alignment="CENTER" maxHeight="800" maxWidth="1000" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.GerenteController">
@@ -55,6 +56,18 @@
                         </ImageView>
                     </graphic>
                 </Button>
+                <Button onAction="#handleArqueoCaja" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Arqueo Caja" contentDisplay="LEFT" graphicTextGap="15">
+                    <graphic>
+                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
+                            <image>
+                                <Image url="@../files/reportes.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button onAction="#handleInventario" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Inventario" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
@@ -68,30 +81,6 @@
                     </graphic>
                 </Button>
                 <Button onAction="#handleCategorias" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Categorias" contentDisplay="LEFT" graphicTextGap="15">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/categorias.png" />
-                            </image>
-                            <effect>
-                                <ColorAdjust brightness="1.0" />
-                            </effect>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button onAction="#handleArqueoCaja" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Arqueo Caja" contentDisplay="LEFT" graphicTextGap="15">
-                    <graphic>
-                        <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
-                            <image>
-                                <Image url="@../files/reportes.png" />
-                            </image>
-                            <effect>
-                                <ColorAdjust brightness="1.0" />
-                            </effect>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button onAction="#handleGestionPrecios" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Gestión Precios" contentDisplay="LEFT" graphicTextGap="15">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
@@ -144,9 +133,24 @@
                     </VBox>
                     
                     <!-- Comparativo de Vendedores - Bar Chart (Ahora abarca las columnas 1 y 2) -->
+                    <!-- Comparativo de Vendedores con Filtros -->
                     <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
-                        <Label text="Comparativo Vendedores" styleClass="titulo" style="-fx-font-size: 11px;"/>
-                        <ComboBox fx:id="comboVendedores" promptText="Seleccionar vendedor" prefWidth="200.0"/>
+                        <Label text="Comparativo Vendedores" styleClass="titulo" style="-fx-font-size: 11px; -fx-font-weight: bold;"/>
+                        
+                        <!-- Barra de Filtros en HBox -->
+                        <HBox spacing="8" alignment="CENTER">
+                            <ComboBox fx:id="comboVendedores" promptText="Vendedor" prefWidth="150.0"/>
+                            
+                            <!-- Filtro por Mes -->
+                            <ComboBox fx:id="comboMeses" promptText="Seleccionar Mes" prefWidth="130.0"/>
+                            
+                            <Label text="Ó" style="-fx-font-weight: bold; -fx-text-fill: #888888;"/>
+                            
+                            <!-- Filtro por Rango de Fechas -->
+                            <DatePicker fx:id="dpDesde" promptText="Desde" prefWidth="110.0"/>
+                            <DatePicker fx:id="dpHasta" promptText="Hasta" prefWidth="110.0"/>
+                        </HBox>
+
                         <BarChart fx:id="vendedoresBarChart" prefHeight="140.0" prefWidth="500.0">
                             <xAxis>
                                 <CategoryAxis label="Día" />
