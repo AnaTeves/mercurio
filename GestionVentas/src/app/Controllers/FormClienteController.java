@@ -1,10 +1,7 @@
 package app.Controllers;
-import java.io.IOException;
 
 import app.BDD.ClienteService;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -12,40 +9,43 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class FormClienteController {
-    @FXML
-    private TextField nombreField;
-    @FXML
-    private TextField dniField;
-    @FXML
-    private TextField emailField;
-    @FXML
-    private TextField telefonoField;
-    @FXML
-    private StackPane mainContentForm;
+
+    @FXML private TextField nombreField;
+    @FXML private TextField dniField;
+    @FXML private TextField emailField;
+    @FXML private TextField telefonoField;
+    @FXML private StackPane mainContentForm;
     @FXML private Button btnGuardar;
-    private ClienteService clientes = new ClienteService();
-    private ClienteController clienteController = new ClienteController();
-    
-    // Metodo que agrega un nuevo cliente
+
+    private final ClienteService clientes = new ClienteService();
+
     @FXML
     public void agregarCliente() {
-        String nombre = nombreField.getText();
-        String dni = dniField.getText();
-        String email = emailField.getText();
-        String telefono = telefonoField.getText();
+        String nombre = nombreField.getText().trim();
+        String dni = dniField.getText().trim();
+        String email = emailField.getText().trim();
+        String telefono = telefonoField.getText().trim();
 
-        // Verifica que todos los campos estén completos
+        // Validar que no haya campos vacíos
         if (nombre.isEmpty() || dni.isEmpty() || email.isEmpty() || telefono.isEmpty()) {
-            clienteController.mostrarAlerta("Error", "Todos los campos deben estar completos.");
+            mostrarAlerta(Alert.AlertType.WARNING, "Campos Incompletos", "Todos los campos deben estar completos.");
             return;
         }
 
-        // Llama al método para insertar el usuario en la base de datos
+        // Insertar en BD
         clientes.addCliente(nombre, dni, email, telefono);
         limpiarCampos();
-        clienteController.mostrarAlerta("Éxito", "Usuario agregado correctamente.");
-        Stage stage = (Stage) btnGuardar.getScene().getWindow();
-        stage.close();
+
+        mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Cliente agregado correctamente.");
+        
+        // Cerrar la ventana modal al finalizar
+        cerrarVentana();
+    }
+
+    @FXML
+    public void cancelar() {
+        // En una ventana modal, 'cancelar' o 'volver' simplemente debe cerrar el Stage actual
+        cerrarVentana();
     }
 
     private void limpiarCampos() {
@@ -55,24 +55,24 @@ public class FormClienteController {
         telefonoField.clear();
     }
 
-    @FXML
-    public void volverVista(){
-        clienteController.setView("/resources/ClientView.fxml");
+    private void cerrarVentana() {
+        if (btnGuardar != null && btnGuardar.getScene() != null) {
+            Stage stage = (Stage) btnGuardar.getScene().getWindow();
+            stage.close();
+        }
     }
 
-    @FXML
-    public void cancelar(){
-            try {
-            Node clientesView = FXMLLoader.load(getClass().getResource("/resources/ClientesView.fxml"));
-            mainContentForm.getChildren().clear(); // Limpiar contenido actual
-            mainContentForm.getChildren().add(clientesView); // Cargar vista de categorías
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("No se pudo cargar la vista de clientes");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+
+        // Asigna la ventana actual como dueña explícita para evitar bloqueos
+        if (mainContentForm != null && mainContentForm.getScene() != null) {
+            alert.initOwner(mainContentForm.getScene().getWindow());
         }
+
+        alert.showAndWait();
     }
 }

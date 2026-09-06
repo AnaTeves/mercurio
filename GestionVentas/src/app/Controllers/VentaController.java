@@ -6,9 +6,10 @@ import app.Models.Usuario;
 import app.Models.DetalleVenta;
 import app.Models.Producto;
 import app.Models.Venta;
-
+import javafx.scene.Node;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -129,23 +130,29 @@ public class VentaController {
         actualizarTotal();
     }
 
-    @FXML
-    public void openTheWindowClients() {
+   @FXML
+    public void openTheWindowClients(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/ClientsList.fxml"));
             Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
 
             ClientsListController controller = loader.getController();
-            String clienteSeleccionado = controller.getClienteSeleccionado();
 
-            if (clienteSeleccionado != null) {
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            
+            // Vincular al escenario principal de ventas
+            Stage parentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.initOwner(parentStage);
+            stage.initModality(Modality.WINDOW_MODAL); // Usar WINDOW_MODAL
+
+            stage.showAndWait();
+
+            String clienteSeleccionado = controller.getClienteSeleccionado();
+            if (clienteSeleccionado != null && campoCliente != null) {
                 campoCliente.setText(clienteSeleccionado);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
