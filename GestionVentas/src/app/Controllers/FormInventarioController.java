@@ -1,5 +1,6 @@
 package app.Controllers;
 import app.BDD.InventService;
+import app.BDD.AuditoriaService;
 import app.BDD.CategoriaService;
 
 import javafx.fxml.FXML;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import app.Models.Categoria;
 import app.Models.Producto;
+import app.Models.Usuario;
 
 public class FormInventarioController {
 
@@ -98,6 +100,20 @@ public class FormInventarioController {
             inventario.addProducto(nombre, descripcion, precio, stock, activo, categoria);
             inventarioController.mostrarAlerta("Éxito", "Producto agregado correctamente");
             limpiarCampos();
+            Usuario usuarioActual = SessionManager.getInstance().getCurrentUser();
+
+            if (usuarioActual != null) {
+                int idUsuario = usuarioActual.getIdUsuario(); // <-- Aquí se define idUsuario
+
+                AuditoriaService.registrar(
+                    idUsuario,
+                    "Productos",
+                    "Agregar Producto",
+                    "Producto agregado: " + nombre
+                );
+            } else {
+                System.out.println("Advertencia: No hay un usuario activo en la sesión.");
+            }
         
     }
 

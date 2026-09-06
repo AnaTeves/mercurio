@@ -1,6 +1,7 @@
 package app.BDD;
 import app.Models.Perfil;
 import app.Models.Usuario;
+import app.BDD.AuditoriaService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,7 @@ import java.util.List;
 
 // Clase que maneja la interaccion con la base de datos de la tabla usuario
 public class UserService {
-
+    private AuditoriaService auditoriaService = new AuditoriaService();
     // Método para validar usuario y devolver la descripción del perfil
     public String validateUser(String dni, String contraseña) {
         String perfilDescripcion = null;
@@ -98,7 +99,7 @@ public class UserService {
     // Metodo que busca a un ususario por su DNI
     public Usuario searchUser(String dni) {
     // Consulta SQL con INNER JOIN a la tabla PERFIL
-    String query = "SELECT u.nombreyape, u.DNI, u.email, u.id_perfil, u.estado, p.descripcion AS tipoPerfil " +
+    String query = "SELECT u.id_usuario, u.nombreyape, u.DNI, u.email, u.id_perfil, u.estado, p.descripcion AS tipoPerfil " +
                    "FROM USUARIO u " +
                    "JOIN PERFIL p ON u.id_perfil = p.id_perfil " +
                    "WHERE u.DNI = ?";
@@ -111,6 +112,7 @@ public class UserService {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                int idUsuario = rs.getInt("id_usuario");
                 String nomYape = rs.getString("nombreyape");
                 String documento = rs.getString("DNI");
                 String email = rs.getString("email");
@@ -118,7 +120,7 @@ public class UserService {
                 String estado = rs.getString("estado"); 
                 String tipoPerfil = rs.getString("tipoPerfil");
 
-                usuario = new Usuario(nomYape, documento, email, idPerfil, estado);
+                usuario = new Usuario(idUsuario,nomYape, documento, email, idPerfil, estado);
                 usuario.setTipoPerfil(tipoPerfil); // <--- Asignamos la descripción del perfil
             }
         } catch (SQLException e) {
@@ -128,7 +130,7 @@ public class UserService {
     }
 
     // Funcion que agrega un usuario a la base de datos
-    public void addUser(String nomYape, String dni, String email, int idPerfil, String contraseña){
+    public void addUser(String nomYape, String dni, String email, int idPerfil, String contraseña, int idUsuarioLogueado) {
         String sql = "INSERT INTO Usuario(nombreyape, DNI, email, id_perfil, estado, contraseña) VALUES (?, ?, ?, ?, ?, ?)"; // Consulta SQL para insertar un nuevo usuario
         // Realizo la conexion con la base de datos
         try(Connection conn = DatabaseConnection.getConnection();
@@ -141,7 +143,15 @@ public class UserService {
                 stmt.setString(5, "Activo"); // Por defecto el usuario se encuentra activo
                 String hashedPassword = encriptarContraseña(contraseña); // Encriptamos la contraseña
                 stmt.setString(6, hashedPassword); // Asignamos la contraseña encriptada
-                stmt.executeUpdate(); // Ejecuta la consulta para insertar al nuevo usuario en la base de datos
+
+                int filasAfectadas = stmt.executeUpdate();
+                if (filasAfectadas > 0) {
+                    String modulo = "Usuarios";
+                    String accion = "Creación";
+                    String detalle = "Se registró al usuario: " + nomYape + " (DNI: " + dni + ")";
+
+                    AuditoriaService.registrar(idUsuarioLogueado, modulo, accion, detalle);
+                }
         } catch (SQLException e) {
             e.printStackTrace();
         }

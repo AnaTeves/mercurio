@@ -1,42 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.XYChart?>
-<?import javafx.scene.image.Image?>        
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.chart.PieChart?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.effect.ColorAdjust?>
-<?import javafx.scene.effect.InnerShadow?>
-<?import javafx.scene.effect.Lighting?>
-<?import javafx.scene.effect.Light.Distant?>
 
-<!-- Vista del administrador al ingresar a la aplicacion-->
 <StackPane alignment="CENTER" maxHeight="800" maxWidth="1000" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.AdminController">
     <BorderPane fx:id="mainBorderPane" StackPane.alignment="CENTER">
-        <!-- Contenedor izquierdo que contiene el menu de opciones -->
+        <!-- Menú Lateral Izquierdo -->
         <left>
-            <VBox style="-fx-background-color: rgb(90, 108, 128);" alignment="CENTER_LEFT" spacing="40" prefWidth="180">
-            <padding>
-                <Insets left="20" right="20" />
-            </padding>
-                <Button onAction="#editProfile" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Administrador" contentDisplay="LEFT" graphicTextGap="15">
+            <VBox alignment="CENTER_LEFT" prefWidth="180" spacing="40" style="-fx-background-color: rgb(90, 108, 128);">
+                <padding>
+                    <Insets left="20" right="20" />
+                </padding>
+                <Button contentDisplay="LEFT" graphicTextGap="15" onAction="#editProfile" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Administrador">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
@@ -48,7 +41,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#handleReports" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Reportes" contentDisplay="LEFT" graphicTextGap="15">
+                <Button contentDisplay="LEFT" graphicTextGap="15" onAction="#handleReports" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Reportes">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
@@ -60,7 +53,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#userManagement" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Usuarios" contentDisplay="LEFT" graphicTextGap="15">
+                <Button contentDisplay="LEFT" graphicTextGap="15" onAction="#userManagement" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Usuarios">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
@@ -72,7 +65,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#openBackupForm" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Backup" contentDisplay="LEFT" graphicTextGap="15">
+                <Button contentDisplay="LEFT" graphicTextGap="15" onAction="#openBackupForm" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Backup">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
@@ -84,7 +77,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button onAction="#logout" fx:id="logoutButton" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Cerrar sesión" contentDisplay="LEFT" graphicTextGap="15">
+                <Button fx:id="logoutButton" contentDisplay="LEFT" graphicTextGap="15" onAction="#logout" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0 10; -fx-text-fill: White;" text="Cerrar sesión">
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
@@ -98,7 +91,8 @@
                 </Button>
             </VBox>
         </left>
-        <!-- Contenedor central -->
+
+        <!-- Contenido Principal -->
         <center>
             <StackPane fx:id="mainContent" style="-fx-background-color: #f4f4f7;">
                 <GridPane fx:id="gridPane" alignment="CENTER" hgap="30" vgap="30">
@@ -110,44 +104,58 @@
                         <RowConstraints percentHeight="45" />
                         <RowConstraints percentHeight="45" />
                     </rowConstraints>
-                    
+
                     <!-- Ganancia Neta -->
-                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
-                        <Label text="Ganancia Neta" styleClass="titulo" style="-fx-font-size: 16px;"/>
+                    <VBox alignment="CENTER" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label style="-fx-font-size: 16px;" styleClass="titulo" text="Ganancia Neta" />
                         <StackPane styleClass="cuadro-ingresos">
-                            <Label fx:id="lblGananciaNeta" text="S/ 0.00" styleClass="texto-ingresos"/>
+                            <Label fx:id="lblGananciaNeta" styleClass="texto-ingresos" text="S/ 0.00" />
                         </StackPane>
                     </VBox>
 
                     <!-- Ingresos del día y mensual -->
-                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
-                        <Label text="Ingresos del dia" styleClass="titulo" style="-fx-font-size: 16px;"/>
+                    <VBox alignment="CENTER" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label style="-fx-font-size: 16px;" styleClass="titulo" text="Ingresos del día" />
                         <StackPane styleClass="cuadro-ingresos">
-                            <Label fx:id="lblIngresosDia" text="S/ 0.00" styleClass="texto-ingresos"/>
+                            <Label fx:id="lblIngresosDia" styleClass="texto-ingresos" text="S/ 0.00" />
                         </StackPane>
 
-                        <Label text="Seleccionar Mes:" styleClass="texto-comun"/>
-                        <ComboBox fx:id="monthComboBox" promptText="Ingresos mensuales"/>
+                        <Label styleClass="texto-comun" text="Seleccionar Mes:" />
+                        <ComboBox fx:id="monthComboBox" promptText="Ingresos mensuales" />
                         <StackPane styleClass="cuadro-ingresos">
-                            <Label fx:id="lblIngresosMes" text="S/ 0.00" styleClass="texto-ingresos"/>
+                            <Label fx:id="lblIngresosMes" styleClass="texto-ingresos" text="S/ 0.00" />
                         </StackPane>
                     </VBox>
-                    
+
                     <!-- Auditoría del Sistema -->
-                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
-                        <Label text="Auditoría del Sistema" styleClass="titulo" style="-fx-font-size: 16px;"/>
-                        <Label text="*(En desarrollo - Tracking de cambios)" style="-fx-text-fill: gray; -fx-font-size: 12px; -fx-wrap-text: true;"/>
+                    <VBox alignment="CENTER" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #333;" styleClass="titulo" text="Últimos Movimientos de Auditoría" />
+                        </HBox>
+
+                        <TableView fx:id="tablaAuditoriaPreview" prefHeight="130.0" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colAudFecha" prefWidth="110.0" text="Fecha/Hora" />
+                                <TableColumn fx:id="colAudUsuario" prefWidth="100.0" text="Usuario" />
+                                <TableColumn fx:id="colAudAccion" prefWidth="120.0" text="Acción" />
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            </columnResizePolicy>
+                        </TableView>
+
+                        <Button onAction="#handleVerAuditoria" style="-fx-background-color: rgb(90, 108, 128); -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Ver Auditoría Completa →" />
                     </VBox>
 
                     <!-- Balance Mensual/Anual - Line Chart -->
-                    <VBox spacing="10" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;">
-                        <Label text="Balance Mensual/Anual" styleClass="titulo" style="-fx-font-size: 16px;"/>
+                    <VBox alignment="CENTER" spacing="10" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label style="-fx-font-size: 16px;" styleClass="titulo" text="Balance Mensual/Anual" />
                         <LineChart fx:id="ingresosLineChart" prefHeight="200.0" prefWidth="350.0">
                             <xAxis>
-                                <CategoryAxis label="Meses" />
+                                <CategoryAxis fx:id="xAxis" label="Meses" />
                             </xAxis>
                             <yAxis>
-                                <NumberAxis fx:id="yAxis" label="Ingresos" autoRanging="false" lowerBound="0" upperBound="50" tickUnit="10"/>
+                                <NumberAxis fx:id="yAxis" autoRanging="true" label="Ingresos ($)" />
                             </yAxis>
                         </LineChart>
                     </VBox>
