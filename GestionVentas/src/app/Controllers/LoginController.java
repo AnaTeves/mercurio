@@ -43,6 +43,23 @@ public class LoginController {
         if (perfilDescripcion != null) {
             Usuario dataUser = userService.searchUser(dni);
 
+            // 3. Validar si la cuenta está desactivada
+        if (dataUser != null && !dataUser.getEstado().equalsIgnoreCase("Activo")) { // Ajusta "Activo" según el valor guardado en tu BDD (ej: "1" o "Habilitado")
+            try {
+                AuditoriaService.registrar(
+                    dataUser.getIdUsuario(), 
+                    "Login", 
+                    "Acceso Bloqueado", 
+                    "Intento de ingreso con usuario desactivado (DNI: " + dni + ")"
+                );
+            } catch (Exception e) {
+                System.err.println("Error al registrar auditoría: " + e.getMessage());
+            }
+
+            mostrarAlerta(Alert.AlertType.ERROR, "Cuenta Desactivada", "Su usuario ha sido desactivado por un administrador.");
+            return;
+        }
+
             sessionManager.setCurrentUser(dataUser); 
 
             // AUDITORÍA: Inicio de sesión exitoso
@@ -61,7 +78,7 @@ public class LoginController {
             }
 
         } else {
-            // 3. AUDITORÍA: Registrar intento fallido
+            // 4. AUDITORÍA: Registrar intento fallido
             Usuario usuarioExistente = userService.searchUser(dni);
             int idUsuario = (usuarioExistente != null) ? usuarioExistente.getIdUsuario() : 0;
             String detalle = (usuarioExistente != null) 
