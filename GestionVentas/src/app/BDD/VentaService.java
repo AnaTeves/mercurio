@@ -9,6 +9,9 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.util.Pair;
 
+import app.BDD.AuditoriaService;
+import app.Controllers.SessionManager;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -20,6 +23,7 @@ import java.util.Map;
 import java.sql.*;
 
 public class VentaService {
+    private SessionManager sessionManager = SessionManager.getInstance();
 
     public Connection connection;
 
@@ -131,6 +135,13 @@ public class VentaService {
                 // Ejecutar la consulta de inserción
                 int affectedRows = statement.executeUpdate();
                 System.out.println("Filas afectadas al insertar venta: " + affectedRows);
+                //Auditoria
+                AuditoriaService.registrar(
+                    sessionManager.getCurrentUser().getIdUsuario(),
+                    "Ventas",
+                    "Nueva Venta",
+                    "Venta realizada por un total de S/ " + venta.getTotalVenta()
+                );
 
                 if(affectedRows == 0){
                     throw new SQLException("No se pudo insertar la venta.");
@@ -364,7 +375,7 @@ public class VentaService {
     private String abreviarNombreProducto(String nombre) {
         int maxLongitud = 15; // Longitud máxima del nombre en el gráfico
         if (nombre.length() > maxLongitud) {
-            return nombre.substring(0, maxLongitud) + "..."; // Añadir "..." al final si el nombre es demasiado largo
+            return nombre.substring(0, maxLongitud) + "..."; 
         }
         return nombre;
     }
@@ -407,12 +418,6 @@ public class VentaService {
             e.printStackTrace();
         }
         return ingresosPorMes;
-    }
-    
-    private static String obtenerNombreMes(int mes) {
-        String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
-                        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-        return meses[mes - 1];
     }
 
     public static Map<String, Double> obtenerIngresosSemanalesPorMes(String mesNombre) {
@@ -693,30 +698,30 @@ public class VentaService {
         ORDER BY total_recaudado DESC
         """;
 
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)) {
 
-        if (aplicarFiltro) {
-            stmt.setDate(1, Date.valueOf(desde));
-            stmt.setDate(2, Date.valueOf(hasta));
-            stmt.setDate(3, Date.valueOf(desde));
-            stmt.setDate(4, Date.valueOf(hasta));
-        }
+            if (aplicarFiltro) {
+                stmt.setDate(1, Date.valueOf(desde));
+                stmt.setDate(2, Date.valueOf(hasta));
+                stmt.setDate(3, Date.valueOf(desde));
+                stmt.setDate(4, Date.valueOf(hasta));
+            }
 
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()) {
-            lista.add(new RendimientoVendedor(
-                rs.getString("vendedor"),
-                rs.getString("dni"),
-                rs.getInt("total_ventas"),
-                rs.getDouble("total_recaudado"),
-                rs.getInt("total_arqueos"),
-                rs.getInt("cierres_con_diferencia")
-            ));
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                lista.add(new RendimientoVendedor(
+                    rs.getString("vendedor"),
+                    rs.getString("dni"),
+                    rs.getInt("total_ventas"),
+                    rs.getDouble("total_recaudado"),
+                    rs.getInt("total_arqueos"),
+                    rs.getInt("cierres_con_diferencia")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return lista;
     }
-    return lista;
-}
 }

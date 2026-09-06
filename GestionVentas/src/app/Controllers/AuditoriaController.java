@@ -24,7 +24,6 @@ public class AuditoriaController {
 
     @FXML
     public void handleVolver(ActionEvent event) {
-        System.out.println("¡Apretaste el botón Volver!");
         if (adminController != null) {
             adminController.volverAlMainContent();
         } else {

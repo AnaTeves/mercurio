@@ -1,6 +1,5 @@
 package app.Controllers;
 
-import app.BDD.AuditoriaService;
 import app.BDD.CajaService;
 import app.BDD.VentaService;
 import app.Models.Usuario;
@@ -28,7 +27,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class VentaController {
-    private SessionManager sessionManager = SessionManager.getInstance();
 
     @FXML private TextField campoCliente; 
     @FXML private TextField buscarProducto;
@@ -195,13 +193,6 @@ public class VentaController {
 
             mostrarAlerta("Éxito", "Venta realizada correctamente.");
             limpiarCampos();
-
-            AuditoriaService.registrar(
-                sessionManager.getCurrentUser().getIdUsuario(),
-                "Ventas",
-                "Nueva Venta",
-                "Venta realizada por un total de S/ " + totalAcumulado
-            );
 
         } catch (Exception e) {
             e.printStackTrace();
