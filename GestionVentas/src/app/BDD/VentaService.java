@@ -2,6 +2,7 @@ package app.BDD;
 import app.Models.Venta;
 import app.Models.DetalleVenta;
 import app.Models.Producto;
+import app.Models.RendimientoVendedor;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
@@ -17,9 +18,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.sql.*;
-import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class VentaService {
 
@@ -664,4 +662,61 @@ public class VentaService {
         }
         return gananciaNeta;
     }
+
+    public ObservableList<RendimientoVendedor> obtenerRendimientoVendedores(LocalDate desde, LocalDate hasta) {
+    ObservableList<RendimientoVendedor> lista = FXCollections.observableArrayList();
+    
+    boolean aplicarFiltro = (desde != null && hasta != null);
+
+    String subqueryVenta = aplicarFiltro 
+        ? "(SELECT id_usuario, COUNT(id_venta) AS total_ventas, SUM(total_venta) AS total_recaudado FROM VENTA WHERE CAST(fecha_venta AS DATE) BETWEEN ? AND ? GROUP BY id_usuario)"
+        : "(SELECT id_usuario, COUNT(id_venta) AS total_ventas, SUM(total_venta) AS total_recaudado FROM VENTA GROUP BY id_usuario)";
+
+    String subqueryCaja = aplicarFiltro 
+        ? "(SELECT DNI, COUNT(id_caja) AS total_arqueos, SUM(CASE WHEN diferencia <> 0 THEN 1 ELSE 0 END) AS cierres_con_diferencia FROM CAJA WHERE CAST(fecha_apertura AS DATE) BETWEEN ? AND ? GROUP BY DNI)"
+        : "(SELECT DNI, COUNT(id_caja) AS total_arqueos, SUM(CASE WHEN diferencia <> 0 THEN 1 ELSE 0 END) AS cierres_con_diferencia FROM CAJA GROUP BY DNI)";
+
+    String query = """
+        SELECT 
+            u.nombreyape AS vendedor,
+            u.DNI AS dni,
+            ISNULL(v.total_ventas, 0) AS total_ventas,
+            ISNULL(v.total_recaudado, 0) AS total_recaudado,
+            ISNULL(c.total_arqueos, 0) AS total_arqueos,
+            ISNULL(c.cierres_con_diferencia, 0) AS cierres_con_diferencia
+        FROM USUARIO u
+        LEFT JOIN """ + subqueryVenta + """
+        v ON u.id_usuario = v.id_usuario
+        LEFT JOIN """ + subqueryCaja + """
+        c ON u.DNI = c.DNI
+        WHERE u.id_perfil = 3
+        ORDER BY total_recaudado DESC
+        """;
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+
+        if (aplicarFiltro) {
+            stmt.setDate(1, Date.valueOf(desde));
+            stmt.setDate(2, Date.valueOf(hasta));
+            stmt.setDate(3, Date.valueOf(desde));
+            stmt.setDate(4, Date.valueOf(hasta));
+        }
+
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            lista.add(new RendimientoVendedor(
+                rs.getString("vendedor"),
+                rs.getString("dni"),
+                rs.getInt("total_ventas"),
+                rs.getDouble("total_recaudado"),
+                rs.getInt("total_arqueos"),
+                rs.getInt("cierres_con_diferencia")
+            ));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return lista;
+}
 }

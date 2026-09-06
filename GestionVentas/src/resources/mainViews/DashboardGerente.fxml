@@ -171,6 +171,7 @@
                                 <NumberAxis label="Ventas" />
                             </yAxis>
                         </BarChart>
+                        <Button text="Ver Detalle de Vendedores" onAction="#handleVerDetalleVendedores" styleClass="boton-registro"/>
                     </VBox>
                     
                     <!-- Productos Más Vendidos - Bar Chart -->

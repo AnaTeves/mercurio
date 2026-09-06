@@ -266,6 +266,7 @@ public class GerenteController extends ComunesController {
     @FXML public void cerrarSesion() { handleLogout(); }
     @FXML public void handleCategorias() { setView("/resources/CategoriasView.fxml"); }
     @FXML public void handleClientes(){ setView("/resources/ClientesView.fxml"); }
+    @FXML public void handleVerDetalleVendedores() {setView("/resources/DetalleVendedoresView.fxml"); }
 
     @FXML
     public void showAlert(String titulo, String mensaje) {
