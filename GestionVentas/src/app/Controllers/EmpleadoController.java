@@ -8,7 +8,6 @@ import app.BDD.VentaService;
 import app.BDD.CajaService; 
 import app.Models.Usuario;
 import app.Models.Venta;
-import app.Controllers.AperturaCajaController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -239,11 +238,6 @@ public class EmpleadoController extends ComunesController {
     // ==========================================
 
     @FXML
-    public void handleInventario(){
-        setView("/resources/InventarioView.fxml");
-    }
-
-    @FXML
     public void handleClientes(){
         setView("/resources/ClientesView.fxml");
     }
@@ -255,7 +249,7 @@ public class EmpleadoController extends ComunesController {
 
     @FXML
     public void handleConsultaStock(){
-        setView("/resources/InventarioView.fxml");
+        setView("/resources/ConsultaStockView.fxml");
     }
 
     @FXML
