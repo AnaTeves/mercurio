@@ -4,6 +4,7 @@ import app.BDD.AuditoriaService;
 import app.Models.Auditoria;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -14,6 +15,22 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.time.LocalDate;
 
 public class AuditoriaController {
+    private AdminController adminController;
+
+    // Método para recibir la referencia del AdminController
+    public void setAdminController(AdminController adminController) {
+        this.adminController = adminController;
+    }
+
+    @FXML
+    public void handleVolver(ActionEvent event) {
+        System.out.println("¡Apretaste el botón Volver!");
+        if (adminController != null) {
+            adminController.volverAlMainContent();
+        } else {
+            System.out.println("ERROR: adminController es NULL");
+        }
+    }
 
     // Componentes mapeados desde el FXML
     @FXML private ComboBox<String> cbModulo;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -14,7 +15,15 @@
     <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #333;" text="Auditoría del Sistema" />
 
     <VBox spacing="15" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20;">
-        
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            
+            <Button text="← Volver al inicio" 
+                    onAction="#handleVolver" 
+                    style="-fx-background-color: #5a6c80; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" />
+        </HBox>
         <!-- Barra de Filtros -->
         <HBox alignment="CENTER_LEFT" spacing="12">
             <Label style="-fx-font-weight: bold; -fx-text-fill: #555;" text="Módulo:" />

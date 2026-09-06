@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -100,13 +101,17 @@ public class AdminController extends ComunesController {
     private void handleVerAuditoria() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/AuditoriaView.fxml"));
-            Node view = loader.load();
+            Parent auditoriaView = loader.load();
 
-            mainContent.getChildren().clear();
-            mainContent.getChildren().add(view);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            // Obtener la instancia que creó JavaFX
+            AuditoriaController controller = loader.getController();
+            controller.setAdminController(this);
+
+            // Mostrar en el centro
+            mainBorderPane.setCenter(auditoriaView);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 
     public void cargarVentasPorDia() {
@@ -142,6 +147,13 @@ public class AdminController extends ComunesController {
     public void handleReports() {
         mainBorderPane.setCenter(mainContent);
     }
+
+    // Método público que llamará el AuditoriaController
+public void volverAlMainContent() {
+    if (mainContent != null) {
+        mainBorderPane.setCenter(mainContent);
+    }
+}
 
     @FXML
     public void logout() {

@@ -36,8 +36,6 @@ public class LoginController {
     
     if (perfilDesripcion != null) {
         Usuario dataUser = userService.searchUser(dni);
-
-        // DIAGNÓSTICO: Revisa tu consola. Si imprime 0, el problema está en searchUser()
         System.out.println("ID Usuario obtenido: " + dataUser.getIdUsuario());
 
         sessionManager.setCurrentUser(dataUser); 
