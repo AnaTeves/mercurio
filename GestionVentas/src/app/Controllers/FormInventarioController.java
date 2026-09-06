@@ -1,4 +1,5 @@
 package app.Controllers;
+
 import app.BDD.InventService;
 import app.BDD.AuditoriaService;
 import app.BDD.CategoriaService;
@@ -20,28 +21,19 @@ import app.Models.Usuario;
 
 public class FormInventarioController {
 
-    @FXML
-    private TextField nombreField;
-    @FXML
-    private TextField descripcionField;
-    @FXML
-    private TextField precioField;
-    @FXML
-    private TextField stockField;
-    @FXML
-    private MenuButton categoriaMenuButton;
-    @FXML
-    private MenuButton estadoMenuButton;
-    @FXML
-    private StackPane mainContentForm;
+    @FXML private TextField nombreField;
+    @FXML private TextField descripcionField;
+    @FXML private TextField precioField;
+    @FXML private TextField stockField;
+    @FXML private MenuButton categoriaMenuButton;
+    @FXML private MenuButton estadoMenuButton;
+    @FXML private StackPane mainContentForm;
 
-    private int estadoSeleccionado;
+    private int estadoSeleccionado = -1; // -1 indica no seleccionado
 
-    private boolean activo;
-
-    private InventService inventario = new InventService();
-    private InventarioController inventarioController = new InventarioController();
-    private CategoriaService categoriaService = new CategoriaService();
+    private final InventService inventario = new InventService();
+    private final InventarioController inventarioController = new InventarioController();
+    private final CategoriaService categoriaService = new CategoriaService();
     private Producto productoEdicion;
 
     @FXML
@@ -58,63 +50,67 @@ public class FormInventarioController {
             descripcionField.setText(producto.getDescripcion());
             precioField.setText(String.valueOf(producto.getPrecio()));
             stockField.setText(String.valueOf(producto.getStock()));
-            estadoMenuButton.setText(String.valueOf(producto.getEstado()));
+            estadoMenuButton.setText(producto.getEstado() ? "Activo" : "Inactivo");
+            estadoSeleccionado = producto.getEstado() ? 1 : 0;
             categoriaMenuButton.setText(String.valueOf(producto.getId_categoria()));
         } else {
             limpiarCampos();
         }
     }
     
+    @FXML
     public void agregarProducto(){
-    
-            String nombre = nombreField.getText();
-            String descripcion = descripcionField.getText();
-            float precio = Float.parseFloat(precioField.getText());
-            int stock = Integer.parseInt(stockField.getText());
-            String categoriaDescripcion = categoriaMenuButton.getText();
+        String nombre = nombreField.getText().trim();
+        String descripcion = descripcionField.getText().trim();
+        String precioStr = precioField.getText().trim();
+        String stockStr = stockField.getText().trim();
+        String categoriaDescripcion = categoriaMenuButton.getText();
 
-            // boolean estado = Boolean.parseBoolean(estadoSeleccionado);
-            int categoria = inventario.obtenerIdCategoria(categoriaDescripcion);
-            
-            if(nombre.isEmpty() || descripcion.isEmpty() || categoria == -1){
-                inventarioController.mostrarAlerta("Error", "Todos los campos deben estar completos");
-                return;
-            }
+        // 1. Validar que los campos de texto no estén vacíos
+        if (nombre.isEmpty() || descripcion.isEmpty() || precioStr.isEmpty() || stockStr.isEmpty()) {
+            inventarioController.mostrarAlerta("Error", "Todos los campos deben estar completos.");
+            return;
+        }
 
-            if(estadoSeleccionado == 1){
-                activo = true;
-            } else {
-                activo = false;
-            }
+        // 2. Validar que la categoría sea válida
+        int categoria = inventario.obtenerIdCategoria(categoriaDescripcion);
+        if (categoria == -1) {
+            inventarioController.mostrarAlerta("Error", "Debe seleccionar una categoría válida.");
+            return;
+        }
 
-            try {
-                precio = Float.parseFloat(precioField.getText()); // Convertir a float
-                stock = Integer.parseInt(stockField.getText()); // Convertir a int
-                // estado = Boolean.parseBoolean(estadoMenuButton.getText()); // Convertir a boolean
-            } catch (NumberFormatException e) {
-                inventarioController.mostrarAlerta("Error", "Por favor, ingresa valores numéricos válidos en Precio y Stock, y un estado válido.");
-                return;
-            }
+        // 3. Convertir de forma segura los valores numéricos
+        float precio;
+        int stock;
+        try {
+            precio = Float.parseFloat(precioStr);
+            stock = Integer.parseInt(stockStr);
+        } catch (NumberFormatException e) {
+            inventarioController.mostrarAlerta("Error", "Ingresa valores numéricos válidos en Precio y Stock.");
+            return;
+        }
 
-            // Llama al metodo para agregar el producto a la base de datos
-            inventario.addProducto(nombre, descripcion, precio, stock, activo, categoria);
-            inventarioController.mostrarAlerta("Éxito", "Producto agregado correctamente");
-            limpiarCampos();
-            Usuario usuarioActual = SessionManager.getInstance().getCurrentUser();
+        // 4. Determinar estado
+        boolean activo = (estadoSeleccionado == 1);
 
-            if (usuarioActual != null) {
-                int idUsuario = usuarioActual.getIdUsuario(); // <-- Aquí se define idUsuario
+        // 5. Guardar el producto en la BD
+        inventario.addProducto(nombre, descripcion, precio, stock, activo, categoria);
+        inventarioController.mostrarAlerta("Éxito", "Producto agregado correctamente.");
+        limpiarCampos();
 
-                AuditoriaService.registrar(
-                    idUsuario,
-                    "Productos",
-                    "Agregar Producto",
-                    "Producto agregado: " + nombre
-                );
-            } else {
-                System.out.println("Advertencia: No hay un usuario activo en la sesión.");
-            }
-        
+        // 6. Registrar en auditoría
+        Usuario usuarioActual = SessionManager.getInstance().getCurrentUser();
+        if (usuarioActual != null) {
+            int idUsuario = usuarioActual.getIdUsuario();
+            AuditoriaService.registrar(
+                idUsuario,
+                "Productos",
+                "Agregar Producto",
+                "Producto agregado: " + nombre
+            );
+        } else {
+            System.out.println("Advertencia: No hay un usuario activo en la sesión.");
+        }
     }
 
     private void limpiarCampos(){
@@ -122,6 +118,9 @@ public class FormInventarioController {
         descripcionField.clear();
         precioField.clear();
         stockField.clear();
+        estadoMenuButton.setText("Estado");
+        categoriaMenuButton.setText("Categoría");
+        estadoSeleccionado = -1;
     }
 
     private void estadoSelection() {
@@ -141,12 +140,10 @@ public class FormInventarioController {
 
     private void cargarCategorias() {
         try {
-            // Llama al servicio para obtener la lista de categorías
             List<Categoria> categorias = categoriaService.obtenerCategoriasDesdeBD();
 
-            // Agrega cada categoría como un elemento del menú
             for (Categoria categoria : categorias) {
-                MenuItem item = new MenuItem(categoria.getNombre()); // Asumiendo que el modelo `Categoria` tiene un método `getNombre`
+                MenuItem item = new MenuItem(categoria.getNombre());
                 item.setOnAction(event -> seleccionarCategoria(categoria));
                 categoriaMenuButton.getItems().add(item);
             }
@@ -155,17 +152,16 @@ public class FormInventarioController {
         }
     }
 
-    // Método para manejar la selección de categoría
     private void seleccionarCategoria(Categoria categoria) {
         categoriaMenuButton.setText(categoria.getNombre());
     }
 
     @FXML
     public void cancelar(){
-            try {
+        try {
             Node inventarioView = FXMLLoader.load(getClass().getResource("/resources/InventarioView.fxml"));
-            mainContentForm.getChildren().clear(); // Limpiar contenido actual
-            mainContentForm.getChildren().add(inventarioView); // Cargar vista de inventario
+            mainContentForm.getChildren().clear();
+            mainContentForm.getChildren().add(inventarioView);
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);

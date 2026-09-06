@@ -39,27 +39,27 @@ public class ClientsListController {
     }
 
     @FXML
-public void seleccionarCliente() {
-    Cliente cliente = tablaClientes.getSelectionModel().getSelectedItem();
-    
-    if (cliente != null) {
-        this.clienteSeleccionado = cliente.getDni();
-        Stage stage = (Stage) tablaClientes.getScene().getWindow();
-        stage.close();
-    } else {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Selección requerida");
-        alert.setHeaderText(null);
-        alert.setContentText("Por favor, selecciona un cliente de la lista antes de continuar.");
+    public void seleccionarCliente() {
+        Cliente cliente = tablaClientes.getSelectionModel().getSelectedItem();
         
-        // Asigna la ventana actual como dueña para forzar la alerta SIEMPRE ENFRENTE
-        if (tablaClientes.getScene() != null && tablaClientes.getScene().getWindow() != null) {
-            alert.initOwner(tablaClientes.getScene().getWindow());
-        }
+        if (cliente != null) {
+            this.clienteSeleccionado = cliente.getDni();
+            Stage stage = (Stage) tablaClientes.getScene().getWindow();
+            stage.close();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Selección requerida");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, selecciona un cliente de la lista antes de continuar.");
+            
+            // Asigna la ventana actual como dueña para forzar la alerta SIEMPRE ENFRENTE
+            if (tablaClientes.getScene() != null && tablaClientes.getScene().getWindow() != null) {
+                alert.initOwner(tablaClientes.getScene().getWindow());
+            }
 
-        alert.showAndWait();
+            alert.showAndWait();
+        }
     }
-}
 
     @FXML
     public void abrirFormularioCliente() {

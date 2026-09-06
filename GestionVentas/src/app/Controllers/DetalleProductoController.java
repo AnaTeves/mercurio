@@ -2,6 +2,7 @@ package app.Controllers;
 
 import app.BDD.InventService;
 import app.Models.Producto;
+import app.Models.Usuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -100,8 +101,16 @@ public class DetalleProductoController extends ComunesController {
             producto.setEstado(estado);
             producto.setId_categoria(idCategoria);
 
-            // Guardar en la Base de Datos
-            boolean exito = inventService.actualizarProducto(producto);
+            Usuario usuarioActual = SessionManager.getInstance().getCurrentUser();
+
+            if (usuarioActual == null) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Error de Sesión", "No se encontró un usuario activo en el sistema.");
+                return;
+            }
+
+            int idUsuario = usuarioActual.getIdUsuario();
+
+            boolean exito = inventService.actualizarProducto(producto, idUsuario);
 
             if (exito) {
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Producto actualizado correctamente en la base de datos.");
