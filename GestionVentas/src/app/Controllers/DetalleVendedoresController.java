@@ -71,6 +71,8 @@ public class DetalleVendedoresController {
 
     @FXML
     private void handleVolver() {
-        
+        if (gerenteController != null) {
+            gerenteController.handleReports();
+        }
     }
 }

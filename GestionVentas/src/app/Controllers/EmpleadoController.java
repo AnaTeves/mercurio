@@ -3,9 +3,11 @@ package app.Controllers;
 import java.io.IOException;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import app.BDD.VentaService;
-import app.BDD.CajaService; 
+import app.BDD.CajaService;
+import app.Models.DetalleVenta;
 import app.Models.Usuario;
 import app.Models.Venta;
 import javafx.collections.FXCollections;
@@ -120,17 +122,29 @@ public class EmpleadoController extends ComunesController {
     }
 
     private void verDetalleVenta(Venta venta) {
-        // Por ahora, mostramos una alerta con el detalle
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Detalle de Venta");
-        alert.setHeaderText("Detalle de la venta");
-        alert.setContentText(
-            "Fecha: " + venta.getFechaVenta() + "\n" +
-            "Total: S/ " + venta.getTotalVenta() + "\n" +
-            "Cliente: " + venta.getDni_cliente()
-        );
-        alert.showAndWait();
+    // Consulta los productos de esta venta específica solo al hacer clic
+    List<DetalleVenta> detalles = ventaService.obtenerDetallesPorVenta(venta.getIdVenta());
+    
+    StringBuilder sb = new StringBuilder();
+    sb.append("Ticket ID: #").append(venta.getIdVenta()).append("\n");
+    sb.append("Cliente: ").append(venta.getDni_cliente() != null ? venta.getDni_cliente() : "Consumidor Final").append("\n");
+    sb.append("----------------------------------------------\n");
+    
+    for (DetalleVenta dv : detalles) {
+        float subtotal = dv.getCantidad() * dv.getPrecioUnitario();
+        sb.append(String.format("• %s\n   %d x S/ %.2f = S/ %.2f\n", 
+                dv.getNombre(), dv.getCantidad(), dv.getPrecioUnitario(), subtotal));
     }
+    
+    sb.append("----------------------------------------------\n");
+    sb.append(String.format("TOTAL COBRADO: S/ %.2f", venta.getTotalVenta()));
+
+    Alert alert = new Alert(AlertType.INFORMATION);
+    alert.setTitle("Comprobante de Venta");
+    alert.setHeaderText("Desglose de Productos");
+    alert.setContentText(sb.toString());
+    alert.showAndWait();
+}
 
     // ==========================================
     // LÓGICA DE APERTURA DE CAJA (Refactorizada con FXML)

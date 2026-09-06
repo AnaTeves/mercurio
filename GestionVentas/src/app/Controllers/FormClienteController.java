@@ -2,11 +2,13 @@ package app.Controllers;
 
 import app.BDD.ClienteService;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+import java.io.IOException;
 
 public class FormClienteController {
 
@@ -20,32 +22,35 @@ public class FormClienteController {
     private final ClienteService clientes = new ClienteService();
 
     @FXML
-    public void agregarCliente() {
-        String nombre = nombreField.getText().trim();
-        String dni = dniField.getText().trim();
-        String email = emailField.getText().trim();
-        String telefono = telefonoField.getText().trim();
+public void agregarCliente() {
+    String nombre = nombreField.getText().trim();
+    String dni = dniField.getText().trim();
+    String email = emailField.getText().trim();
+    String telefono = telefonoField.getText().trim();
 
-        // Validar que no haya campos vacíos
-        if (nombre.isEmpty() || dni.isEmpty() || email.isEmpty() || telefono.isEmpty()) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Campos Incompletos", "Todos los campos deben estar completos.");
-            return;
-        }
-
-        // Insertar en BD
-        clientes.addCliente(nombre, dni, email, telefono);
-        limpiarCampos();
-
-        mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Cliente agregado correctamente.");
-        
-        // Cerrar la ventana modal al finalizar
-        cerrarVentana();
+    // 1. Validar que los campos no estén vacíos
+    if (nombre.isEmpty() || dni.isEmpty() || email.isEmpty() || telefono.isEmpty()) {
+        mostrarAlerta(Alert.AlertType.WARNING, "Campos Incompletos", "Todos los campos deben estar completos.");
+        return;
     }
+
+    // 2. Validar si el DNI ya está registrado en la base de datos
+    if (clientes.buscarPorDni(dni).isPresent()) {
+        mostrarAlerta(Alert.AlertType.ERROR, "DNI Ya Registrado", "El DNI ingresado ya pertenece a otro cliente.");
+        return; // Detiene el proceso de guardado
+    }
+
+    // 3. Insertar en BD si superó las validaciones
+    clientes.addCliente(nombre, dni, email, telefono);
+    limpiarCampos();
+
+    mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Cliente agregado correctamente.");
+    volverAClientes();
+}
 
     @FXML
     public void cancelar() {
-        // En una ventana modal, 'cancelar' o 'volver' simplemente debe cerrar el Stage actual
-        cerrarVentana();
+        volverAClientes();
     }
 
     private void limpiarCampos() {
@@ -55,10 +60,16 @@ public class FormClienteController {
         telefonoField.clear();
     }
 
-    private void cerrarVentana() {
-        if (btnGuardar != null && btnGuardar.getScene() != null) {
-            Stage stage = (Stage) btnGuardar.getScene().getWindow();
-            stage.close();
+    private void volverAClientes() {
+        try {
+            // Cambia la ruta según donde tengas tu FXML de lista de clientes
+            Node clienteView = FXMLLoader.load(getClass().getResource("/ClienteView.fxml"));
+            if (mainContentForm != null) {
+                mainContentForm.getChildren().clear();
+                mainContentForm.getChildren().add(clienteView);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -68,7 +79,6 @@ public class FormClienteController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
 
-        // Asigna la ventana actual como dueña explícita para evitar bloqueos
         if (mainContentForm != null && mainContentForm.getScene() != null) {
             alert.initOwner(mainContentForm.getScene().getWindow());
         }

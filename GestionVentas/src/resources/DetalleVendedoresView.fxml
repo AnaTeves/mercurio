@@ -13,7 +13,7 @@
     
     <!-- Encabezado y Botón Volver -->
     <HBox alignment="CENTER_LEFT" spacing="15">
-        <Button onAction="#handleVolver" style="-fx-background-color: rgb(90, 108, 128); -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="← Volver a Reportes" />
+        <Button onAction="#handleVolver" style="-fx-background-color: rgb(90, 108, 128); -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Volver a Reportes" />
         <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;" text="Detalle de Rendimiento por Vendedor" />
     </HBox>
 

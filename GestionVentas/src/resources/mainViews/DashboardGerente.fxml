@@ -60,7 +60,7 @@
                     <graphic>
                         <ImageView fitHeight="27" fitWidth="27" preserveRatio="true">
                             <image>
-                                <Image url="@../files/reportes.png" />
+                                <Image url="@../files/arqueoCaja.png" />
                             </image>
                             <effect>
                                 <ColorAdjust brightness="1.0" />

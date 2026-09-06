@@ -2,7 +2,7 @@ package app.Controllers;
 
 import app.BDD.UserService;
 import app.BDD.CajaService;
-import app.BDD.AuditoriaService; // AUDITORÍA: Se agrega el servicio
+import app.BDD.AuditoriaService;
 import app.Models.Usuario;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,63 +17,86 @@ import javafx.scene.Scene;
 import java.io.IOException;
 import java.util.Optional;
 
-// Control que maneja el inicio de sesion 
+// Control que maneja el inicio de sesión 
 public class LoginController {
-    @FXML
-    private TextField dniField;
-    @FXML
-    private PasswordField passwordField;
+    @FXML private TextField dniField;
+    @FXML private PasswordField passwordField;
     
     private UserService userService = new UserService(); 
     private SessionManager sessionManager = SessionManager.getInstance();
     private CajaService cajaService = new CajaService();
 
-    @FXML protected void handleLogin(ActionEvent event) {
-    String dni = dniField.getText().trim();
-    String password = passwordField.getText().trim();
+    @FXML 
+    protected void handleLogin(ActionEvent event) {
+        String dni = dniField.getText().trim();
+        String password = passwordField.getText().trim();
 
-    String perfilDesripcion = userService.validateUser(dni, password);
-    
-    if (perfilDesripcion != null) {
-        Usuario dataUser = userService.searchUser(dni);
-        System.out.println("ID Usuario obtenido: " + dataUser.getIdUsuario());
-
-        sessionManager.setCurrentUser(dataUser); 
-
-        // AUDITORÍA: Registrar ANTES de cambiar de ventana o abrir caja
-        AuditoriaService.registrar(
-            dataUser.getIdUsuario(), 
-            "Login", 
-            "Inicio de Sesión", 
-            "Ingreso al sistema (" + perfilDesripcion + ")"
-        );
-
-        // Redirección de vistas después de guardar la auditoría
-        if (perfilDesripcion.equals("Empleado")) {
-            procesarAperturaDeCaja(dataUser, perfilDesripcion);
-        } else {
-            loadDashboard(perfilDesripcion); 
-        }
-
-    } else {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("Usuario o contraseña inválidos");
-        alert.show();
-    }
-}
-
-    // Método que maneja la lógica de la caja
-    private void procesarAperturaDeCaja(Usuario usuarioLogueado, String perfilDesripcion) {
-        String dni = usuarioLogueado.getDni();
-
-        // A. Verificamos si ya tiene una caja abierta
-        if (cajaService.isCajaAbierta(dni)) {
-            System.out.println("La caja ya estaba abierta. Ingresando al sistema...");
-            loadDashboard(perfilDesripcion);
+        // 1. Validar campos vacíos antes de autenticar
+        if (dni.isEmpty() || password.isEmpty()) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Campos Incompletos", "Por favor, complete todos los campos para ingresar.");
             return;
         }
 
-        // B. Pedimos el monto inicial
+        // 2. Validar credenciales
+        String perfilDescripcion = userService.validateUser(dni, password);
+        
+        if (perfilDescripcion != null) {
+            Usuario dataUser = userService.searchUser(dni);
+
+            sessionManager.setCurrentUser(dataUser); 
+
+            // AUDITORÍA: Inicio de sesión exitoso
+            AuditoriaService.registrar(
+                dataUser.getIdUsuario(), 
+                "Login", 
+                "Inicio de Sesión", 
+                "Ingreso exitoso al sistema (" + perfilDescripcion + ")"
+            );
+
+            // Redirección de vistas
+            if (perfilDescripcion.equals("Empleado")) {
+                procesarAperturaDeCaja(dataUser, perfilDescripcion);
+            } else {
+                loadDashboard(perfilDescripcion); 
+            }
+
+        } else {
+            // 3. AUDITORÍA: Registrar intento fallido
+            Usuario usuarioExistente = userService.searchUser(dni);
+            int idUsuario = (usuarioExistente != null) ? usuarioExistente.getIdUsuario() : 0;
+            String detalle = (usuarioExistente != null) 
+                ? "Contraseña incorrecta (DNI: " + dni + ")" 
+                : "DNI no registrado (DNI: " + dni + ")";
+
+            try {
+                AuditoriaService.registrar(idUsuario, "Login", "Intento Fallido", detalle);
+            } catch (Exception e) {
+                System.err.println("Error al registrar auditoría de intento fallido: " + e.getMessage());
+            }
+
+            mostrarAlerta(Alert.AlertType.ERROR, "Acceso Denegado", "Usuario o contraseña inválidos.");
+        }
+    }
+
+    // Método auxiliar para alertas reutilizables
+    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    // Método que maneja la lógica de la caja
+    private void procesarAperturaDeCaja(Usuario usuarioLogueado, String perfilDescripcion) {
+        String dni = usuarioLogueado.getDni();
+
+        if (cajaService.isCajaAbierta(dni)) {
+            System.out.println("La caja ya estaba abierta. Ingresando al sistema...");
+            loadDashboard(perfilDescripcion);
+            return;
+        }
+
         TextInputDialog dialog = new TextInputDialog("0.00");
         dialog.setTitle("Apertura de Caja");
         dialog.setHeaderText("¡Bienvenido/a, " + usuarioLogueado.getNomYape() + "!");
@@ -81,17 +104,14 @@ public class LoginController {
 
         Optional<String> result = dialog.showAndWait();
 
-        // C. Evaluamos qué ingresó
         if (result.isPresent()) {
             try {
                 String montoTexto = result.get().replace(",", ".");
                 double montoInicial = Double.parseDouble(montoTexto);
 
-                // Guardamos en BD
                 boolean exito = cajaService.abrirCaja(dni, montoInicial);
 
                 if (exito) {
-                    // AUDITORÍA 2: Registrar la apertura de caja
                     AuditoriaService.registrar(
                         usuarioLogueado.getIdUsuario(),
                         "Caja",
@@ -100,14 +120,14 @@ public class LoginController {
                     );
 
                     System.out.println("Caja abierta con éxito: $" + montoInicial);
-                    loadDashboard(perfilDesripcion);
+                    loadDashboard(perfilDescripcion);
                 } else {
                     mostrarAlertaError("No se pudo registrar la caja en la base de datos.");
                 }
 
             } catch (NumberFormatException e) {
                 mostrarAlertaError("El monto ingresado no es válido. Debe ser un número.");
-                procesarAperturaDeCaja(usuarioLogueado, perfilDesripcion);
+                procesarAperturaDeCaja(usuarioLogueado, perfilDescripcion);
             }
         } else {
             System.out.println("Apertura de caja cancelada.");
@@ -116,11 +136,7 @@ public class LoginController {
     }
 
     private void mostrarAlertaError(String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error de Apertura");
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        mostrarAlerta(Alert.AlertType.ERROR, "Error de Apertura", mensaje);
     }
 
     private void loadDashboard(String userRole) {
@@ -128,9 +144,9 @@ public class LoginController {
             Stage stage = (Stage) dniField.getScene().getWindow(); 
             Parent root;
             
-            if(userRole.equals("Administrador")) {
+            if (userRole.equals("Administrador")) {
                 root = FXMLLoader.load(getClass().getResource("/resources/mainViews/DashboardAdmin.fxml"));
-            } else if(userRole.equals("Gerente")) { 
+            } else if (userRole.equals("Gerente")) { 
                 root = FXMLLoader.load(getClass().getResource("/resources/mainViews/DashboardGerente.fxml"));
             } else { 
                 root = FXMLLoader.load(getClass().getResource("/resources/mainViews/DashboardEmpleado.fxml"));

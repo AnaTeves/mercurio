@@ -108,12 +108,12 @@ public class Venta {
     }
 
     @Override
-public String toString() {
-    return "Venta{" +
-            "fechaVenta=" + fechaVenta +
-            ", totalVenta=" + totalVenta +
-            ", usuario=" + getIdusuario() +
-            ", cliente=" + getIdcliente() +
-            '}';
-}
+    public String toString() {
+        return "Venta{" +
+                "fechaVenta=" + fechaVenta +
+                ", totalVenta=" + totalVenta +
+                ", usuario=" + getIdusuario() +
+                ", cliente=" + getIdcliente() +
+                '}';
+    }
 }

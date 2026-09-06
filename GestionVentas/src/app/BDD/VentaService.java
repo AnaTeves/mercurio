@@ -604,11 +604,42 @@ public class VentaService {
         return productos;
     }
 
+    public List<DetalleVenta> obtenerDetallesPorVenta(int idVenta) {
+    List<DetalleVenta> detalles = new ArrayList<>();
+    String query = """
+        SELECT p.nombre, dv.cantidad, dv.precio_unitario, dv.id_producto
+        FROM DETALLE_VENTA dv
+        JOIN PRODUCTO p ON dv.id_producto = p.id_producto
+        WHERE dv.id_venta = ?
+    """;
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+
+        stmt.setInt(1, idVenta);
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String nombre = rs.getString("nombre");
+                int cantidad = rs.getInt("cantidad");
+                float precioUnitario = rs.getFloat("precio_unitario");
+                int idProducto = rs.getInt("id_producto");
+
+                detalles.add(new DetalleVenta(nombre, cantidad, precioUnitario, idProducto));
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return detalles;
+}
+
     // Método para obtener las ventas del día de un usuario específico
     public List<Venta> obtenerVentasDelDiaPorUsuario(String dniUsuario) {
         List<Venta> ventas = new ArrayList<>();
         String query = """
             SELECT 
+                V.id_venta,
                 V.fecha_venta, 
                 V.total_venta, 
                 U.DNI AS dniUsuario, 
@@ -629,12 +660,15 @@ public class VentaService {
             ResultSet resultSet = stmt.executeQuery();
 
             while (resultSet.next()) {
+                int idVenta = resultSet.getInt("id_venta");
                 Timestamp fechaVenta = resultSet.getTimestamp("fecha_venta");
                 float totalVenta = resultSet.getFloat("total_venta");
                 String dniUsuarioResult = resultSet.getString("dniUsuario");
                 String dniCliente = resultSet.getString("dniCliente");
                 
-                ventas.add(new Venta(fechaVenta, totalVenta, dniUsuarioResult, dniCliente));
+                Venta v = new Venta(fechaVenta, totalVenta, dniUsuarioResult, dniCliente);
+                v.setIdVenta(idVenta);
+                ventas.add(v);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -643,30 +677,28 @@ public class VentaService {
         return ventas;
     }
 
-    // Método para calcular la ganancia neta (ventas totales - costo de compras)
+    // Método para calcular la ganancia neta
     public double obtenerGananciaNeta() {
-        double gananciaNeta = 0;
-        String query = "SELECT " +
-                      "SUM(dv.cantidad * p.precio_venta) AS total_ventas, " +
-                      "SUM(dv.cantidad * p.precio_costo) AS total_costo " +
-                      "FROM detalle_venta dv " +
-                      "JOIN producto p ON dv.id_producto = p.id_producto " +
-                      "JOIN venta v ON dv.id_venta = v.id_venta";
+    double gananciaNeta = 0;
+    String query = """
+        SELECT 
+            SUM(dv.cantidad * (dv.precio_unitario - p.precio_costo)) AS ganancia_neta
+        FROM detalle_venta dv
+        JOIN producto p ON dv.id_producto = p.id_producto
+    """;
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
+    try (Connection conn = DatabaseConnection.getConnection();
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(query)) {
 
-            if (rs.next()) {
-                double totalVentas = rs.getDouble("total_ventas");
-                double totalCosto = rs.getDouble("total_costo");
-                gananciaNeta = totalVentas - totalCosto;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (rs.next()) {
+            gananciaNeta = rs.getDouble("ganancia_neta");
         }
-        return gananciaNeta;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return gananciaNeta;
+}
 
     public ObservableList<RendimientoVendedor> obtenerRendimientoVendedores(LocalDate desde, LocalDate hasta) {
     ObservableList<RendimientoVendedor> lista = FXCollections.observableArrayList();

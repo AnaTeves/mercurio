@@ -77,7 +77,6 @@ public class GerenteController extends ComunesController {
 
         // 1. Cargar componentes del Dashboard
         cargarProductosStockBajo();
-        cargarRankingProductos();
         cargarProductosMasVendidos();
         inicializarComboVendedores();
 
@@ -188,29 +187,6 @@ public class GerenteController extends ComunesController {
         }
     }
 
-    private void cargarRankingProductos() {
-        try {
-            List<Pair<String, Integer>> productosRanking = ventaService.obtenerProductosMasVendidos();
-            rankingProductosPieChart.getData().clear();
-            
-            for (Pair<String, Integer> producto : productosRanking) {
-                PieChart.Data data = new PieChart.Data(producto.getKey(), producto.getValue());
-                rankingProductosPieChart.getData().add(data);
-            }
-            
-            double sum = 0;
-            for (PieChart.Data d : rankingProductosPieChart.getData()) {
-                sum += d.getPieValue();
-            }
-            
-            for (PieChart.Data d : rankingProductosPieChart.getData()) {
-                double porcentaje = (sum > 0) ? (d.getPieValue() / sum) * 100 : 0;
-                d.setName(d.getName() + " (" + String.format("%.2f", porcentaje) + "%)");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private void cargarProductosMasVendidos() {
         productosMasVendidosBarChart.setData(ventaService.obtenerProductosVendidos());

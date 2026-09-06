@@ -19,6 +19,7 @@ public class ConsultaStockController {
     @FXML private TableColumn<Producto, String> colCategoria;
     @FXML private TableColumn<Producto, Double> colPrecio;
     @FXML private TableColumn<Producto, Integer> colStock;
+    @FXML private TableColumn<Producto, Boolean> colEstado; // Se agrega la columna de estado
 
     private EmpleadoController vendedorController; 
     private final InventService productoService = new InventService();
@@ -30,6 +31,7 @@ public class ConsultaStockController {
         cargarProductos();
         configurarFiltroBusqueda();
         resaltarStockCritico();
+        configurarFormatoEstado();
     }
 
     public void setVendedorController(EmpleadoController vendedorController) {
@@ -42,6 +44,7 @@ public class ConsultaStockController {
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
         colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
         colCategoria.setCellValueFactory(new PropertyValueFactory<>("id_categoria"));
+        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
     }
 
     private void cargarProductos() {
@@ -60,7 +63,6 @@ public class ConsultaStockController {
 
                 String filtro = newValue.toLowerCase().trim();
 
-                // Busca coincidencias por ID o por Nombre al mismo tiempo
                 boolean coincideNombre = producto.getNombre().toLowerCase().contains(filtro);
                 boolean coincideId = String.valueOf(producto.getId()).contains(filtro);
 
@@ -85,11 +87,33 @@ public class ConsultaStockController {
                 } else {
                     setText(stock.toString());
                     if (stock == 0) {
-                        setStyle("-fx-background-color: #ffcdd2; -fx-text-fill: #b71c1c; -fx-font-weight: bold; -fx-alignment: CENTER;"); // Rojo sin stock
+                        setStyle("-fx-background-color: #ffcdd2; -fx-text-fill: #b71c1c; -fx-font-weight: bold; -fx-alignment: CENTER;");
                     } else if (stock <= 5) {
-                        setStyle("-fx-background-color: #ffe0b2; -fx-text-fill: #e65100; -fx-font-weight: bold; -fx-alignment: CENTER;"); // Naranja stock bajo
+                        setStyle("-fx-background-color: #ffe0b2; -fx-text-fill: #e65100; -fx-font-weight: bold; -fx-alignment: CENTER;");
                     } else {
                         setStyle("-fx-alignment: CENTER;");
+                    }
+                }
+            }
+        });
+    }
+
+    private void configurarFormatoEstado() {
+        colEstado.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Boolean estado, boolean empty) {
+                super.updateItem(estado, empty);
+
+                if (empty || estado == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    if (estado) {
+                        setText("Activo");
+                        setStyle("-fx-text-fill: #2e7d32; -fx-font-weight: bold; -fx-alignment: CENTER;"); // Texto verde
+                    } else {
+                        setText("Inactivo");
+                        setStyle("-fx-text-fill: #c62828; -fx-font-weight: bold; -fx-alignment: CENTER;"); // Texto rojo
                     }
                 }
             }
