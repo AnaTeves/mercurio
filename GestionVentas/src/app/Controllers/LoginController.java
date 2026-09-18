@@ -44,7 +44,7 @@ public class LoginController {
             Usuario dataUser = userService.searchUser(dni);
 
             // 3. Validar si la cuenta está desactivada
-        if (dataUser != null && !dataUser.getEstado().equalsIgnoreCase("Activo")) { // Ajusta "Activo" según el valor guardado en tu BDD (ej: "1" o "Habilitado")
+        if (dataUser != null && !dataUser.getEstado().equalsIgnoreCase("Activo")) { 
             try {
                 AuditoriaService.registrar(
                     dataUser.getIdUsuario(), 
